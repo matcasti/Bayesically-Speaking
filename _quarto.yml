@@ -1,0 +1,23 @@
+project:
+  type: website
+  resources: 
+    - libs/
+  
+website:
+  title: "Bayesically Speaking"
+  navbar:
+    background: primary
+    logo: images/logo.png
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/
+      - icon: twitter
+        href: https://twitter.com
+        
+format:
+  html:
+    theme: libs/styles.scss
+
+
+
