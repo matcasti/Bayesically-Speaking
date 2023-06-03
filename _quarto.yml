@@ -7,7 +7,6 @@ website:
   title: "Bayesically Speaking"
   navbar:
     background: primary
-    logo: images/logo.png
     right:
       - about.qmd
       - icon: github
@@ -17,6 +16,7 @@ website:
         
 format:
   html:
+    fig-format: svg
     theme: libs/styles.scss
 
 
