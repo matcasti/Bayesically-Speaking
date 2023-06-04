@@ -57,7 +57,7 @@ Within the statistics toolbox, we have commonly used tests like t-tests, ANOVA, 
 
 To address these limitations, non-parametric alternatives have been developed. These approaches offer flexibility but make it challenging to extrapolate inferences to new data due to the lack of distributional parameters. Other models, such as neural networks or random forest models, provide assistance when analyzing data with special properties. However, they often sacrifice simplicity and interpretability for increased flexibility and are commonly referred to as "black box" models.
 
-![This is between us, I just put this photo because I thought it would look cooler. Photo from [Dan Cristian Pădureț](https://unsplash.com/pt-br/@dancristianpaduret?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) at [Unsplash](https://unsplash.com/es/fotos/h3kuhYUCE9A?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).](body_1.jpeg){.rounded .img-fluid}
+![Just between us, I only put this picture because it looked cool. Photo from [Dan Cristian Pădureț](https://unsplash.com/pt-br/@dancristianpaduret?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) at [Unsplash](https://unsplash.com/es/fotos/h3kuhYUCE9A?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).](body_1.jpeg){.rounded .img-fluid}
 
 Despite the availability of these alternative methods, there is still a pressing need to incorporate previous knowledge and align with the way human understanding is constructed. As humans, our perception of the world is shaped by experiences and prior beliefs. This is where Bayesian statistics come into play.
 
