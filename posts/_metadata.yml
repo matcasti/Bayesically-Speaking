@@ -8,3 +8,5 @@ freeze: true
 title-block-banner: true
 
 cap-location: margin
+reference-location: margin
+citation-location: margin
