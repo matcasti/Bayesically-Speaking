@@ -75,7 +75,9 @@ To estimate the posterior probability of getting heads after tossing a coin, we 
 
 According to the information provided, we have the prior probability of $P(H)$ estimated from an independent experiment as 10 heads out of 15 tosses. This can be written as a Beta distribution:
 
-[This symbol "$\sim$" means "distribuited as"]{.aside}
+:::{.aside}
+This symbol "$\sim$" means *distributed as*
+:::
 
 $$
 P(H) \sim Beta(10, 5)
@@ -86,7 +88,7 @@ Here, the Beta distribution parameters are (10, 5) since we had 10 heads and 5 t
 Now, a new experiment with the same 15 tosses gives us 2 heads. To update our prior belief, we can use this information to calculate the posterior probability which can be expressed as follow:
 
 :::{.aside}
-This symbol: $\propto$, means "proportional to"
+This symbol "$\propto$" means *proportional to*
 :::
 
 $$
@@ -99,17 +101,25 @@ $$
 Posterior \propto Likelihood \times Prior
 $$
 
-To calculate the posterior probability, we need to normalize the product of the likelihood and prior, which involves integrating over all possible values of H.[^pdf] However, in this case, we can use a shortcut because the prior distribution is conjugate to the binomial distribution,[^conjugacy] so the posterior distribution will also follow a Beta distribution:
+To calculate the posterior probability, we need to normalize the product of the likelihood and prior, which involves integrating over all possible values of H. However, in this case, we can use a shortcut because the prior distribution is conjugate to the binomial distribution, so the posterior distribution will also follow a Beta distribution:
 
-[^pdf]: This is given that the product of both the prior and the likelihood keep the same shape as the posterior, with the exception that it doesn't add up to 1, so is not a probability density function. For this to happen it needs to be normalized using integration.
+::: {.callout-note collapse="true"}
+## About normalization
 
-[^conjugacy]: When using a Beta distribution as our prior belief and observing new data from a coin toss, we find that the posterior distribution also follows a Beta distribution. This convenient property simplifies calculations. It's like a mathematical shortcut that saves time and effort.
+The product of both the prior and the likelihood maintains the same shape as the final posterior probability distribution, indicated by the "proportional to" ($\propto$) in the previous equation. However, this raw product does not sum up to 1, making it an improper probability density function. To rectify this, the raw product needs to be normalized using integration or simulation in most cases.
+:::
 
 $$
 P(H | Data) \sim Beta(10 + 2, 5 + 13)
 $$
 
 After incorporating the data from the new experiment, the parameters of the Beta distribution become (12, 18) since we had 2 heads and 13 tails in the new experiment, meaning 12 heads and 18 tails in total.
+
+::: {.callout-note collapse="true"}
+## About conjugacy
+
+When we choose a Beta distribution as our prior belief and gather new data from a coin toss, an intriguing property emerges: the posterior distribution also follows a Beta distribution. This property, known as conjugacy, offers a valuable advantage by simplifying calculations. It acts as a mathematical shortcut that saves time and effort, making the analysis more efficient and streamlined.
+:::
 
 To calculate the posterior probability of getting heads, we can consider the mode (maximum) of the Beta distribution, which is $(a - 1) / (a + b - 2)$:
 

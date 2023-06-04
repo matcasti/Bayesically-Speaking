@@ -302,15 +302,17 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="computing-the-posterior">Computing the posterior</h2>
 <p>To estimate the posterior probability of getting heads after tossing a coin, we can use the Bayesian framework. Let’s denote the probability of getting heads in a coin toss as <span class="math inline">\(P(H)\)</span>.</p>
 <p>According to the information provided, we have the prior probability of <span class="math inline">\(P(H)\)</span> estimated from an independent experiment as 10 heads out of 15 tosses. This can be written as a Beta distribution:</p>
-<div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="">This symbol “<span class="math inline">\(\sim\)</span>” means “distribuited as”</span></div></div>
-<p><span class="math display">\[
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>This symbol “<span class="math inline">\(\sim\)</span>” means <em>distributed as</em></p>
+</div></div><p><span class="math display">\[
 P(H) \sim Beta(10, 5)
 \]</span></p>
 <p>Here, the Beta distribution parameters are (10, 5) since we had 10 heads and 5 tails in the prior experiment.</p>
 <p>Now, a new experiment with the same 15 tosses gives us 2 heads. To update our prior belief, we can use this information to calculate the posterior probability which can be expressed as follow:</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<p>This symbol: <span class="math inline">\(\propto\)</span>, means “proportional to”</p>
+<p>This symbol “<span class="math inline">\(\propto\)</span>” means <em>proportional to</em></p>
 </div></div><p><span class="math display">\[
 P(H | Data) \propto P(Data | H) \times P(H)
 \]</span></p>
@@ -318,11 +320,43 @@ P(H | Data) \propto P(Data | H) \times P(H)
 <p><span class="math display">\[
 Posterior \propto Likelihood \times Prior
 \]</span></p>
-<div class="page-columns page-full"><p>To calculate the posterior probability, we need to normalize the product of the likelihood and prior, which involves integrating over all possible values of H.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> However, in this case, we can use a shortcut because the prior distribution is conjugate to the binomial distribution,<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> so the posterior distribution will also follow a Beta distribution:</p><div class="no-row-height column-margin column-container"><li id="fn1"><p><sup>1</sup>&nbsp;This is given that the product of both the prior and the likelihood keep the same shape as the posterior, with the exception that it doesn’t add up to 1, so is not a probability density function. For this to happen it needs to be normalized using integration.</p></li><li id="fn2"><p><sup>2</sup>&nbsp;When using a Beta distribution as our prior belief and observing new data from a coin toss, we find that the posterior distribution also follows a Beta distribution. This convenient property simplifies calculations. It’s like a mathematical shortcut that saves time and effort.</p></li></div></div>
+<p>To calculate the posterior probability, we need to normalize the product of the likelihood and prior, which involves integrating over all possible values of H. However, in this case, we can use a shortcut because the prior distribution is conjugate to the binomial distribution, so the posterior distribution will also follow a Beta distribution:</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+About normalization
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The product of both the prior and the likelihood maintains the same shape as the final posterior probability distribution, indicated by the “proportional to” (<span class="math inline">\(\propto\)</span>) in the previous equation. However, this raw product does not sum up to 1, making it an improper probability density function. To rectify this, the raw product needs to be normalized using integration or simulation in most cases.</p>
+</div>
+</div>
+</div>
 <p><span class="math display">\[
 P(H | Data) \sim Beta(10 + 2, 5 + 13)
 \]</span></p>
 <p>After incorporating the data from the new experiment, the parameters of the Beta distribution become (12, 18) since we had 2 heads and 13 tails in the new experiment, meaning 12 heads and 18 tails in total.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+About conjugacy
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When we choose a Beta distribution as our prior belief and gather new data from a coin toss, an intriguing property emerges: the posterior distribution also follows a Beta distribution. This property, known as conjugacy, offers a valuable advantage by simplifying calculations. It acts as a mathematical shortcut that saves time and effort, making the analysis more efficient and streamlined.</p>
+</div>
+</div>
+</div>
 <p>To calculate the posterior probability of getting heads, we can consider the mode (maximum) of the Beta distribution, which is <span class="math inline">\((a - 1) / (a + b - 2)\)</span>:</p>
 <div class="text-center">
 <p><span class="math inline">\(\begin{aligned} P(H | Data) &amp;= (12 - 1) / (12 + 18 - 2) \\  &amp;= 11 / 28 \\  &amp;\approx 0.39 \end{aligned}\)</span></p>
@@ -422,7 +456,6 @@ Gelman, Andrew, and Cosma Rohilla Shalizi. 2013. <span>“Philosophy and the Pra
 
 </section>
 </section>
-
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
