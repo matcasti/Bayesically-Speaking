@@ -1,6 +1,6 @@
 ---
 title: "About"
-image: images/about_profile.png
+image: images/profile.png
 about:
   template: jolla 
   links:
@@ -10,6 +10,13 @@ about:
     - icon: github
       text: Github
       href: https://github.com/matcasti
+    - icon: Mortorboard
+      text: ResearchGate
+      href: https://www.researchgate.net/profile/Matias-Castillo-Aguilar
 ---
 
+Matías is a researcher and a statistics geek with (more than) a little taste for bayesian methods, but more importantly an applied coffee lover.
 
+In this corner of the web he will be working and sharing real world problems using applied statistics to develop insights and to provide an inference-based framework towards an unified perspective, quantifying the uncertainty behind those problems and the potential solutions associated with them.
+
+Feel free to reach Matías if you wish to collaborate or leave your feedback on any of the published material hosted in *Bayesically Speaking*.

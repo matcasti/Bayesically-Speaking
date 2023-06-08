@@ -22,29 +22,7 @@ title-block-banner: false
 :::
 ::::
 
-
 <div id="sample-listings"></div>
-
-<hr>
-
-# About me
-
-::::{.grid .align-items-center}
-
-:::{.g-col-0 .g-col-sm-2}
-:::
-
-:::{.g-col-6 .g-start-4 .g-col-sm-4}
-![](images/profile.png){style="width: 80%"}
-:::
-
-:::{.g-col-12 .g-col-sm-4}
-I'm Matías, researcher and a statistics geek and with (more than) a little taste for bayesian methods and an applied coffee lover.
-
-In this little corner of the web I'll be working with some real world problems using applied statistics to develop insights and (hopefully) provide an inference-based framework towards a more unified perspective on what is known (and unknown).
-:::
-
-::::
 
 <hr>
 
