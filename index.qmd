@@ -24,7 +24,15 @@ title-block-banner: false
 
 <div id="sample-listings"></div>
 
-<hr>
+<br>
+
+:::{.column-screen style='background-image: url("images/classroom.jpeg"); background-size: cover; height: 50vh;'}
+:::{.column-page .text-light .m-3 .px-3 style="background-color: rgb(0,0,0,0.25); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(10px); border-radius: 10px;"}
+# Plots and Visualizations
+
+Coming soon!
+:::
+:::
 
 <script src="libs/particles.js"></script> 
 <script src="libs/app.js"></script> 

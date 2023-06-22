@@ -2,6 +2,7 @@ project:
   type: website
   resources: 
     - libs/
+    - images/
   
 website:
   title: "Bayesically Speaking"
