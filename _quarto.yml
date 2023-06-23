@@ -3,6 +3,7 @@ project:
   resources: 
     - libs/
     - images/
+    - CNAME
   
 website:
   title: "Bayesically Speaking"
