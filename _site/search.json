@@ -30,7 +30,7 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Bayesically Speaking",
+    "title": "Home",
     "section": "",
     "text": "Bayesically Speaking\n\n\nPriors & Coffee\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nWelcome to Bayesically Speaking\n\n\nHi everyone! This is the first post of Bayesically Speaking, so get your seatbelt on and get ready to join me on this ride!\n\n\n\nMatías Castillo-Aguilar\n\n\nJun 10, 2023\n\n\n\n\n\n\n\n\nNo matching items\n\n\n\n\n\nPlots and Visualizations\nComing soon!"
   },
@@ -39,6 +39,27 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "Hello and welcome to Bayesically Speaking, the blog where I, Matías, share my passion for statistics, bayesian methods and coffee. If you are curious about how to use data and probability to understand and solve real world problems, you have come to the right place. Here you will find practical examples, tutorials, tips and tricks on how to apply statistical thinking and inference to various domains and scenarios.\nWho am I and why should you care? Well, I am a researcher who loves numbers and coffee (not necessarily in that order). I have a special interest in bayesian methods, which are a powerful and flexible way of doing statistics that allows you to incorporate prior knowledge and uncertainty into your analysis. Bayesian methods are not magic, though. They have their limitations and challenges, just like any other approach. That’s why I don’t shy away from using other tools when they are appropriate, such as frequentist methods or p-values. My goal is not to start a war between different schools of thought, but to show you how to use the best tool for the job.\nIn this blog, you will also learn how to create beautiful and informative graphics and plots using R, which is a free and open source software for data analysis and visualization. R is my favorite tool for doing statistics, because it has a huge community of users and developers who create amazing packages and resources for all kinds of purposes. R can also do much more than just statistics, such as web scraping, text mining, machine learning and more.\nI hope you enjoy reading Bayesically Speaking as much as I enjoy writing it. I welcome your feedback and suggestions on any of the topics I cover here. You can contact me through email or social media if you want to collaborate or just say hi. Thank you for visiting and happy learning!"
+    "text": "About"
+  },
+  {
+    "objectID": "about.html#what-is-all-the-fuzz-about",
+    "href": "about.html#what-is-all-the-fuzz-about",
+    "title": "About",
+    "section": "What is all the fuzz about?",
+    "text": "What is all the fuzz about?\nHello and welcome to Bayesically Speaking, the blog where I, Matías, share my passion for statistics, bayesian methods and coffee. If you are curious about how to use data and probability to understand and solve real world problems, you have come to the right place. Here you will find practical examples, tutorials, tips and tricks on how to apply statistical thinking and inference to various domains and scenarios."
+  },
+  {
+    "objectID": "about.html#who-is-this-guy",
+    "href": "about.html#who-is-this-guy",
+    "title": "About",
+    "section": "Who is this guy?",
+    "text": "Who is this guy?\nWho am I and why should you care? Well, I am a researcher who loves numbers and coffee (not necessarily in that order). I have a special interest in bayesian methods, which are a powerful and flexible way of doing statistics that allows you to incorporate prior knowledge and uncertainty into your analysis. Bayesian methods are not magic, though. They have their limitations and challenges, just like any other approach. That’s why I don’t shy away from using other tools when they are appropriate, such as frequentist methods or p-values. My goal is not to start a war between different schools of thought, but to show you how to use the best tool for the job."
+  },
+  {
+    "objectID": "about.html#a-secret-weapon",
+    "href": "about.html#a-secret-weapon",
+    "title": "About",
+    "section": "A secret weapon",
+    "text": "A secret weapon\nIn this blog, you will also learn how to create beautiful and informative graphics and plots using R, which is a free and open source software for data analysis and visualization. R is my favorite tool for doing statistics, because it has a huge community of users and developers who create amazing packages and resources for all kinds of purposes. R can also do much more than just statistics, such as web scraping, text mining, machine learning and more. Even this website was build using R!"
   }
 ]

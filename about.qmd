@@ -1,23 +1,66 @@
 ---
 title: "About"
-image: images/profile.png
-about:
-  template: trestles 
-  links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/matias_science
-    - icon: github
-      text: Github
-      href: https://github.com/matcasti
-    - text: "{{< fa brands researchgate size=large >}} ResearchGate"
-      href: https://www.researchgate.net/profile/Matias-Castillo-Aguilar
+title-block-banner: false
 ---
 
+<!--- Replacement of title-block: START ---->
+
+[About]{.display-2 .position-absolute .text-light style="z-index:3; top:45vh;"}
+
+<div class="vh-100 w-100 top-0 position-absolute" style="background-color: rgb(0,0,0,0.3); z-index:2;"></div>
+
+:::{.column-screen .position-absolute .w-100 .top-0 style="z-index:1;"}
+```{=html}
+<video autoplay loop muted poster="images/about_title_block.jpeg" style="height: 100vh; width: 100%; object-fit: cover;">
+<source src="images/about_title_block.mp4" type="video/mp4">
+</video>
+```
+:::
+
+<div class="vh-100"></div>
+
+<style>
+#title-block-header {
+    display: none;
+}
+</style>
+
+<!--- Replacement of title-block: END ---->
+
+:::{.grid}
+
+:::{.g-col-12 .g-col-md-6}
+## What is all the fuzz about?
+
 Hello and welcome to *Bayesically Speaking*, the blog where I, Matías, share my passion for statistics, bayesian methods and coffee. If you are curious about how to use data and probability to understand and solve real world problems, you have come to the right place. Here you will find practical examples, tutorials, tips and tricks on how to apply statistical thinking and inference to various domains and scenarios.
+:::
+
+:::{.g-col-12 .g-col-md-6 .m-auto}
+![](images/about_sketch.png){.img-fluid style="max-width: 15rem"}
+:::
+
+:::{.g-col-12 .g-col-md-8}
+## Who is this guy?
 
 Who am I and why should you care? Well, I am a researcher who loves numbers and coffee (not necessarily in that order). I have a special interest in bayesian methods, which are a powerful and flexible way of doing statistics that allows you to incorporate prior knowledge and uncertainty into your analysis. Bayesian methods are not magic, though. They have their limitations and challenges, just like any other approach. That's why I don't shy away from using other tools when they are appropriate, such as frequentist methods or p-values. My goal is not to start a war between different schools of thought, but to show you how to use the best tool for the job.
+:::
 
-In this blog, you will also learn how to create beautiful and informative graphics and plots using R, which is a free and open source software for data analysis and visualization. R is my favorite tool for doing statistics, because it has a huge community of users and developers who create amazing packages and resources for all kinds of purposes. R can also do much more than just statistics, such as web scraping, text mining, machine learning and more.
+:::{.g-col-12 .g-col-md-4 .m-auto}
+![](images/profile.png){.img-fluid style="max-width: 12rem"}
+:::
 
+:::{.g-col-12 .g-col-md-6}
+## A secret weapon
+
+In this blog, you will also learn how to create beautiful and informative graphics and plots using R, which is a free and open source software for data analysis and visualization. R is my favorite tool for doing statistics, because it has a huge community of users and developers who create amazing packages and resources for all kinds of purposes. R can also do much more than just statistics, such as web scraping, text mining, machine learning and more. Even this website was build using R!
+::: 
+
+:::{.g-col-12 .g-col-md-6 .m-auto}
+![[Artwork by [\@allison_horst](https://twitter.com/allison_horst)]{.small .mx-5}](images/about_allison_drawing.png){.img-fluid style="max-width: 20rem"}
+:::
+
+:::{.g-col-12 .g-col-md-12}
 I hope you enjoy reading *Bayesically Speaking* as much as I enjoy writing it. I welcome your feedback and suggestions on any of the topics I cover here. You can contact me through email or social media if you want to collaborate or just say hi. Thank you for visiting and happy learning!
+:::
+
+:::
