@@ -1,5 +1,5 @@
 ---
-title: "About"
+title: "[About]{.d-none}"
 title-block-banner: false
 ---
 
@@ -19,11 +19,6 @@ title-block-banner: false
 
 <div class="vh-100"></div>
 
-<style>
-#title-block-header {
-    display: none;
-}
-</style>
 
 <!--- Replacement of title-block: END ---->
 
@@ -47,6 +42,21 @@ Who am I and why should you care? Well, I am a researcher who loves numbers and 
 
 :::{.g-col-12 .g-col-md-4 .m-auto}
 ![](images/profile.png){.img-fluid style="max-width: 12rem"}
+:::
+
+:::{.g-col-12 .callout-note collapse=false}
+## About Matías
+
+<div class="grid" style="--bs-gap:0;">
+:::{.g-col-12 .g-col-sm-8}
+If you want to dive deeper into Matías' work, you can explore his research and software development projects in his portfolio.
+:::
+
+:::{.g-col-12 .g-col-sm-4 .text-center .my-auto}
+<a class="btn btn-outline-primary" href="portfolio.html">{{< fa suitcase >}} Portfolio</a>
+:::
+</div>
+
 :::
 
 :::{.g-col-12 .g-col-md-6}
