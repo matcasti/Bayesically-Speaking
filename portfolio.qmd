@@ -149,4 +149,4 @@ Propiedades cinemáticas de rodilla en respuesta a la posición de cuclillas: Im
 
 # Software & Web design
 
-As you can imagine, the act of creating this website constitutes a web design project itself, however I've also created websites and software in the context
+Across my years using technological tools, I faced a need to increase the size the technological and analytical toolbox.

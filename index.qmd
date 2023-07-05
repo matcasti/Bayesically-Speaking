@@ -23,12 +23,41 @@ title-block-banner: false
 :::
 ::::
 
+<!--- ### --->
+
+:::{style="background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(images/home_parallax-1.jpeg); background-attachment: fixed; background-size: cover; background-position: center; background-repeat: no-repeat; grid-column: screen-start/screen-end; backdrop-filter: rgba(0, ,0, 0, 0.5);"}
+
+:::{.grid .column-page .text-light .py-5}
+
+:::{.g-col-6 .g-start-4}
+# What is this?
+
+If you are curious about how to use data and probability to understand and visualize real world problems, you have come to the right place. 
+
+<div class="grid">
+<div class="g-col-12 g-col-sm-6"><a class="btn btn-outline-light" href="about.html">{{< fa circle-info >}} About section</a></div>
+<div class="g-col-12 g-col-sm-6"><a class="btn btn-outline-light" href="portfolio.html">{{< fa suitcase >}} Related work</a></div>
+</div>
+:::
+
+:::
+
+:::
+
+<br>
+
+<!--- ### --->
+
+# Blog
+
 <div id="sample-listings"></div>
 
 <br>
 
-:::{.column-screen .bg-primary}
-:::{.column-page .text-light}
+<!--- ### --->
+
+:::{style="background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(images/home_parallax-2.jpeg); background-attachment: fixed; background-size: cover; background-position: center; background-repeat: no-repeat; grid-column: screen-start/screen-end; backdrop-filter: rgba(0, ,0, 0, 0.5); min-height: 500px;"}
+:::{.column-page .text-light .py-5}
 # Plots and Visualizations
 
 Coming soon!
