@@ -183,7 +183,7 @@ Bayesically Speaking
 
 <span class="badge bg-primary">Website</span>
 
-[Personal website and blog where I write about statistics and showcase my past research and related projects]{.small .text-black-50}
+[Personal website and blog where I write about statistics and showcase my past research and related projects.]{.small .text-black-50}
 
 <a class="btn btn-outline-primary" href="https://bayesically-speaking.com/">Website {{< fa link >}}</a>
 
@@ -192,6 +192,54 @@ Bayesically Speaking
   <source src="images/portfolio_web-2.mp4" type="video/mp4">
 </video>
 ```
+:::
+
+:::{.g-col-12 .g-col-sm-6}
+`youngSwimmers`
+
+<span class="badge bg-primary">R package</span>
+
+[Data package from the young swimmers study.]{.small .text-black-50}
+
+<a class="btn btn-outline-primary" href="https://nim-ach.github.io/youngSwimmers/">Repository {{< fa link >}}</a>
+
+![](images/portfolio_web-3.png){.img-fluid .rounded}
+:::
+
+:::{.g-col-12 .g-col-sm-6}
+`AnxietySleep`
+
+<span class="badge bg-primary">R package</span>
+
+[Data package from the anxiety and sleep study.]{.small .text-black-50}
+
+<a class="btn btn-outline-primary" href="https://nim-ach.github.io/AnxietySleep/">Repository {{< fa link >}}</a>
+
+![](images/portfolio_web-4.png){.img-fluid .rounded}
+:::
+
+:::{.g-col-12 .g-col-sm-6}
+`prices`
+
+<span class="badge bg-primary">R package</span>
+
+[Helper functions for services prices estimation based on time-dependent work.]{.small .text-black-50}
+
+<a class="btn btn-outline-primary" href="https://matcasti.github.io/prices/">Repository {{< fa link >}}</a>
+
+![](images/portfolio_web-5.png){.img-fluid .rounded}
+:::
+
+:::{.g-col-12 .g-col-sm-6}
+`mammals`
+
+<span class="badge bg-primary">R package</span>
+
+[Tools for population dynamics analysis.]{.small .text-black-50}
+
+<a class="btn btn-outline-primary" href="https://mammal-proj.github.io/mammals/">Repository {{< fa link >}}</a>
+
+![](images/portfolio_web-6.png){.img-fluid .rounded}
 :::
 
 :::
