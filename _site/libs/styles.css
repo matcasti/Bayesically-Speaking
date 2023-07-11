@@ -22,3 +22,17 @@ canvas{
   background-position: 50% 50%;
 } 
 
+/* ---- parallax effect ---- */ 
+.parallax{
+  background-attachment: fixed; 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  grid-column: screen-start/screen-end; 
+}
+
+@media only screen and (max-width:749px) {
+  .parallax {
+    background-attachment: inherit;
+  }
+}
