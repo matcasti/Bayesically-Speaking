@@ -3,6 +3,7 @@ title: "[Portfolio]{.d-none}"
 title-block-banner: false
 bibliography: libs/portfolio.bib
 csl: libs/portfolio.csl
+css: libs/styles.css
 toc: true
 ---
 
@@ -20,20 +21,65 @@ toc: true
 ```
 :::
 
-<style>
-.zindex-over-content{
-  display: none;
-}
-</style>
-
 <div class="vh-100"></div>
 <!--- Replacement of title-block: END ---->
 
+:::{.grid}
+
+:::{.g-col-12}
+# About me
+:::
+
+:::{.g-col-12 .g-col-md-7}
+Matías Castillo-Aguilar is a dedicated researcher and data analyst at NIM-ACh, focusing on the area of cardiac autonomic modulation and its role on exercise-induced adaptations. With a Bachelor's degree in Kinesiology from Magallanes University, Matías brings a strong academic foundation to his work. 
+
+His research explores the effects of exercise and physical activity on various populations, including athletes, older individuals, and those in extreme environments. By delving into the intricacies of these effects, Matías seeks to uncover valuable insights and contribute to our understanding of human physiology.
+:::
+
+:::{.g-col-12 .g-col-md-5 .m-auto .text-center}
+![](images/profile.png){.img-fluid style="max-width: 12rem"}
+:::
+
+:::{.g-col-12 .g-col-md-7}
+Beyond his experience in research, Matías possesses extensive knowledge in statistical modeling. This proficiency enables him to employ advanced statistical methods in his analyses, providing a comprehensive examination of the data. By effectively translating complex data into meaningful knowledge, Matías facilitates informed decision-making and drives further advancements in the field.
+:::
+
+:::{.g-col-12 .g-col-md-5 .text-center}
+Research areas of interest
+
+<span class="badge bg-primary">Cardiac Autonomic Modulation</span>
+<span class="badge bg-primary">Neurophysiology</span>
+<span class="badge bg-primary">Exercise Physiology</span>
+<span class="badge bg-primary">Strength and Conditioning</span>
+<span class="badge bg-primary">Biomechanics</span>
+<span class="badge bg-primary">Bayesian Statistics</span>
+:::
+
+:::
+
+<br>
+
+:::{.parallax style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(images/portfolio_parallax-1.jpeg); min-height: 150vh;"}
+
+:::{.grid .column-page .text-light .my-auto .py-5}
+
+:::{.g-col-7 .g-start-4}
 # Research
 
-Throughout my research career, I have focused primarily on investigating the impact of exercise and physical activity on cardiac autonomic modulation in athletes and older individuals. Additionally, I have explored the influence of various variables on this relationship, aiming to gain a comprehensive understanding of this complex interplay. Moreover, I have actively engaged in collaborative efforts outside my core research domain, leveraging my expertise in applied statistics and Bayesian data analysis to contribute valuable insights.
+During my research career, my primary focus has been on investigating the effects of exercise and physical activity on cardiac autonomic modulation in two specific populations: athletes and older individuals. This line of inquiry has allowed me to delve into the intricate relationship between exercise and cardiac autonomic modulation, while also exploring the influence of various variables to develop a comprehensive understanding.
 
-In the following section, I present a summary of the research endeavors I have undertaken since 2021, which have shaped my expertise and contributed to the advancement of knowledge in my field.
+In addition to my core research, I have actively pursued collaborative opportunities beyond my primary domain. Leveraging my expertise in applied statistics and Bayesian data analysis, I have contributed valuable insights to these collaborative efforts. This multidisciplinary approach has broadened my research horizons and facilitated the exchange of knowledge across different fields.
+
+In the following section, I provide a concise summary of my research undertakings since 2021. These endeavors have not only shaped my expertise but have also made significant contributions to the advancement of knowledge in my field.
+:::
+
+:::
+
+:::
+
+<br>
+
+<!--- #### --->
 
 :::{.grid}
 
@@ -154,20 +200,32 @@ Propiedades cinemáticas de rodilla en respuesta a la posición de cuclillas: Im
 
 :::
 
+<br>
+
 <!--- #### --->
 
+:::{.parallax style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/portfolio_parallax-2.jpeg); min-height: 150vh"}
+
+:::{.grid .column-page .text-light .my-auto .py-5}
+
+:::{.g-col-7 .g-start-4}
 # Software & Web design
 
 Over the years I have encountered multiple challenges, both academic and personal. In these contexts, being able to use the tools that a digitalized world offers us is vital to be able to adapt in a world that evolves in a complex and dynamic way every second. In this way, and in a self-taught way, I have cultivated technological and computer skills in response to these challenges. Below, I show the projects I have developed, both in terms of web design and intermediate products of published research projects that I have led and collaborated.
+:::
+
+:::
+
+:::
+
+<br>
+
+<!--- #### --->
 
 :::{.grid}
 
-:::{.g-col-12}
-### 2023
-:::
-
 :::{.g-col-12 .g-col-sm-6}
-NIM-ACh ^[Chilean Austral Molecular Integrative Neurophysiology by its acronym in Spanish.] 
+#### NIM-ACh ^[Chilean Austral Molecular Integrative Neurophysiology by its acronym in Spanish.] 
 
 <span class="badge bg-primary">Website</span>
 
@@ -179,7 +237,7 @@ NIM-ACh ^[Chilean Austral Molecular Integrative Neurophysiology by its acronym i
 :::
 
 :::{.g-col-12 .g-col-sm-6}
-Bayesically Speaking
+#### Bayesically Speaking
 
 <span class="badge bg-primary">Website</span>
 
@@ -195,7 +253,7 @@ Bayesically Speaking
 :::
 
 :::{.g-col-12 .g-col-sm-6}
-`youngSwimmers`
+#### `youngSwimmers`
 
 <span class="badge bg-primary">R package</span>
 
@@ -207,7 +265,7 @@ Bayesically Speaking
 :::
 
 :::{.g-col-12 .g-col-sm-6}
-`AnxietySleep`
+#### `AnxietySleep`
 
 <span class="badge bg-primary">R package</span>
 
@@ -219,7 +277,7 @@ Bayesically Speaking
 :::
 
 :::{.g-col-12 .g-col-sm-6}
-`prices`
+#### `prices`
 
 <span class="badge bg-primary">R package</span>
 
@@ -231,7 +289,7 @@ Bayesically Speaking
 :::
 
 :::{.g-col-12 .g-col-sm-6}
-`mammals`
+#### `mammals`
 
 <span class="badge bg-primary">R package</span>
 
