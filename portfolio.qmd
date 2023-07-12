@@ -63,7 +63,7 @@ Research areas of interest
 
 :::{.grid .column-page .text-light .my-auto .py-5}
 
-:::{.g-col-7 .g-start-4}
+:::{.g-col-12 .g-col-sm-7 .g-start-sm-4}
 # Research
 
 During my research career, my primary focus has been on investigating the effects of exercise and physical activity on cardiac autonomic modulation in two specific populations: athletes and older individuals. This line of inquiry has allowed me to delve into the intricate relationship between exercise and cardiac autonomic modulation, while also exploring the influence of various variables to develop a comprehensive understanding.
@@ -208,7 +208,7 @@ Propiedades cinemáticas de rodilla en respuesta a la posición de cuclillas: Im
 
 :::{.grid .column-page .text-light .my-auto .py-5}
 
-:::{.g-col-7 .g-start-4}
+:::{.g-col-12 .g-col-sm-7 .g-start-sm-4}
 # Software & Web design
 
 Over the years I have encountered multiple challenges, both academic and personal. In these contexts, being able to use the tools that a digitalized world offers us is vital to be able to adapt in a world that evolves in a complex and dynamic way every second. In this way, and in a self-taught way, I have cultivated technological and computer skills in response to these challenges. Below, I show the projects I have developed, both in terms of web design and intermediate products of published research projects that I have led and collaborated.
