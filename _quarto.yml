@@ -7,6 +7,7 @@ project:
   
 website:
   title: "Bayesically Speaking"
+  description: "The place where statistics, coffee and bayes theorem come toghether"
   favicon: "images/logo.png"
   site-url: https://bayesically-speaking.com/
   navbar:

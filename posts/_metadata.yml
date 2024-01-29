@@ -10,3 +10,13 @@ title-block-banner: true
 cap-location: margin
 reference-location: margin
 citation-location: margin
+
+comments:
+  utterances:
+    repo: matcasti/Bayesically-Speaking
+    
+# Author information
+author:
+  - name: "Matías Castillo-Aguilar" 
+    orcid: "0000-0001-7291-247X"
+    email: "m99castillo@gmail.com"

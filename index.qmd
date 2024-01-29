@@ -10,6 +10,7 @@ listing:
   categories: false
   sort-ui: true
   filter-ui: true
+  feed: true
 page-layout: full
 css: libs/styles.css
 title-block-banner: false
