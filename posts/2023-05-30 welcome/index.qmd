@@ -3,6 +3,8 @@ title: "Welcome to Bayesically Speaking"
 description: |
   Hi everyone! This is the first post of Bayesically Speaking, so get your seatbelt on and get ready to join me on this ride!
 date: "2023-06-10"
+citation:
+  doi: "10.59350/35tc8-qyj10"
 categories: [news]
 bibliography: ref.bib
 title-block-banner: title_block.jpeg
