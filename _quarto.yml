@@ -16,7 +16,7 @@ website:
       - text: "About"
         href: about.qmd
       - text: "CV"
-        href: portfolio.qmd
+        href: cv.qmd
       - icon: github
         href: https://github.com/matcasti
       - icon: twitter

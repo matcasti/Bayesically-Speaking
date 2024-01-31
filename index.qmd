@@ -11,6 +11,7 @@ listing:
   sort-ui: true
   filter-ui: true
   feed: true
+  fields: [image, date, title, reading-time, description]
 page-layout: full
 css: libs/styles.css
 title-block-banner: false
@@ -28,7 +29,7 @@ title-block-banner: false
 
 :::{.parallax style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/home_parallax-1.jpeg);"}
 
-:::{.grid .column-page .text-light .py-5}
+:::{.grid .column-page .text-light style="padding: 10rem 0 !important;"}
 
 :::{.g-col-6 .g-start-4}
 # What is this?
@@ -37,7 +38,7 @@ If you are curious about how to use data and probability to understand and visua
 
 <div class="grid">
 <div class="g-col-12 g-col-sm-6"><a class="btn btn-outline-light" href="about.html">{{< fa circle-info >}} About</a></div>
-<div class="g-col-12 g-col-sm-6"><a class="btn btn-outline-light" href="portfolio.html">{{< fa suitcase >}} Related work</a></div>
+<div class="g-col-12 g-col-sm-6"><a class="btn btn-outline-light" href="cv.html">{{< fa suitcase >}} Related work</a></div>
 </div>
 :::
 
@@ -55,7 +56,7 @@ If you are curious about how to use data and probability to understand and visua
 
 <br>
 
-<!--- ### --->
+<!--- 
 
 :::{.parallax style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/home_parallax-2.jpeg); min-height: 500px;"}
 :::{.column-page .text-light .py-5}
@@ -64,6 +65,8 @@ If you are curious about how to use data and probability to understand and visua
 Coming soon!
 :::
 :::
+
+### --->
 
 <script src="libs/particles.js"></script> 
 <script src="libs/app.js"></script> 

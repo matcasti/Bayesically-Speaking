@@ -48,10 +48,82 @@ $link-color:                $success !default;
 // Fonts
 
 // stylelint-disable-next-line value-keyword-case
-$font-family-sans-serif:      "Playfair Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
-$h1-font-size:                2.6rem !default;
-$h2-font-size:                2.3rem !default;
-$h3-font-size:                2rem !default;
+$font-family-sans-serif:      "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+$font-size-root:              null !default;
+$font-size-base:              1rem !default; // Assumes the browser default, typically `16px`
+$font-size-sm:                $font-size-base * .875 !default;
+$font-size-lg:                $font-size-base * 1.25 !default;
+
+$font-weight-lighter:         lighter !default;
+$font-weight-light:           300 !default;
+$font-weight-normal:          400 !default;
+$font-weight-medium:          500 !default;
+$font-weight-semibold:        600 !default;
+$font-weight-bold:            700 !default;
+$font-weight-bolder:          bolder !default;
+
+$font-weight-base:            $font-weight-normal !default;
+
+$line-height-base:            1.5 !default;
+$line-height-sm:              1.25 !default;
+$line-height-lg:              2 !default;
+
+$h1-font-size:                $font-size-base * 2.5 !default;
+$h2-font-size:                $font-size-base * 2 !default;
+$h3-font-size:                $font-size-base * 1.75 !default;
+$h4-font-size:                $font-size-base * 1.5 !default;
+$h5-font-size:                $font-size-base * 1.25 !default;
+$h6-font-size:                $font-size-base !default;
+// scss-docs-end font-variables
+
+// scss-docs-start font-sizes
+$font-sizes: (
+  1: $h1-font-size,
+  2: $h2-font-size,
+  3: $h3-font-size,
+  4: $h4-font-size,
+  5: $h5-font-size,
+  6: $h6-font-size
+) !default;
+
+// scss-docs-start headings-variables
+$headings-margin-bottom:      1rem * .5 !default;
+$headings-font-family:        "Playfair Display" !default;
+$headings-font-style:         null !default;
+$headings-font-weight:        500 !default;
+$headings-line-height:        1.2 !default;
+$headings-color:              inherit !default;
+// scss-docs-end headings-variables
+
+// scss-docs-start display-headings
+$display-font-sizes: (
+  1: 5rem,
+  2: 4.5rem,
+  3: 4rem,
+  4: 3.5rem,
+  5: 3rem,
+  6: 2.5rem
+) !default;
+
+$display-font-family: "Playfair Display" !default;
+$display-font-style:  null !default;
+$display-font-weight: 300 !default;
+$display-line-height: $headings-line-height !default;
+// scss-docs-end display-headings
+
+@each $display, $font-size in $display-font-sizes {
+  .display-#{$display} {
+    font-family: $display-font-family;
+    font-style: $display-font-style;
+    font-weight: $display-font-weight;
+    line-height: $display-line-height;
+  }
+}
+
+.navbar-title {
+  font-family: "Playfair Display";
+  font-size: 1.75rem;
+}
 
 // Tables
 
@@ -127,10 +199,9 @@ $btn-close-hover-opacity:    1 !default;
 
 // Variables
 
-$web-font-path: "https://fonts.googleapis.com/css2?family=Playfair+Display" !default;
-@if $web-font-path {
-  @import url($web-font-path);
-}
+
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat");
 
 // Navbar
 

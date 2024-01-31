@@ -73,7 +73,7 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-image','listing-date','listing-title','listing-reading-time','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
       searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
     };
@@ -119,7 +119,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./portfolio.html">
+    <a class="nav-link" href="./cv.html">
  <span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item compact">
@@ -178,7 +178,7 @@ Priors &amp; Coffee
 </div>
 <!--- ### --->
 <div class="parallax page-columns page-full" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/home_parallax-1.jpeg);">
-<div class="grid column-page text-light py-5">
+<div class="grid column-page text-light" style="padding: 10rem 0 !important;">
 <section id="what-is-this" class="level1 g-col-6 g-start-4">
 <h1>What is this?</h1>
 <p>If you are curious about how to use data and probability to understand and visualize real world problems, you have come to the right place.</p>
@@ -187,7 +187,7 @@ Priors &amp; Coffee
 <a class="btn btn-outline-light" href="about.html"><i class="fa-solid fa-circle-info" aria-label="circle-info"></i> About</a>
 </div>
 <div class="g-col-12 g-col-sm-6">
-<a class="btn btn-outline-light" href="portfolio.html"><i class="fa-solid fa-suitcase" aria-label="suitcase"></i> Related work</a>
+<a class="btn btn-outline-light" href="cv.html"><i class="fa-solid fa-suitcase" aria-label="suitcase"></i> Related work</a>
 </div>
 </div>
 </section>
@@ -213,9 +213,6 @@ Priors &amp; Coffee
          <option value="listing-date-sort" data-direction="desc">
           Date - Newest
         </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
      </select>
   </div>
     <div class="input-group input-group-sm quarto-listing-filter">
@@ -234,13 +231,13 @@ Priors &amp; Coffee
 <h5 class="no-anchor card-title listing-title" data-anchor-id="blog">
 Welcome to Bayesically Speaking
 </h5>
+<div class="listing-reading-time card-text text-muted">
+11 min
+</div>
 <div class="card-text listing-description">
 <p>Hi everyone! This is the first post of Bayesically Speaking, so get your seatbelt on and get ready to join me on this ride!</p>
 </div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Matías Castillo-Aguilar
-</div>
+<div class="card-attribution card-text-small end">
 <div class="listing-date">
 Jun 10, 2023
 </div>
@@ -255,19 +252,23 @@ No matching items
 </div>
 </div>
 <p><br></p>
-<!--- ### --->
-</section>
-<div class="parallax page-columns page-full" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/home_parallax-2.jpeg); min-height: 500px;">
-<section id="plots-and-visualizations" class="level1 column-page text-light py-5">
-<h1>Plots and Visualizations</h1>
-<p>Coming soon!</p>
-</section>
-</div>
+<!--- 
+
+:::{.parallax style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/home_parallax-2.jpeg); min-height: 500px;"}
+:::{.column-page .text-light .py-5}
+# Plots and Visualizations
+
+Coming soon!
+:::
+:::
+
+### --->
 <script src="libs/particles.js"></script>
 <script src="libs/app.js"></script>
 
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

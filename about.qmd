@@ -53,7 +53,7 @@ If you want to dive deeper into Matías' work, you can explore his research and 
 :::
 
 :::{.g-col-12 .g-col-sm-4 .text-center .my-auto}
-<a class="btn btn-outline-primary" href="portfolio.html">{{< fa suitcase >}} Portfolio</a>
+<a class="btn btn-outline-primary" href="cv.html">{{< fa suitcase >}} Portfolio</a>
 :::
 </div>
 
