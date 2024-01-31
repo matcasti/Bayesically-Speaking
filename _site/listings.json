@@ -4,5 +4,11 @@
     "items": [
       "/posts/2023-05-30 welcome/index.html"
     ]
+  },
+  {
+    "listing": "/blog.html",
+    "items": [
+      "/posts/2023-05-30 welcome/index.html"
+    ]
   }
 ]

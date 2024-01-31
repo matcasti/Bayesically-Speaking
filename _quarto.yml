@@ -13,6 +13,8 @@ website:
   navbar:
     background: primary
     right:
+      - text: "Blog"
+        href: blog.qmd
       - text: "About"
         href: about.qmd
       - text: "CV"
@@ -21,6 +23,8 @@ website:
         href: https://github.com/matcasti
       - icon: twitter
         href: https://twitter.com/matias_science
+      - icon: rss
+        href: blog.xml
         
 format:
   html:
