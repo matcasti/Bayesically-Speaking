@@ -7,12 +7,15 @@ freeze: true
 # Enable banner style title blocks
 title-block-banner: true
 
+
 cap-location: margin
 reference-location: margin
 citation-location: document
 citations-hover: true
 citation: 
   type: post-weblog
+
+google-scholar: true
 
 comments:
   utterances:
@@ -22,5 +25,6 @@ comments:
 author:
   - name: "Matías Castillo-Aguilar" 
     orcid: "0000-0001-7291-247X"
-    email: "m99castillo@gmail.com"
+    email: m99castillo@gmail.com
     url: https://bayesically-speaking.com/portfolio
+
