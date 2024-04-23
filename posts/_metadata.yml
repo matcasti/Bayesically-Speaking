@@ -4,6 +4,9 @@
 # (see https://quarto.org/docs/projects/code-execution.html#freeze)
 freeze: true
 
+execute: 
+  cache: true
+
 # Enable banner style title blocks
 title-block-banner: true
 
