@@ -9,7 +9,7 @@ class Simulation {
       dim: 2,
     };
     this.delay = 250;
-    this.tweeningDelay = 0;
+    this.tweeningDelay = 50;
     this.autoplay = true;
   }
   setAlgorithm(algorithmName) {
@@ -264,7 +264,7 @@ window.onload = function () {
       var f = gui.addFolder("Algorithm Options");
       sim.mcmc.attachUI(sim.mcmc, f);
       // f.add(sim.mcmc, 'about').name('About...');
-      f.open();
+    f.open();
     });
   f1.add(sim, "target", MCMC.targetNames)
     .name("Target distribution")
@@ -284,7 +284,7 @@ window.onload = function () {
   f1.add(sim, "tweeningDelay", 0, 200).name("Tweening delay");
   f1.add(sim, "step").name("Step");
   f1.add(sim, "reset").name("Reset");
-  f1.open();
+f1.open();
 
   var f2 = gui.addFolder("Visualization Options");
   f2.add(viz, "animateProposal").name("Animate proposal").listen();
@@ -298,14 +298,15 @@ window.onload = function () {
       viz.drawHistograms();
       viz.render();
     });
-  f2.open();
+/*f2.open();*/
 
   gui.removeFolder("Algorithm Options");
   var f3 = gui.addFolder("Algorithm Options");
   sim.mcmc.attachUI(sim.mcmc, f3);
   f3.add(sim.mcmc, "about").name("About this algorithm");
-  f3.open();
-
+/*f3.open();*/
+  f3.close();
+  
   sim.animate();
 };
 

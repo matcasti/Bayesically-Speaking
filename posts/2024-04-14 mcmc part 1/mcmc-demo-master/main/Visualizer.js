@@ -19,7 +19,7 @@ class Visualizer {
     this.tweening = false;
     this.showHistograms = false;
 
-    this.arrowSize = 12;
+    this.arrowSize = 15;
     this.proposalColor = "#999";
     this.trajectoryColor = "#333";
     this.acceptColor = "#4c4";
@@ -287,9 +287,9 @@ class Visualizer {
     var context = canvas.getContext("2d");
     context.globalCompositeOperation = "multiply";
     this.drawCircle(canvas, {
-      fill: "rgb(216,216,216)",
+      fill: "rgb(50,50,50)",
       center: center,
-      radius: 0.02,
+      radius: 0.03,
       lw: 0,
     });
     context.globalCompositeOperation = "source-over";
@@ -326,7 +326,7 @@ class Visualizer {
           from: last,
           to: to,
           color: this.proposalColor,
-          lw: 1,
+          lw: 2,
         });
       }
 
@@ -524,13 +524,13 @@ class Visualizer {
       this.drawPath(this.overlayCanvas, {
         path: path,
         color: this.trajectoryColor,
-        lw: 1,
+        lw: 2,
       });
       // this.drawArrow(this.overlayCanvas, {from: event.trajectory[event.offset], to: event.trajectory[event.offset + 1], color: this.trajectoryColor, lw: 0.5, arrowScale: 0.8, alpha: 0.8 });
       this.drawCircle(this.overlayCanvas, {
         fill: this.trajectoryColor,
         center: event.trajectory[event.offset + 1],
-        radius: 0.02,
+        radius: 0.03,
         lw: 0,
       });
     }
