@@ -23,7 +23,7 @@ library(data.table)
 
 # Introduction
 
-Alright, folks, let's dive into the wild world of statistics and data science! Picture this: you're knee-deep in data, trying to make sense of the chaos. But here's the kicker, sometimes the chaos is just too darn complex. With tons of variables flying around, getting a grip on uncertainty can feel like **trying to catch smoke with your bare hands**.
+Alright, folks, let's dive into the wild world of statistics and data science! Picture this: you're knee-deep in data, trying to make sense of the chaos. But here's the kicker, sometimes the chaos is just **too darn complex**. With tons of variables flying around, getting a grip on uncertainty can feel like **trying to catch smoke with your bare hands**.
 
 Please, have in your consideration that the kind of problems that we're dealing with, it's not solely related to the number of dimensions, it's mostly related to **trying to estimate something that we can't see in full beforehand**. For instance, consider the following banana distribution (shown below). How could we map this simple two dimensional surface without computing it all at once?
 
@@ -57,7 +57,7 @@ You know when you hit a roadblock in your calculations, and you're like, "*Can't
 
 So, let's say you wanna estimate 100 points (to get a decent estimation of the shape) for each of 100 dimensions. That's like slamming your head against **ten to the power of 200 computations**... that's a hell of a lot of computations! 
 
-Sure, in la-la land, you could approximate every single number with some degree of approximation. But let's get real here, even **if you had all the time in the world**, you'd still be chipping away at those calculations **until the sun swallowed the Earth**, especially with continuous cases and tons of dimensions that are somewhat correlated (which in reality, tends to be the case).
+Sure, in la-la land, you could approximate every single number with some degree of approximation. But let's get real here, even **if you had all the time in the world**, you'd still be chipping away at those calculations **until the sun swallowed the Earth**, especially with continuous cases and tons of dimensions that are somewhat correlated (which in reality, **tends to be the case**).
 
 This headache we're dealing with? It's what we "*affectionately*" call — emphasis on double quotes — the **curse of dimensionality**. It's like trying to squeeze a square peg into a round hole... it ain't gonna happen without a supersized hammer!
 
@@ -86,16 +86,16 @@ ggplot(curse_dimensionality, aes(dimensions, calculations)) +
 ::: {.callout-note collapse=true}
 ## Explaining the curse of dimensionality further
 
-Imagine you're trying to create a grid to map out the probability space for a set of variables. As the number of dimensions increases, the number of grid points needed to adequately represent the space explodes exponentially. This means that even with the most powerful computers, it becomes practically impossible to compute all the probabilities accurately.
+Imagine you're trying to create a grid **to map out the probability space for a set of variables**. As the number of dimensions increases, the number of grid points needed to adequately represent the space explodes exponentially. This means that even with the most powerful computers, it becomes **practically impossible** to compute all the probabilities accurately.
 :::
 
 ## Sampling the unknown: Markov Chain Monte Carlo
 
-Now, if we can't crack the problem analytically (which, let's face it, is the case most of the time), we gotta get creative. Lucky for us, there's a bunch of algorithms that can lend a hand by sampling this high-dimensional parameter space. Enter the **Markov Chain Monte Carlo (MCMC)** family of algorithms.
+Now, if we can't crack the problem **analytically** (which, let's face it, is the case **most of the time**), we gotta get creative. Lucky for us, there's a bunch of algorithms that can lend a hand by sampling this high-dimensional parameter space. Enter the **Markov Chain Monte Carlo (MCMC)** family of algorithms.
 
 But hold up—Markov Chain Monte What? Yeah, it's a mouthful, but bear with me. You're probably wondering how this fancy-schmancy term is connected to exploring high-dimensional probability spaces. Well, I'll let you in on the secret sauce behind these concepts and why **they're the go-to tools** in top-notch probabilistic software like Stan.
 
-But before we get into the nitty-gritty of MCMC, let's take a detour and talk about Markov Chains, because they're like the OGs of this whole MCMC gang.
+But before we get into the nitty-gritty of MCMC, let's take a detour and talk about **Markov Chains**, because they're like the OGs of this whole MCMC gang.
 
 # Understanding Markov Chains: A rainy example
 

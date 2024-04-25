@@ -49,18 +49,11 @@
     "text": "You know when you hit a roadblock in your calculations, and you’re like, “Can’t we just crunch the numbers for every single value?” Well, let’s break it down. Picture a grid with \\(N\\) points for \\(D\\) dimensions. Now, brace yourself, ’cause the math needed is like \\(N\\) raised to the power of \\(D\\).\nSo, let’s say you wanna estimate 100 points (to get a decent estimation of the shape) for each of 100 dimensions. That’s like slamming your head against ten to the power of 200 computations… that’s a hell of a lot of computations!\nSure, in la-la land, you could approximate every single number with some degree of approximation. But let’s get real here, even if you had all the time in the world, you’d still be chipping away at those calculations until the sun swallowed the Earth, especially with continuous cases and tons of dimensions that are somewhat correlated (which in reality, tends to be the case).\nThis headache we’re dealing with? It’s what we “affectionately” call — emphasis on double quotes — the curse of dimensionality. It’s like trying to squeeze a square peg into a round hole… it ain’t gonna happen without a supersized hammer!\n\n\nCode\ncurse_dimensionality &lt;- data.frame(dimensions = factor((1:10)^2),\n                                   calculations = 100^((1:10)^2))\n\nggplot(curse_dimensionality, aes(dimensions, calculations)) +\n  geom_col(fill = ggsci::pal_jama()(1)) +\n  scale_y_continuous(transform = \"log10\", n.breaks = 9,\n                     labels = scales::label_log(), expand = c(0,0,.1,0)) +\n  labs(y = \"Computations (log-scale)\", x = \"Dimensions (Variables)\",\n       title = \"Computations needed to compute a grid of 100 points\",\n       subtitle = \"As a funtion of dimensions/variables involved\") +\n  theme_classic(base_size = 20)\n\n\n\n\n\nIllustration of computations needed (in log-scale) for 100 points as a function of dimensions considered.\n\n\n\n\n\n\n\n\n\n\nExplaining the curse of dimensionality further\n\n\n\n\n\nImagine you’re trying to create a grid to map out the probability space for a set of variables. As the number of dimensions increases, the number of grid points needed to adequately represent the space explodes exponentially. This means that even with the most powerful computers, it becomes practically impossible to compute all the probabilities accurately."
   },
   {
-    "objectID": "posts/2024-04-14 mcmc part 1/index.html#sampling-the-unknown",
-    "href": "posts/2024-04-14 mcmc part 1/index.html#sampling-the-unknown",
+    "objectID": "posts/2024-04-14 mcmc part 1/index.html#sampling-the-unknown-markov-chain-monte-carlo",
+    "href": "posts/2024-04-14 mcmc part 1/index.html#sampling-the-unknown-markov-chain-monte-carlo",
     "title": "Markov Chain Monte What?",
     "section": "",
     "text": "Now, if we can’t crack the problem analytically (which, let’s face it, is the case most of the time), we gotta get creative. Lucky for us, there’s a bunch of algorithms that can lend a hand by sampling this high-dimensional parameter space. Enter the Markov Chain Monte Carlo (MCMC) family of algorithms.\nBut hold up—Markov Chain Monte What? Yeah, it’s a mouthful, but bear with me. You’re probably wondering how this fancy-schmancy term is connected to exploring high-dimensional probability spaces. Well, I’ll let you in on the secret sauce behind these concepts and why they’re the go-to tools in top-notch probabilistic software like Stan.\nBut before we get into the nitty-gritty of MCMC, let’s take a detour and talk about Markov Chains, because they’re like the OGs of this whole MCMC gang."
-  },
-  {
-    "objectID": "posts/2024-04-14 mcmc part 1/index.html#a-rainy-example",
-    "href": "posts/2024-04-14 mcmc part 1/index.html#a-rainy-example",
-    "title": "Markov Chain Monte What?",
-    "section": "A rainy example",
-    "text": "A rainy example\nConsider the following scenario: if today is rainy, the probability that tomorrow will be rainy again is 60%, but if today is sunny, the probability that tomorrow will be rainy is only 30%. However, the probability of tomorrow being sunny is 40% if today is raining, but 70% if today is sunny as well.\n\n\n\n\n\n\nflowchart LR\n  a((Rainy)) ---&gt;| 40% | b((Sunny))\n  a --&gt;| 60% | a\n  b --&gt;| 70% | b\n  b ---&gt;| 30% | a\n\n\n\n\n\n\n\nAs you can see, the probability of a future step depends on the current step. This logic is central to Bayesian inference, as it allows us to talk about the conditional probability of a future value based on a previous one, like sampling across a continuous variable."
   },
   {
     "objectID": "posts/2024-04-14 mcmc part 1/index.html#converging-to-an-answer",
@@ -166,12 +159,5 @@
     "title": "Portfolio",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nChilean Austral Molecular Integrative Neurophysiology by its acronym in Spanish.↩︎"
-  },
-  {
-    "objectID": "posts/2024-04-14 mcmc part 1/index.html#sampling-the-unknown-markov-chain-monte-carlo",
-    "href": "posts/2024-04-14 mcmc part 1/index.html#sampling-the-unknown-markov-chain-monte-carlo",
-    "title": "Markov Chain Monte What?",
-    "section": "",
-    "text": "Now, if we can’t crack the problem analytically (which, let’s face it, is the case most of the time), we gotta get creative. Lucky for us, there’s a bunch of algorithms that can lend a hand by sampling this high-dimensional parameter space. Enter the Markov Chain Monte Carlo (MCMC) family of algorithms.\nBut hold up—Markov Chain Monte What? Yeah, it’s a mouthful, but bear with me. You’re probably wondering how this fancy-schmancy term is connected to exploring high-dimensional probability spaces. Well, I’ll let you in on the secret sauce behind these concepts and why they’re the go-to tools in top-notch probabilistic software like Stan.\nBut before we get into the nitty-gritty of MCMC, let’s take a detour and talk about Markov Chains, because they’re like the OGs of this whole MCMC gang."
   }
 ]
