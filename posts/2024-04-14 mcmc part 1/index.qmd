@@ -23,9 +23,9 @@ library(data.table)
 
 # Introduction
 
-Alright, folks, let's dive into the wild world of statistics and data science! Picture this: you're knee-deep in data, trying to make sense of the chaos. But here's the kicker, sometimes the chaos is just too darn complex. With tons of variables flying around, getting a grip on uncertainty can feel like trying to catch smoke with your bare hands.
+Alright, folks, let's dive into the wild world of statistics and data science! Picture this: you're knee-deep in data, trying to make sense of the chaos. But here's the kicker, sometimes the chaos is just too darn complex. With tons of variables flying around, getting a grip on uncertainty can feel like **trying to catch smoke with your bare hands**.
 
-Please, have in your consideration that the kind of problems that we're dealing with, it's not solely related to the number of dimensions, it's mostly related to trying to estimate something that we can't see in full beforehand. For instance, consider the following banana distribution (shown below). How could we map this simple two dimensional surface without computing it all at once?
+Please, have in your consideration that the kind of problems that we're dealing with, it's not solely related to the number of dimensions, it's mostly related to **trying to estimate something that we can't see in full beforehand**. For instance, consider the following banana distribution (shown below). How could we map this simple two dimensional surface without computing it all at once?
 
 ```{r}
 #| fig-format: svg
@@ -53,11 +53,11 @@ plot_ly(x = z$x, y = z$y, z = sqrt(z$z)) |>
 
 ## Just put a darn grid to it
 
-You know when you hit a roadblock in your calculations, and you're like, "Can't we just crunch the numbers for every single value?" Well, let's break it down. Picture a grid with $N$ points for $D$ dimensions. Now, brace yourself, 'cause the math needed is like $N$ raised to the power of $D$.
+You know when you hit a roadblock in your calculations, and you're like, "*Can't we just crunch the numbers for every single value?*" Well, let's break it down. Picture a grid with $N$ points for $D$ dimensions. Now, brace yourself, 'cause the math needed is like $N$ raised to the power of $D$.
 
-So, let's say you wanna estimate 100 points (to get a decent estimation of the shape) for each of 100 dimensions. That's like slamming your head against ten to the power of 200 computations... that's a hell of a lot of computations! 
+So, let's say you wanna estimate 100 points (to get a decent estimation of the shape) for each of 100 dimensions. That's like slamming your head against **ten to the power of 200 computations**... that's a hell of a lot of computations! 
 
-Sure, in la-la land, you could approximate every single number with some degree of approximation. But let's get real here, even if you had all the time in the world, you'd still be chipping away at those calculations until the sun swallowed the Earth, especially with continuous cases and tons of dimensions that are somewhat correlated (which in reality, tends to be the case).
+Sure, in la-la land, you could approximate every single number with some degree of approximation. But let's get real here, even **if you had all the time in the world**, you'd still be chipping away at those calculations **until the sun swallowed the Earth**, especially with continuous cases and tons of dimensions that are somewhat correlated (which in reality, tends to be the case).
 
 This headache we're dealing with? It's what we "*affectionately*" call — emphasis on double quotes — the **curse of dimensionality**. It's like trying to squeeze a square peg into a round hole... it ain't gonna happen without a supersized hammer!
 
@@ -89,17 +89,15 @@ ggplot(curse_dimensionality, aes(dimensions, calculations)) +
 Imagine you're trying to create a grid to map out the probability space for a set of variables. As the number of dimensions increases, the number of grid points needed to adequately represent the space explodes exponentially. This means that even with the most powerful computers, it becomes practically impossible to compute all the probabilities accurately.
 :::
 
-## Sampling the unknown
+## Sampling the unknown: Markov Chain Monte Carlo
 
-Now, if we can't crack the problem analytically (which, let's face it, is the case most of the time), we gotta get creative. Lucky for us, there's a bunch of algorithms that can lend a hand by sampling this high-dimensional parameter space. Enter the Markov Chain Monte Carlo (MCMC) family of algorithms.
+Now, if we can't crack the problem analytically (which, let's face it, is the case most of the time), we gotta get creative. Lucky for us, there's a bunch of algorithms that can lend a hand by sampling this high-dimensional parameter space. Enter the **Markov Chain Monte Carlo (MCMC)** family of algorithms.
 
-But hold up—Markov Chain Monte What? Yeah, it's a mouthful, but bear with me. You're probably wondering how this fancy-schmancy term is connected to exploring high-dimensional probability spaces. Well, I'll let you in on the secret sauce behind these concepts and why they're the go-to tools in top-notch probabilistic software like Stan.
+But hold up—Markov Chain Monte What? Yeah, it's a mouthful, but bear with me. You're probably wondering how this fancy-schmancy term is connected to exploring high-dimensional probability spaces. Well, I'll let you in on the secret sauce behind these concepts and why **they're the go-to tools** in top-notch probabilistic software like Stan.
 
 But before we get into the nitty-gritty of MCMC, let's take a detour and talk about Markov Chains, because they're like the OGs of this whole MCMC gang.
 
-# ⁠Understanding Markov Chains
-
-## A rainy example
+# Understanding Markov Chains: A rainy example
 
 Consider the following scenario: if today is rainy, the probability that tomorrow will be rainy again is 60%, but if today is sunny, the probability that tomorrow will be rainy is only 30%. However, the probability of tomorrow being sunny is 40% if today is raining, but 70% if today is sunny as well.
 
@@ -113,13 +111,13 @@ flowchart LR
 ```
 :::
 
-As you can see, the probability of a future step depends on the current step. This logic is central to Bayesian inference, as it allows us to talk about the conditional probability of a future value based on a previous one, like sampling across a continuous variable.
+As you can see, **the probability of a future step depends on the current step**. This logic is central to Bayesian inference, as it allows us to talk about the conditional probability of a future value based on a previous one, like sampling across a continuous variable.
 
 ## Converging to an answer
 
-Now, let's imagine letting time run. After a year passes, if we observe how the weather behaves, we'll notice that the relative frequencies of each state tend to converge to a single number.
+Now, let's imagine letting time run. After a year passes, if we observe how the weather behaves, we'll notice that the relative frequencies of each state **tend to converge** to a single number.
 
-Now, fast forward a year. If we keep an eye on the weather every day, we'll notice something interesting: the relative frequencies of rainy and sunny days start to settle into a rhythm. This steady state is what we call a stationary distribution. It's like the true probability of what the weather's gonna be like in the long run, taking into account all the different scenarios.
+Now, fast forward a year. If we keep an eye on the weather every day, we'll notice something interesting: the **relative frequencies** of rainy and sunny days **start to settle into a rhythm**. This steady state is what we call a stationary distribution. It's like the true probability of what the weather's gonna be like in the long run, taking into account all the different scenarios.
 
 ```{r}
 #| code-fold: true
@@ -168,9 +166,9 @@ ggplot(weather_data, aes(time, prop, fill = weather)) +
 ```
 
 
-This heuristic allows us to naturally converge to an answer without needing to solve it analytically, which tends to be useful for really complex and high-dimensional problems.
+This heuristic allows us to naturally converge to an answer **without needing to solve it analytically**, which tends to be useful for really complex and high-dimensional problems.
 
-Sure, we could've crunched the numbers ourselves to figure out these probabilities. But why bother with all that math when we can let time do its thing and naturally converge to the same answer? Especially when we're dealing with complex problems that could have given even Einstein himself a headache.
+Sure, we could've crunched the numbers ourselves to figure out these probabilities. But why bother with all that math when we can let time do its thing and **naturally converge to the same answer?** Especially when we're dealing with **complex problems** that could have given even Einstein himself a headache.
 
 ::: {.callout-note collapse=true}
 ## Explaining the convergence process further
@@ -180,15 +178,15 @@ The idea of convergence to a stationary distribution can be likened to taking a 
 
 As we've seen, sometimes it becomes impractical to solve analytically or even approximate the posterior distribution using a grid, given the number of calculations needed to even get a decent approximation of the posterior.
 
-However, we've also seen that Markov Chains might offer us a way to compute complex conditional probabilities and, if we let them run long enough, they will eventually converge to the stationary distribution, which could resemble the posterior distribution itself. So, all things considered, when does the Monte Carlo part come in?
+However, we've also seen that **Markov Chains** might offer us a way to compute **complex conditional probabilities** and, if we let them run long enough, they will eventually converge to the stationary distribution, which could resemble the posterior distribution itself. So, all things considered, when does the Monte Carlo part come in?
 
-# ⁠The Need for Monte Carlo Methods
+# The Need for Monte Carlo Methods
 
-Alright, let's break down the magic of Monte Carlo methods in plain English. Picture this: in the wacky world of random events, being able to sample from a distribution is like having a crystal ball to predict the future—pretty nifty, right?
+Alright, let's break down the magic of Monte Carlo methods in plain English. Picture this: in the wacky world of random events, being able to **sample from a distribution** is like having a crystal ball to predict the future—pretty nifty, right?
 
-Now, imagine we're sampling from a normal probability density, say, with a mean of 80 and a standard deviation of 5. We grab a random sample of 10 folks, calculate their average weight, and repeat this process a thousand times. It's like throwing darts at a dartboard in the dark—sure, it sounds crazy, but bear with me.
+Now, imagine we're sampling from a normal probability density, say, with a mean of 80 and a standard deviation of 5. **We grab a random sample** of 10 folks, calculate their average weight, **and repeat this process** a thousand times.
 
-In the following figure, we overlay the calculated sample mean, for each simulated sample using a histogram, to the population distribution from which we are sampling. As you can see, this sets an interesting precedent, using this Monte Carlo simulation, we can get an intuition of how likely is to our sample of 10 individuals have a mean rangin from 75 to 85, it's not impossible, but it's unlikely.
+In the following figure, we overlay the calculated sample mean, from each simulated sample using a histogram, to the population distribution from which we are sampling. As you can see, this sets an interesting opportunity, using this Monte Carlo simulation, **we can get an intuition of how likely** is, to our sample of 10 individuals, have a mean outside the range of 75 to 85, it's not impossible, but it's unlikely.
 
 ```{r}
 #| code-fold: true
@@ -221,44 +219,46 @@ ggplot() +
   theme_classic(base_size = 20)
 ```
 
-With each sample, we're capturing the randomness of the population's weight distribution. And hey, it's not just about weight; we can simulate all sorts of wild scenarios, from multi-variable mayhem to linear model lunacy. This is the heart and soul of Monte Carlo methods: taking random shots in the dark to mimic complex processes.
+With each sample, we're capturing the randomness of the population's weight distribution. And hey, it's not just about weight; **we can simulate all sorts of wild scenarios**, from multi-variable mayhem to linear model lunacy. This is the heart and soul of Monte Carlo methods: taking random shots in the dark to mimic complex processes.
 
-But here's the kicker: the more shots we take, the clearer the picture becomes. It's like trying to guess the shape of a dartboard by tossing glowing darts. The more darts we throw, the better our intuition about the dartboard's shape.
+But here's the kicker: **the more samples we take, the clearer the picture becomes**. For instance, if we take ten times the amount of samples used, we would get **a better intuition about the uncertainty around the expectation** for each sample of 10 individuals, which could have important applications in the design of experiments and hypothesis testing.
 
 And that's where Monte Carlo methods shine. By generating a boatload of samples, we can unravel the mysteries of even the trickiest distributions, no crystal ball required. It's a game changer for exploring the unknown without needing a PhD in rocket science.
 
 ::: {.callout-note collapse=true}
 ## Explaining the importance of Monte Carlo further
 
-Monte Carlo methods provide a powerful tool for approximating complex distributions by sampling from them. By generating a large number of samples, we can gain insight into the shape and properties of the distribution without needing to explicitly calculate all possible outcomes.
+Monte Carlo methods provide a powerful tool for **approximating complex distributions** by sampling from them. By generating a large number of samples, we can gain insight into the shape and properties of the distribution without needing to explicitly calculate all possible outcomes.
 :::
 
 # ⁠Basics of MCMC
 
-Alright, let's break down the basics of MCMC. Picture this: you've got these two heavyweights in the world of statistics—Markov Chains and Monte Carlo methods. But how do they team up to tackle real-world problems?
+Alright, let's break down the basics of MCMC. Picture this: you've got these two heavyweights in the world of statistics, Markov Chains and Monte Carlo methods.
 
-On one side, you've got Markov Chains. These bad boys help us predict the probability of something happening based on what happened before. It's like saying, "Hey, if it rained yesterday, what's the chance it'll rain again today?"
+On one side, you've got Markov Chains. These bad boys **help us predict the probability of something happening based on what happened before**. It's like saying, "Hey, if it rained yesterday, what's the chance it'll rain again today?"
 
-Then, there are Monte Carlo methods. These puppies work by randomly sampling from a distribution to get an idea of what the whole shebang looks like. It's like throwing a bunch of darts at a dartboard in the dark and hoping you hit the bullseye.
+Then, there are Monte Carlo methods. These puppies **work by randomly sampling from a distribution** to get an idea of what the whole shebang looks like. It's like throwing a bunch of darts at a dartboard in the dark and hoping you hit the bullseye.
+
+However the question remains, how do they team up to tackle real-world problems?
 
 ## What is MCMC actually doing?
 
-So, in essence, MCMC is an algorithm that generates random samples from a proposal distribution. These samples are accepted or rejected based on how much more likely the proposed sample is compared to the previous accepted sample.
+In essence, **MCMC is an algorithm that generates random samples from a proposal distribution**. These samples are accepted or rejected based on how much more likely the proposed sample is compared to the previous accepted sample.
 
-In this way, the proposed samples are accepted in the same proportion as the actual probability in the target distribution, accepting more samples that are more likely and fewer samples that are less likely.
+In this way, the proposed samples are **accepted in the same proportion as the actual probability in the target distribution**, accepting more samples that are more likely and fewer samples that are less likely.
 
 The fascinating nature of this heuristic is that it works to approximate complex distributions without needing to know much about the shape of the final distribution.
 
-So, think of it as trekking through this complex landscape, taking random steps (the Monte Carlo part) but guided by the likelihood of each move, given where you currently stand (the Markov Chain part). It's a meticulous journey, but one that ultimately leads us to a better understanding of these elusive distributions.
+So, think of it as trekking through this complex landscape, **taking random steps** (the Monte Carlo part) but **guided by the likelihood of each move**, given where you currently stand (the Markov Chain part). It's a meticulous journey, but one that ultimately leads us to a better understanding of these elusive distributions.
 
-For instance, consider that we have a distribution (shown below) that we can't to compute, because it would take too long to integrate the whole function. This will be our target distribution, from which we can only compute the density of one value at a time. 
+For instance, consider that we have a distribution (shown below) that we can't to compute, because **it would take too long to integrate** the whole function. This will be our target distribution, from which we can only compute the density of **one value at a time**. 
 
 ::: {.callout-note collapse=true}
 ## About the target distribution
 
-In practice, we would derive the target distribution from the data and prior information, this enable us to estimate the density in a point-wise manner, without the need to estimate the whole PDF all at once. But for the sake of demonstration we will the use the Gamma probability density function. 
+In practice, we would derive the target distribution from the data and prior information, this enable us to estimate the density in a **point-wise manner**, without the need to estimate the whole PDF all at once. But for the sake of demonstration we will the use the **Gamma probability density function**. 
 
-However, please consider that you can't use some family distribution to describe perfectly any probability density, sometimes it can be a mixture of distributions, truncation, censoring. All comes down to the underlying process that generates the data that we are trying to mimic.
+However, please consider that you can't use some family distribution to describe perfectly any probability density, sometimes it can be a mixture of distributions, truncation, censoring. **All comes down to the underlying process that generates the data that we are trying to mimic**.
 :::
 
 ```{r}
@@ -367,9 +367,9 @@ ggplot(mcmc, aes(x = step, y = value)) +
   theme(ggside.panel.scale = .4)
 ```
 
-Another thing that we care is to see how well our MCMC is performing. After all, if not, then what would be the point of using it in first place? To check this, we'll compare the mean of the target distribution[^1] against the posterior derived from our MCMC. 
+Another thing that we care is to see **how well our MCMC is performing**. After all, if not, then what would be the point of using it in first place? To check this, **we'll compare the expectation** ($E(X)$) of the target distribution[^1] **against the posterior derived from our MCMC**. 
 
-For this, we have to consider that the location parameter, $\mu$, of any Gamma distribution is equal to the shape parameter ($\alpha$) times by the scale parameter ($\sigma$). We could express the aforementioned the following.
+For this, we have to consider that the expectation, $E(X)$, of any Gamma distribution is equal to the shape parameter ($\alpha$) times by the scale parameter ($\sigma$). We could express the aforementioned the following.
 
 :::{style="text-align: center;"}
 $\begin{aligned}
@@ -412,31 +412,31 @@ This general process is central to MCMC, but more specifically to the **Metropol
 
 ## Gibbs Sampling: A Buffet Adventure
 
-Imagine you're at a buffet with stations offering various cuisines—Italian, Chinese, Mexican—you name it. You're on a mission to create a plate with a bit of everything, but here's the catch: you can only visit one station at a time. Here's how you tackle it:
+Imagine you're at a buffet with stations offering various cuisines — Italian, Chinese, Mexican — you name it. **You're on a mission to create a plate with a bit of everything**, but here's the catch: you can only visit one station at a time. Here's how you tackle it:
 
-1. Hit up a station and randomly pick a dish.
-2. Move on to the next station and repeat the process.
+1. Hit up a station and **randomly pick a dish**.
+2. **Move on to the next station** and repeat the process.
 3. Keep going until you've got a plateful of diverse flavors.
 
-Gibbs sampling works kind of like this buffet adventure. You take turns sampling from conditional distributions, just like you visit each station for a dish. Each time, you focus on one variable, updating its value while keeping the others constant. It's like building your plate by sampling from each cuisine until you've got the perfect mix.
+Gibbs sampling works kind of like this buffet adventure. **You take turns sampling from conditional distributions**, just like you visit each station for a dish. Each time, you focus on one variable, **updating its value while keeping the others constant**. It's like building your plate by sampling from each cuisine until you've got the perfect mix.
 
 ## Hamiltonian Monte Carlo: Charting Your Hiking Path
 
-Picture yourself hiking up a rugged mountain with rocky trails and valleys. Your goal? Reach the summit without breaking a sweat—or falling off a cliff. So, you whip out your map and binoculars to plan your route:
+Picture yourself hiking up a rugged mountain with rocky trails and valleys. Your goal? **Reach the summit without breaking a sweat—or falling off a cliff**. So, you whip out your map and binoculars to plan your route:
 
-1. Study the map to plot a path with minimal uphill battles and maximum flat stretches.
-2. Use the binoculars to scout ahead and avoid obstacles along the way.
-3. Adjust your route as you go, smoothly navigating the terrain like a seasoned pro.
+1. Study the map to plot a path with **minimal uphill battles and maximum flat stretches**.
+2. Use the binoculars to **scout ahead and avoid obstacles** along the way.
+3. **Adjust your route as you go**, smoothly navigating the terrain like a seasoned pro.
 
-Hamiltonian Monte Carlo (HMC) is a bit like this hiking adventure. It simulates a particle moving through a high-dimensional space, using gradient info to find the smoothest path. Instead of blindly wandering, HMC leverages the curvature of the target distribution to explore efficiently. It's like hiking with a GPS that guides you around the rough spots and straight to the summit.
+Hamiltonian Monte Carlo (HMC) is a bit like this hiking adventure. It simulates a particle moving through a high-dimensional space, **using gradient info to find the smoothest path**. Instead of blindly wandering, HMC leverages the curvature of the target distribution to explore efficiently. It's like hiking with a GPS that guides you around the rough spots and straight to the summit.
 
 ## Strengths, Weaknesses, and Real-World Applications
 
 Now that you've dipped your toes into the MCMC pool, it's time to talk turkey—well, sampling. Each MCMC method has its perks and quirks, and knowing them is half the battle.
 
-Gibbs sampling is the laid-back surfer dude of the group—simple, chill, and great for models with structured dependencies. But throw in some highly correlated variables, and it starts to wobble like a rookie on a surfboard.
+**Gibbs sampling** is the laid-back surfer dude of the group—simple, chill, and **great for models with structured dependencies**. But throw in some highly correlated variables, and it starts to wobble like a rookie on a surfboard.
 
-Meanwhile, HMC is the sleek Ferrari—efficient, powerful, and perfect for tackling complex models head-on. Just don't forget to fine-tune those parameters, or you might end up spinning out on a sharp curve.
+Meanwhile, **HMC** is the sleek Ferrari—efficient, powerful, and **perfect for tackling complex models** head-on. Just don't forget to fine-tune those parameters, or you might end up spinning out on a sharp curve.
 
 ## Key Differences
 
@@ -466,7 +466,7 @@ Meanwhile, HMC is the sleek Ferrari—efficient, powerful, and perfect for tackl
 
 ## MCMC in action
 
-In the following, you can see an interactive animation of different MCMC algorithms (MH, Gibbs and HMC) and how they work to uncover distributions in two dimensions. The code for this animation is borrowed from [Chi Feng's github](https://github.com/chi-feng). You can find the original repository with corresponding code here: <https://github.com/chi-feng/mcmc-demo>
+In the following, you can see **an interactive animation** of different MCMC algorithms (MH, Gibbs and HMC) and **how they work** to uncover distributions in two dimensions. The code for this animation is borrowed from [Chi Feng's github](https://github.com/chi-feng). You can find the original repository with corresponding code here: <https://github.com/chi-feng/mcmc-demo>
 
 :::{style="text-align: center;"}
 <iframe width="90%" height="500" src="mcmc-demo-master/app.html" title="MCMC"></iframe>
@@ -476,21 +476,21 @@ In the following, you can see an interactive animation of different MCMC algorit
 
 ## Implementing MCMC Algorithms in Practice
 
-Alright, theory's cool and all, but let's get down to brass tacks. When you're rolling up your sleeves to implement MCMC algorithms, it's like picking the right tool for the job. Simple models? Metropolis-Hastings or Gibbs sampling has your back. But when you're wrangling with the big boys—those complex models—that's when you call in Hamiltonian Monte Carlo. It's like upgrading from a rusty old wrench to a shiny new power tool. And don't forget about tuning those parameters—it's like fine-tuning your car for a smooth ride.
+Alright, theory's cool and all, but let's get down to brass tacks. When you're rolling up your sleeves to implement MCMC algorithms, it's like picking the right tool for the job. Simple models? **Metropolis-Hastings** or **Gibbs sampling** has your back. But when you're wrangling with the big boys—those complex models—that's when you call in **Hamiltonian Monte Carlo**. It's like upgrading from a rusty old wrench to a shiny new power tool. And don't forget about tuning those parameters — it's like fine-tuning your car for a smooth ride.
 
-Beyond all the technical jargon, successful Bayesian inference is part gut feeling, part detective work. Picking the right priors is like seasoning a dish—you want just the right flavor without overpowering everything else. And tuning those parameters? It's like fine-tuning your favorite instrument to make sure the music hits all the right notes.
+Beyond all the technical jargon, successful Bayesian inference is part gut feeling, part detective work. Picking the right priors is like seasoning a dish — you want **just the right flavor without overpowering everything else**. And tuning those parameters? It's like fine-tuning your favorite instrument to make sure the music hits all the right notes.
 
 # Challenges and What Lies Ahead
 
-But hey, nothing worth doing is ever a walk in the park, right? MCMC might be the hero of the Bayesian world, but it's not without its challenges. Scaling up to big data? It's like trying to squeeze into those skinny jeans from high school—uncomfortable and a bit awkward. And exploring those complex parameter spaces? It's like navigating a maze blindfolded.
+But hey, nothing worth doing is ever a walk in the park, right? MCMC might be the hero of the Bayesian world, but **it's not without its challenges**. Scaling up to big data? It's like trying to squeeze into those skinny jeans from high school — uncomfortable and a bit awkward. And exploring those complex parameter spaces? **It's like navigating a maze blindfolded**.
 
-But fear not! There's always a light at the end of the tunnel. Recent innovations in Bayesian inference, like variational inference (we'll tackle this cousin of MCMC in the next posts) and probabilistic programming languages (like Stan), are like shiny beacons, guiding us to new horizons.
+But fear not! There's always a light at the end of the tunnel. Recent innovations in Bayesian inference, like **variational inference** (we'll tackle this cousin of MCMC in the next posts) and **probabilistic programming languages** (like Stan), are like shiny beacons, guiding us to new horizons.
 
-These days, some probabilistic programming languages, like Stan, use a souped-up version of the Hamiltonian Monte Carlo algorithm with hyperparameters tuned on the fly. These tools are like magic wands that turn your ideas into reality—just specify your model, and let the parameter space exploration happen in the background, no sweat.
+These days, some probabilistic programming languages, **like Stan**, use a souped-up version of the Hamiltonian Monte Carlo algorithm with **hyperparameters tuned on the fly**. These tools are like magic wands that turn your ideas into reality, just specify your model, and let the parameter space exploration happen **in the background**, no sweat.
 
 # Conclusion: Wrapping It Up
 
-As we wrap up our journey into the world of MCMC, let's take a moment to appreciate the wild ride we've been on. MCMC might not wear a cape, but it's the unsung hero behind so much of what we do in Bayesian data analysis. It's the tool that lets us dive headfirst into the murky waters of uncertainty and come out the other side with clarity and insight.
+As we wrap up our journey into the world of MCMC, let's take a moment to appreciate the wild ride we've been on. MCMC might not wear a cape, but it's the unsung hero behind so much of what we do in **Bayesian data analysis**. It's the tool that lets us dive headfirst into the **murky waters of uncertainty** and come out the other side with **clarity and insight**.
 
-In the next installment of our MCMC series, we'll dive into the infamous Hamiltonian Monte Carlo and unravel the statistical wizardry behind this and other similar algorithms. Until then, happy sampling!
+In the next installment of our MCMC series, we'll dive into the infamous **Hamiltonian Monte Carlo** and unravel the statistical wizardry behind this and other similar algorithms. Until then, happy sampling!
 
