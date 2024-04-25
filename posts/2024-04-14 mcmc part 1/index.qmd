@@ -3,8 +3,7 @@ title: "Markov Chain Monte What?"
 description: |
   In this post we will delve into the main idea behind Markov Chain Monte Carlo (MCMC for short) and why it is useful within the bayesian inference framework.
 date: "2024-04-25"
-citation:
-  doi: "10.59350/mxfyk-6av39"
+doi: "10.59350/mxfyk-6av39"
 categories: [intro, mcmc]
 bibliography: ref.bib
 title-block-banner: title-block.png
