@@ -77,7 +77,7 @@ ggplot(curse_dimensionality, aes(dimensions, calculations)) +
                      labels = scales::label_log(), expand = c(0,0,.1,0)) +
   labs(y = "Computations (log-scale)", x = "Dimensions (Variables)",
        title = "Computations needed to compute a grid of 100 points",
-       subtitle = "As a funtion of dimensions/variables involved") +
+       subtitle = "As a function of dimensions/variables involved") +
   theme_classic(base_size = 20)
 ```
 
@@ -92,7 +92,7 @@ Imagine you're trying to create a grid **to map out the probability space for a 
 
 Now, if we can't crack the problem **analytically** (which, let's face it, is the case **most of the time**), we gotta get creative. Lucky for us, there's a bunch of algorithms that can lend a hand by sampling this high-dimensional parameter space. Enter the **Markov Chain Monte Carlo (MCMC)** family of algorithms.
 
-But hold up—Markov Chain Monte What? Yeah, it's a mouthful, but bear with me. You're probably wondering how this fancy-schmancy term is connected to exploring high-dimensional probability spaces. Well, I'll let you in on the secret sauce behind these concepts and why **they're the go-to tools** in top-notch probabilistic software like Stan.
+But hold up — Markov Chain Monte What? Yeah, it's a mouthful, but bear with me. You're probably wondering how this fancy-schmancy term is connected to exploring high-dimensional probability spaces. Well, I'll let you in on the secret sauce behind these concepts and why **they're the go-to tools** in top-notch probabilistic software like Stan.
 
 But before we get into the nitty-gritty of MCMC, let's take a detour and talk about **Markov Chains**, because they're like the OGs of this whole MCMC gang.
 
@@ -181,7 +181,7 @@ However, we've also seen that **Markov Chains** might offer us a way to compute 
 
 # The Need for Monte Carlo Methods
 
-Alright, let's break down the magic of Monte Carlo methods in plain English. Picture this: in the wacky world of random events, being able to **sample from a distribution** is like having a crystal ball to predict the future—pretty nifty, right?
+Alright, let's break down the magic of Monte Carlo methods in plain English. Picture this: in the wacky world of random events, being able to **sample from a distribution** is like having a crystal ball to predict the future — pretty nifty, right?
 
 Now, imagine we're sampling from a normal probability density, say, with a mean of 80 and a standard deviation of 5. **We grab a random sample** of 10 folks, calculate their average weight, **and repeat this process** a thousand times.
 
@@ -366,7 +366,7 @@ ggplot(mcmc, aes(x = step, y = value)) +
   theme(ggside.panel.scale = .4)
 ```
 
-Another thing that we care is to see **how well our MCMC is performing**. After all, if not, then what would be the point of using it in first place? To check this, **we'll compare the expectation** ($E(X)$) of the target distribution[^1] **against the posterior derived from our MCMC**. 
+Another thing that we care is to see **how well our MCMC is performing**. After all, if not, then what would be the point of using it in first place? To check this, **we'll compare the expectation** ($E(X)$) of the target distribution **against the posterior derived from our MCMC**. 
 
 For this, we have to consider that the expectation, $E(X)$, of any Gamma distribution is equal to the shape parameter ($\alpha$) times by the scale parameter ($\sigma$). We could express the aforementioned the following.
 
@@ -407,7 +407,7 @@ ggplot(mcmc, aes(x = step, y = cumsum(value)/step)) +
 
 # ⁠Popular MCMC Algorithms
 
-This general process is central to MCMC, but more specifically to the **Metropolis-Hastings** algorithm. However, and in order to broaden our understanding, let's explore additional MCMC algorithms beyond the basic  Metropolis-Hastings with some simple examples.  
+This general process is central to MCMC, but more specifically to the **Metropolis-Hastings** algorithm. However, and in order to broaden our understanding, let's explore additional MCMC algorithms beyond the basic Metropolis-Hastings with some simple examples.  
 
 ## Gibbs Sampling: A Buffet Adventure
 
@@ -421,7 +421,7 @@ Gibbs sampling works kind of like this buffet adventure. **You take turns sampli
 
 ## Hamiltonian Monte Carlo: Charting Your Hiking Path
 
-Picture yourself hiking up a rugged mountain with rocky trails and valleys. Your goal? **Reach the summit without breaking a sweat—or falling off a cliff**. So, you whip out your map and binoculars to plan your route:
+Picture yourself hiking up a rugged mountain with rocky trails and valleys. Your goal? **Reach the summit without breaking a sweat — or falling off a cliff**. So, you whip out your map and binoculars to plan your route:
 
 1. Study the map to plot a path with **minimal uphill battles and maximum flat stretches**.
 2. Use the binoculars to **scout ahead and avoid obstacles** along the way.
@@ -431,11 +431,11 @@ Hamiltonian Monte Carlo (HMC) is a bit like this hiking adventure. It simulates 
 
 ## Strengths, Weaknesses, and Real-World Applications
 
-Now that you've dipped your toes into the MCMC pool, it's time to talk turkey—well, sampling. Each MCMC method has its perks and quirks, and knowing them is half the battle.
+Now that you've dipped your toes into the MCMC pool, it's time to talk turkey — well, sampling. Each MCMC method has its perks and quirks, and knowing them is half the battle.
 
-**Gibbs sampling** is the laid-back surfer dude of the group—simple, chill, and **great for models with structured dependencies**. But throw in some highly correlated variables, and it starts to wobble like a rookie on a surfboard.
+**Gibbs sampling** is the laid-back surfer dude of the group — simple, chill, and **great for models with structured dependencies**. But throw in some highly correlated variables, and it starts to wobble like a rookie on a surfboard.
 
-Meanwhile, **HMC** is the sleek Ferrari—efficient, powerful, and **perfect for tackling complex models** head-on. Just don't forget to fine-tune those parameters, or you might end up spinning out on a sharp curve.
+Meanwhile, **HMC** is the sleek Ferrari — efficient, powerful, and **perfect for tackling complex models** head-on. Just don't forget to fine-tune those parameters, or you might end up spinning out on a sharp curve.
 
 ## Key Differences
 
@@ -460,7 +460,7 @@ Meanwhile, **HMC** is the sleek Ferrari—efficient, powerful, and **perfect for
 ### Parameter Tuning and Complexity
 
 - **Metropolis-Hastings**: Requires tweaking the proposal distribution but keeps it simple.
-- **Gibbs Sampling**: A breeze to implement, but watch out for those conditional distributions—they can be sneaky.
+- **Gibbs Sampling**: A breeze to implement, but watch out for those conditional distributions — they can be sneaky.
 - **Hamiltonian Monte Carlo**: Needs tuning of parameters like step size and trajectory length, and the implementation might get a bit hairy with momentum variables and gradient computation.
 
 ## MCMC in action
@@ -475,7 +475,7 @@ In the following, you can see **an interactive animation** of different MCMC alg
 
 ## Implementing MCMC Algorithms in Practice
 
-Alright, theory's cool and all, but let's get down to brass tacks. When you're rolling up your sleeves to implement MCMC algorithms, it's like picking the right tool for the job. Simple models? **Metropolis-Hastings** or **Gibbs sampling** has your back. But when you're wrangling with the big boys—those complex models—that's when you call in **Hamiltonian Monte Carlo**. It's like upgrading from a rusty old wrench to a shiny new power tool. And don't forget about tuning those parameters — it's like fine-tuning your car for a smooth ride.
+Alright, theory's cool and all, but let's get down to brass tacks. When you're rolling up your sleeves to implement MCMC algorithms, it's like picking the right tool for the job. Simple models? **Metropolis-Hastings** or **Gibbs sampling** has your back. But when you're wrangling with the big boys — those complex models — that's when you call in **Hamiltonian Monte Carlo**. It's like upgrading from a rusty old wrench to a shiny new power tool. And don't forget about tuning those parameters — it's like fine-tuning your car for a smooth ride.
 
 Beyond all the technical jargon, successful Bayesian inference is part gut feeling, part detective work. Picking the right priors is like seasoning a dish — you want **just the right flavor without overpowering everything else**. And tuning those parameters? It's like fine-tuning your favorite instrument to make sure the music hits all the right notes.
 
@@ -487,7 +487,7 @@ But fear not! There's always a light at the end of the tunnel. Recent innovation
 
 These days, some probabilistic programming languages, **like Stan**, use a souped-up version of the Hamiltonian Monte Carlo algorithm with **hyperparameters tuned on the fly**. These tools are like magic wands that turn your ideas into reality, just specify your model, and let the parameter space exploration happen **in the background**, no sweat.
 
-# Conclusion: Wrapping It Up
+# Wrapping It Up
 
 As we wrap up our journey into the world of MCMC, let's take a moment to appreciate the wild ride we've been on. MCMC might not wear a cape, but it's the unsung hero behind so much of what we do in **Bayesian data analysis**. It's the tool that lets us dive headfirst into the **murky waters of uncertainty** and come out the other side with **clarity and insight**.
 
