@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.551">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Matías Castillo-Aguilar">
+<meta name="dcterms.date" content="2024-05-15">
+<meta name="description" content="Following the footsteps of the previous post, here we delve ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.">
+
+<title>Bayesically Speaking - The Good, The Bad, and Hamiltonian Monte Carlo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/logo.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(title-block.png);
+background-size: cover;
+      }
+</style>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta name="citation_title" content="The Good, The Bad, and Hamiltonian Monte Carlo">
+<meta name="citation_author" content="Matías Castillo-Aguilar">
+<meta name="citation_publication_date" content="2024-05-15">
+<meta name="citation_cover_date" content="2024-05-15">
+<meta name="citation_year" content="2024">
+<meta name="citation_online_date" content="2024-05-15">
+<meta name="citation_fulltext_html_url" content="https://bayesically-speaking.com//posts/2024-05-15 mcmc part 2">
+<meta name="citation_language" content="en">
+<meta name="citation_reference" content="citation_title=Philosophy and the practice of bayesian statistics;,citation_author=Andrew Gelman;,citation_author=Cosma Rohilla Shalizi;,citation_publication_date=2013;,citation_cover_date=2013;,citation_year=2013;,citation_issue=1;,citation_volume=66;,citation_journal_title=British Journal of Mathematical and Statistical Psychology;,citation_publisher=Wiley Online Library;">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bayesically Speaking</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../cv.html"> 
+<span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/matcasti"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/matias_science"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../blog.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">The Good, The Bad, and Hamiltonian Monte Carlo</h1>
+                  <div>
+        <div class="description">
+          <p>Following the footsteps of the previous post, here we delve ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.</p>
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">mcmc</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p><a href="https://bayesically-speaking.com/cv">Matías Castillo-Aguilar</a> <a href="mailto:m99castillo@gmail.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-7291-247X" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 15, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level1 page-columns page-full">
+<h1>Introduction</h1>
+<p>Hey there, fellow science enthusiasts and stats geeks! Welcome back to the wild world of Markov Chain Monte Carlo (MCMC) algorithms. This is <strong>part two</strong> of my series on the <strong>powerhouse behind Bayesian Inference</strong>. If you missed the first post, no worries! Just hop on over <a href="https://doi.org/10.59350/mxfyk-6av39">here</a> and catch up before we dive deeper into the MCMC madness. Today, we’re exploring the notorious <strong>Hamiltonian Monte Carlo (HMC)</strong>, a special kind of MCMC algorithm that taps into the dynamics of <strong>Hamiltonian mechanics</strong>.</p>
+<section id="stats-meets-physics" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="stats-meets-physics">Stats Meets Physics?</h2>
+<p>Hold up, did you say Hamiltonian mechanics? What in the world do mechanics and physics have to do with Bayesian stats? I get it, it sounds like a mashup of your wildest nightmares. But trust me, this algorithm sometimes feels <strong>like running a physics simulation in a statistical playground</strong>. Remember our chat from the <a href="https://doi.org/10.59350/mxfyk-6av39">last post</a>? In Bayesian stats, <strong>we’re all about estimating the shape of a parameter space</strong>, aka the posterior distribution.</p>
+<aside>
+Fun fact: There’s this whole field called <strong>statistical mechanics</strong> where scientists mix stats and physics to solve cool problems, mostly related to <strong>thermodynamics and quantum mechanics</strong>.
+</aside>
+</section>
+<section id="a-particle-rolling-through-stats-land" class="level2">
+<h2 class="anchored" data-anchor-id="a-particle-rolling-through-stats-land">A Particle Rolling Through Stats Land</h2>
+<p>Picture this: You drop a tiny particle down a cliff, and it rolls naturally along the landscape’s curves and slopes. Easy, right? <strong>Now, swap out the real-world terrain for a funky high-dimensional probability function</strong>. That same little particle? It’s cruising through this wild statistical landscape like a boss, all thanks to the rules of <strong>Hamiltonian mechanics</strong>.</p>
+<div style="text-align: center;">
+<iframe width="100%" height="500" src="mcmc-demo-master/app.html" title="MCMC">
+</iframe>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+About the animation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The previous animation illustrate the <strong>Hamiltonian dynamics of a particle traveling</strong> a two-dimensional parameter space. The code for this animation is borrowed from <a href="https://github.com/chi-feng">Chi Feng’s github</a>. You can find the original repository with corresponding code here: <a href="https://github.com/chi-feng/mcmc-demo" class="uri">https://github.com/chi-feng/mcmc-demo</a></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="hamiltonian-mechanics-a-childs-play" class="level1 page-columns page-full">
+<h1>Hamiltonian Mechanics: A Child’s Play?</h1>
+<p>Let’s break down Hamiltonian dynamics <strong>in terms of position and momentum</strong> with a fun scenario: <strong>Imagine you’re on a swing</strong>. When you hit the highest point, you slow down, right? <strong>Your momentum’s almost zero</strong>. But here’s the kicker: You know <strong>you’re about to pick up speed on the way down</strong>, gaining momentum in the opposite direction. That moment when you’re at the top, almost motionless? That’s when you’re losing <strong>kinetic energy</strong> and gaining <strong>potential energy</strong>, thanks to gravity getting ready to pull you back down.</p>
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="swing-animation.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="margin-caption">Swing Animation</figcaption>
+</figure>
+</div>
+<p>So, in this analogy, <strong>when your kinetic energy</strong> (think swing momentum) goes up, <strong>your potential energy</strong> (like being at the bottom of the swing) <strong>goes down</strong>. And vice versa! When your kinetic energy drops (like when you’re climbing back up), your potential energy shoots up, waiting for gravity to do its thing.</p>
+<p>This <strong>energy dance</strong> is captured by the <strong>Hamiltonian</strong> (<span class="math inline">\(H(q, p)\)</span>), which sums up the <strong>total energy in the system</strong>. It’s the sum of kinetic energy (<span class="math inline">\(K(p)\)</span>) and potential energy (<span class="math inline">\(U(q)\)</span>):</p>
+<p><span class="math display">\[
+H(q, p) = K(p) + U(q)
+\]</span></p>
+<p>At its core, Hamiltonian Monte Carlo (HMC) borrows from <strong>Hamiltonian dynamics</strong>, a fancy term for the rules that govern <strong>how physical systems evolve in phase space</strong>. In Hamiltonian mechanics, a system’s all about its position (<span class="math inline">\(q\)</span>) and momentum (<span class="math inline">\(p\)</span>), and <strong>their dance is choreographed by Hamilton’s equations</strong>. Brace yourself, things are about to get a little mathy:</p>
+<p><span class="math display">\[
+\begin{align}
+\frac{{dq}}{{dt}} &amp;= \frac{{\partial H}}{{\partial p}} \\
+\frac{{dp}}{{dt}} &amp;= -\frac{{\partial H}}{{\partial q}}
+\end{align}
+\]</span></p>
+<section id="wrapping-our-heads-around-the-math" class="level2">
+<h2 class="anchored" data-anchor-id="wrapping-our-heads-around-the-math">Wrapping Our Heads Around the Math</h2>
+<p>Okay, buckle up because <strong>Hamiltonian dynamics</strong> can be a real <strong>brain-buster</strong> — trust me, it took me a hot minute to wrap my head around it. But hey, I’ve got an analogy that might just make it click. Let’s revisit <strong>our swing scenario</strong>: picture a kid on a swing, right? <strong>The swing’s angle</strong> from the vertical (<span class="math inline">\(q\)</span>) tells us <strong>where the kid is</strong>, and <strong>how fast</strong> the swing’s moving <strong>is its momentum</strong> (<span class="math inline">\(p\)</span>).</p>
+<p>Now, let’s break down those equations:</p>
+<p><span class="math display">\[
+\frac{{dq}}{{dt}} = \frac{{\partial H}}{{\partial p}}
+\]</span></p>
+<p>This one’s like peeking into the future to see <strong>how the angle</strong> (<span class="math inline">\(q\)</span>) <strong>changes over time</strong>. And guess what? <strong>It’s all about momentum</strong> (<span class="math inline">\(p\)</span>). The faster the swing’s going, the quicker it swings back and forth — simple as that!</p>
+<p>Next up:</p>
+<p><span class="math display">\[
+\frac{{dp}}{{dt}} = -\frac{{\partial H}}{{\partial q}}
+\]</span></p>
+<p>Now, this beauty tells us <strong>how momentum</strong> (<span class="math inline">\(p\)</span>) <strong>changes over time</strong>. It’s all about the energy game here — specifically, <strong>how the swing’s position</strong> (<span class="math inline">\(q\)</span>) <strong>affects its momentum</strong>. When the swing’s at the highest point, gravity’s pulling hardest, ready to send it zooming back down.</p>
+<p>So, picture this:</p>
+<ul>
+<li>The kid swings forward, angle (<span class="math inline">\(q\)</span>) going up, and momentum (<span class="math inline">\(p\)</span>) building until bam — top of the swing.</li>
+<li>At the top, the swing’s momentarily still, but gravity’s revving up to send it flying back down.</li>
+<li>Zoom! Back down it goes, picking up speed in the opposite direction.</li>
+<li>And all the while, the Hamiltonian (<span class="math inline">\(H\)</span>) is keeping tabs <strong>on the swing’s total energy</strong> — whether it’s zooming at the bottom (high kinetic energy) or pausing at the top (high potential energy).</li>
+</ul>
+</section>
+<section id="visualizing-hamiltons-equations" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="visualizing-hamiltons-equations">Visualizing Hamilton’s Equations</h2>
+<p>Okay, I know we’re diving into some <strong>physics territory</strong> here <strong>in a stats blog</strong>, but trust me, understanding these concepts <strong>is key to unlocking what HMC’s all about</strong>. So, let’s take a little side trip and get a feel for Hamilton’s equations with a different example. <strong>Check out the gif below</strong> — see that weight on a string? It’s doing this cool back-and-forth dance thanks to the tug-of-war between the string pulling up and gravity pulling down.</p>
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="oscillator.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="margin-caption">Simple harmonic oscillator. Within this example we could expect that the potential energy <span class="math inline">\(U(q)\)</span> is the greatest at the bottom or top positions <span class="math inline">\(q\)</span>, primarely because is in these positions that the potential energy is greater, affecting in consequence the kinetic energy <span class="math inline">\(K(p)\)</span> of the mass attached at the bottom of the string.</figcaption>
+</figure>
+</div>
+<p>Now, let’s get a little hands-on with some code. We’re gonna simulate <strong>a simple harmonic oscillator</strong> — you know, like that weight on a string — and <strong>watch how it moves through phase space</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the potential energy function (U) and its derivative (dU/dq)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>U <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Spring constant</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fl">0.5</span> <span class="sc">*</span> k <span class="sc">*</span> q<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>dU_dq <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Spring constant</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(k <span class="sc">*</span> q)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Kinetic energy (K) used for later</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="cf">function</span>(p, m) {</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (<span class="dv">2</span> <span class="sc">*</span> m))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Introduce a damping coefficient</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fl">0.1</span>  <span class="co"># Damping coefficient</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up initial conditions</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">3.0</span>  <span class="co"># Initial position</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fl">0.0</span>   <span class="co"># Initial momentum</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fl">1.0</span>   <span class="co"># Mass</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Time parameters</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>t_max <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>num_steps <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(t_max <span class="sc">/</span> dt)  <span class="co"># Ensure num_steps is an integer</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize arrays to store position and momentum values over time</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>q_values <span class="ot">&lt;-</span> <span class="fu">numeric</span>(num_steps)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>p_values <span class="ot">&lt;-</span> <span class="fu">numeric</span>(num_steps)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform time integration using the leapfrog method</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_steps) {</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store the current values</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  q_values[i] <span class="ot">&lt;-</span> q</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  p_values[i] <span class="ot">&lt;-</span> p</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Half step update for momentum with damping</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  p_half_step <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> dt <span class="sc">*</span> (<span class="fu">dU_dq</span>(q) <span class="sc">+</span> b <span class="sc">*</span> p <span class="sc">/</span> m)</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Full step update for position using the momentum from the half step</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">&lt;-</span> q <span class="sc">+</span> dt <span class="sc">*</span> (p_half_step <span class="sc">/</span> m)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Another half step update for momentum with damping using the new position</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p_half_step <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> dt <span class="sc">*</span> (<span class="fu">dU_dq</span>(q) <span class="sc">+</span> b <span class="sc">*</span> p_half_step <span class="sc">/</span> m)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<aside>
+<p><strong>In this code:</strong></p>
+<ul>
+<li><code>U</code> is the <strong>potential energy</strong> function, kinda like how much energy’s stored in that spring, if you will.</li>
+<li><code>K</code> is the <strong>kinetic energy</strong> function, telling us how much energy’s tied up in the speed of the weight.</li>
+<li><code>dU_dq</code> is all about <strong>how the potential energy changes</strong> with the weight’s position, aka the force.</li>
+<li><code>b</code>? That’s just a fancy way of saying <strong>how much energy the system loses</strong> over time.</li>
+<li><code>q</code> and <code>p</code> are the weight’s <strong>position</strong> and <strong>momentum</strong>, respectively.</li>
+<li><code>m</code>? That’s the <strong>weight’s mass</strong>, nothing fancy.</li>
+<li><code>dt</code> is the time step, and <code>num_steps</code>? Well, that’s just <strong>how long we’re gonna keep</strong> this simulation running.</li>
+<li>Oh, and that <strong>leapfrog integration</strong>? It’s like stepping through time, updating the momentum, then the position, and back again.</li>
+</ul>
+</aside>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" data-cap-location="margin"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>harmonic_data <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span> <span class="ot">=</span> q_values, <span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span> <span class="ot">=</span> p_values)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(harmonic_data, <span class="fu">aes</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">linewidth =</span> .<span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> harmonic_data[<span class="dv">1</span>,], <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Phase Space Trajectory of Hamiltonian Dynamics"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Accounting for Energy Loss"</span>) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<aside>
+Check out this funky <strong>phase space</strong> trajectory <strong>of a simple harmonic oscillator</strong>! At the furthest points, it’s all about <strong>potential energy</strong> — that’s what’s driving the oscillator back and forth. But in the middle? That’s where the <strong>kinetic energy’s</strong> taking over, keeping things moving.
+</aside>
+<p>Now, take a look at that graphic. See how the <strong>position</strong> (<span class="math inline">\(q\)</span>) is all about <strong>where the oscillator’s</strong> hanging out, and <strong>momentum</strong> (<span class="math inline">\(p\)</span>)? Well, that’s just <strong>how fast the weight’s swinging</strong>. Put them together, and you’ve got what we call the <em>phase space</em> — basically, it’s like peeking into the dance floor of these mechanical systems.</p>
+<p>Now, in a perfect world, there’d be <strong>no energy lost over time</strong>. But hey, we like to keep it real, so we added a little something called <strong>damping</strong> — think of it <strong>like energy leaking out over time</strong>. In the real world, that makes sense, but <strong>in our statistical playground, we want to keep that energy</strong> locked in tight. After all, losing energy means we’re losing precious info about our target distribution, and nobody wants that.</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3" data-cap-location="margin"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>hamiltonian <span class="ot">&lt;-</span> harmonic_data[, <span class="fu">list</span>(<span class="st">`</span><span class="at">Total energy</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">U</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span>) <span class="sc">+</span> <span class="fu">K</span>(<span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span>, m),</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">`</span><span class="at">Kinetic energy</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">K</span>(<span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span>, m), </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">`</span><span class="at">Potential energy</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">U</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span>))]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>hamiltonian <span class="ot">&lt;-</span> <span class="fu">melt</span>(hamiltonian, <span class="at">measure.vars =</span> <span class="fu">c</span>(<span class="st">"Total energy"</span>, <span class="st">"Kinetic energy"</span>, <span class="st">"Potential energy"</span>)) </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hamiltonian, <span class="fu">aes</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>, <span class="at">times =</span> <span class="dv">3</span>), value, <span class="at">col =</span> variable)) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Energy"</span>, <span class="at">col =</span> <span class="st">"Variable"</span>, <span class="at">x =</span> <span class="st">"Time"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Fluctuation of the Total Energy in the Oscillator"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"As a Function of Kinetic and Potential Energy"</span>) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<aside>
+Check out the energy rollercoaster! This graph’s showing us how the <strong>total energy</strong> — made up of <strong>kinetic and potential energy</strong> — changes over time. And yep, that damping effect? It’s keeping things realistic, but in stats land, we’re all about conserving that energy for our exploration.
+</aside>
+<p>So, what’s the big takeaway here? Well, whether it’s a <strong>ball rolling down a hill</strong> or a sampler hunting for <strong>model coefficients</strong>, this framework’s got us covered. In Bayesian land, think of <span class="math inline">\(q\)</span> <strong>as our model’s parameters</strong> and <span class="math inline">\(p\)</span> as an auxiliary term, helping us navigate the twists and turns of parameter space. And with Hamiltonian dynamics leading the way, we’re guaranteed to find our path through the distribution jungle, one efficient step at a time.</p>
+</section>
+</section>
+<section id="building-our-own-hamiltonian-monte-carlo" class="level1 page-columns page-full">
+<h1>Building our own Hamiltonian Monte Carlo</h1>
+<p>Imagine we’re diving into some data to figure out <strong>how an independent variable</strong> (<span class="math inline">\(x\)</span>) <strong>and a dependent variable</strong> (<span class="math inline">\(y\)</span>) are cozying up together. We’re talking about <strong>linear regression</strong> — you know, trying to draw a line through those scattered data points to make sense of it all. But hey, <strong>this is Bayesian territory</strong>, so we’re not just throwing any ol’ line on that plot. No, siree! We’re sprinkling some prior distributions on those regression coefficients — that’s the slope and intercept — to give ’em a bit of personality before the data even shows up. Then, when the data rolls in, we’re smashing together that likelihood and those priors <strong>using Bayes’ theorem</strong> to cook up a posterior distribution — <strong>a fancy way of saying</strong> our updated beliefs <strong>about those coefficients</strong> after we’ve seen the data.</p>
+<section id="cooking-up-some-data" class="level2">
+<h2 class="anchored" data-anchor-id="cooking-up-some-data">Cooking Up Some Data</h2>
+<p>But before we dive into the statistical kitchen, <strong>let’s whip up some synthetic data</strong>. Picture this: we’re mimicking a real-world scenario where relationships between variables are as murky as a foggy morning. So, we’re gonna <strong>conjure up a batch of data</strong> with a simple linear relationship, jazzed up with a sprinkle of noise. Oh, and <strong>let’s keep it small</strong> — just 20 subjects, ’cause, hey, <strong>science “loves” a manageable sample size</strong>.</p>
+<p><side>Emphasis on double quotes on “loves”.</side></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">80</span>) <span class="co"># Set seed for reproducibility</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the number of data points and the range of independent variable 'x'</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="at">length.out =</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Okay, so now let’s get down to business and fit ourselves a nice, cozy <strong>linear relationship</strong> between an independent variable (<span class="math inline">\(x\)</span>) and a dependent variable (<span class="math inline">\(y\)</span>). We’re talking about laying down <strong>a straight line</strong> that best describes how <span class="math inline">\(y\)</span> changes with <span class="math inline">\(x\)</span>. It’s like <strong>finding the perfect angle</strong> for that incline on your backyard slide!</p>
+<p>So, what’s our equation look like? Well, it’s pretty simple:</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_i &amp;\sim \mathcal{N}(\mu_i, \sigma^2) \\
+\mu_i &amp;= \beta_0 + \beta_1 \cdot x_i \\
+\end{aligned}
+\]</span></p>
+<p>Hold on, let’s break it down. We’re saying that each <span class="math inline">\(y\)</span> value (<span class="math inline">\(y_i\)</span>) is chillin’ around a mean (<span class="math inline">\(\mu_i\)</span>), like a bunch of friends at a party. And guess what? <strong>They’re all acting like good ol’ normal folks</strong>, hanging out with a variance (<span class="math inline">\(\sigma^2\)</span>) that tells us <strong>how spread out they are</strong>. Now, the cool part is how we define <span class="math inline">\(\mu_i\)</span>. It’s <strong>just a simple sum</strong> of an intercept (<span class="math inline">\(\beta_0\)</span>) and the slope (<span class="math inline">\(\beta_1\)</span>) times <span class="math inline">\(x_i\)</span>. Think of it like plotting points on graph paper — each <span class="math inline">\(x_i\)</span> tells us where we are on the <span class="math inline">\(x\)</span>-axis, and multiplying by <span class="math inline">\(\beta_1\)</span> <strong>gives us the corresponding height on the line</strong>.</p>
+<p>Now, let’s talk numbers. We’re <strong>setting</strong> <span class="math inline">\(\beta_0\)</span> <strong>to 2</strong> because, hey, every relationship needs a starting point, right? And for <span class="math inline">\(\beta_1\)</span>, <strong>we’re going with 3</strong> — <strong>that’s the rate of change</strong> we’re expecting for every unit increase in <span class="math inline">\(x\)</span>. Oh, and let’s not forget about <span class="math inline">\(\sigma\)</span> — that’s just a fancy way of saying how much our <span class="math inline">\(y\)</span> values <strong>are allowed to wiggle around</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the true parameters of the linear model and the noise level</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>true_intercept <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>true_slope <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="dv">5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With our model all set up, <strong>it’s time to create some data points</strong> for our <span class="math inline">\(y\)</span> variable. We’ll do this using the trusty <code>rnorm</code> function, which is like a magical data generator for <strong>normally distributed variables</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the dependent variable 'y' with noise</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mu_i <span class="ot">=</span> true_intercept <span class="sc">+</span> true_slope <span class="sc">*</span> x</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, mu_i, sigma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="choosing-a-target-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-a-target-distribution">Choosing a Target Distribution</h2>
+<p>Alright, now that we’ve got our hands on some data, it’s time to dive into the <strong>nitty-gritty of Bayesian stuff</strong>. First up, we’re gonna need our trusty <strong>log likelihood function</strong> for our <strong>linear model</strong>. This function’s like the Sherlock Holmes of statistics — it figures out <strong>the probability of seeing our data</strong> given a specific set of parameters (you know, the intercept and slope we’re trying to estimate).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the log likelihood function for linear regression</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>log_likelihood <span class="ot">&lt;-</span> <span class="cf">function</span>(intercept, slope, x, y, sigma) {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We estimate the predicted response</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  y_pred <span class="ot">&lt;-</span> intercept <span class="sc">+</span> slope <span class="sc">*</span> x </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Then we see how far from the observed value we are</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  residuals <span class="ot">&lt;-</span> y <span class="sc">-</span> y_pred</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Then we estimate the likelihood associated with that error from a distribution</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># with no error (mean = 0)</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (this is the function that we are trying to maximize)</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  log_likelihood <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">dnorm</span>(residuals, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma, <span class="at">log =</span> <span class="cn">TRUE</span>) )</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(log_likelihood)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>So, what’s the deal with <strong>priors</strong>? Well, think of them as the background music to our data party. <strong>They’re like our initial hunches</strong> about what the parameters could be before we’ve even glanced at the data. To keep things simple, <strong>we’ll go with flat priors</strong> — no favoritism towards any particular values. It’s like saying, “Hey, let’s give everyone a fair shot!”</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the log prior function for the parameters</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>log_prior <span class="ot">&lt;-</span> <span class="cf">function</span>(intercept, slope) {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Assuming flat priors for simplicity</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (the log of 0 is 1, so it has no effect)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="dv">0</span>) </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, here’s where the real magic kicks in. <strong>We bring our likelihood and priors together</strong> in a beautiful dance to reveal the superstar of Bayesian statistics — <strong>the posterior distribution!</strong> This bad boy tells us everything we wanna know <strong>after we’ve taken the data into account</strong>. It’s like combining your detective skills with a crystal ball to see into the future.</p>
+<p>We represent this posterior as the following:</p>
+<p><span class="math display">\[
+P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
+\]</span></p>
+<p>Which <strong>is the same</strong> as saying:</p>
+<p><span class="math display">\[
+\text{Posterior} \propto \text{Likelihood} \times \text{Prior}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine log likelihood and log prior to get log posterior</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>log_posterior <span class="ot">&lt;-</span> <span class="cf">function</span>(intercept, slope, x, y, sigma) {</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">log_likelihood</span>(intercept, slope, x, y, sigma) <span class="sc">+</span> <span class="fu">log_prior</span>(intercept, slope))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="building-the-hmc-sampler" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="building-the-hmc-sampler">Building the HMC sampler</h2>
+<p>Alright, let’s dig into the guts of HMC and how we put it to work. Remember how HMC <strong>takes inspiration from the momentum and potential energy</strong> dance in physics? Well, in practice, it’s like having a GPS for our parameter space, guiding us to new spots that are likely to be winners in the exploration game.</p>
+<p>But here’s the thing: <strong>our parameter space isn’t some smooth highway</strong> we can cruise along endlessly. Nope, it’s more like a rugged terrain full of twists and turns. So, how do we navigate this bumpy ride? Enter the <strong>leapfrog integration method</strong>, the trusty minion of HMC.</p>
+<p>This method breaks down our journey <strong>into bite-sized steps</strong>, kind of like taking small hops across stepping stones in a river. <strong>Each leap gets us closer to our destination</strong>, all <strong>while conserving the dynamics of the system</strong>. It’s like tiptoeing through the parameter space, making sure we don’t miss a beat in our exploration.</p>
+<section id="leapfrog-integration" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="leapfrog-integration">Leapfrog Integration</h3>
+<p>So, leapfrog integration is basically this cool math trick we use in <strong>Hamiltonian Monte Carlo</strong> (HMC) to play out how a system moves over time using discrete steps, <strong>so we don’t have to compute every single</strong> value along the way. This integration method also is advantageous by keeping the energy levels balanced — remember the Hamiltonian? — which is super important if you want your model to stay true to real-life systems.</p>
+<p>Here’s how it works in HMC-lingo: we use leapfrog integration <strong>to hop around the parameter space and grab samples from the posterior distribution</strong>. It’s like following a recipe, but for finding the right settings for our model. The whole process goes like this:</p>
+<ol type="1">
+<li>We give the <strong>momentum</strong> a little nudge by leveraging on the <strong>gradient info</strong>. The <strong>gradient or slope</strong> of the position we are in this parameter space <strong><em>determine by how much our momentum will change</em></strong>. Like when we are in the top position in the swing — the potential energy then transfers to kinetic energy (aka. momentum).</li>
+<li>We adjust the <strong>position</strong> (or parameters) based on the <strong>momentum</strong> boost.</li>
+<li>Then we <strong>update the momentum</strong> based on the gradient on that <strong>new position</strong>.</li>
+<li>We repeat the cycle for as many “jumps” we are doing, for each sample of the posterior we intend to draw.</li>
+</ol>
+<p><strong>Picture a frog hopping from one lily pad to another</strong> — that’s where the name “leapfrog” comes from. It helps us <strong>explore new spots</strong> in the parameter space by <strong>discretizing the motion</strong> of this imaginary particle (or frog) by using Hamiltonian dynamics, using the slope information of the current position to gain/loss momentum and move to another position in the parameter space.</p>
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="frog-jumping.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="margin-caption">A frog jumping, with a fixed step size, from one point in the phase space into another.</figcaption>
+</figure>
+</div>
+<p>We prefer leapfrogging over simpler methods like Euler’s method because it <strong>keeps errors low</strong>, both locally and globally. This stability is key, especially when we’re dealing with big, complicated systems. Plus, <strong>it’s a champ at handling high-dimensional spaces</strong>, where keeping energy in check is a must for the algorithm to shine.</p>
+</section>
+<section id="tuning-those-hamiltonian-gears" class="level3">
+<h3 class="anchored" data-anchor-id="tuning-those-hamiltonian-gears">Tuning Those Hamiltonian Gears</h3>
+<p>Now, to get our HMC sampler purring like a kitten, we’ve got to <strong>fine-tune a few gears</strong>. Think of these as the knobs and dials on your favorite sound system – adjust them just right, and you’ll be <strong>grooving to the perfect beat</strong>.</p>
+<p>First up, we’ve got the <strong>number of samples</strong>. This determines how many times our sampler will take a peek at the parameter space before calling it a day.</p>
+<p>Next, we’ve got the <strong>step size</strong>. Imagine this as the stride length for our leapfrog integrator. Too short, and we’ll be tiptoeing; too long, and we’ll be taking giant leaps – neither of which gets us where we want to go. It’s all about finding that sweet spot.</p>
+<p>Then, there’s the <strong>number of steps for the leapfrog</strong> to make. This is like deciding how many hops we’ll take across those stepping stones in the river. Too few, and we risk missing key spots; too many, and we might tire ourselves out.</p>
+<p>Lastly, we need <strong>an initial guess for the intercept and slope</strong>. This is like dropping a pin on a map – it gives our sampler a starting point to begin its journey through the parameter space.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialization of the sampler</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>num_samples <span class="ot">&lt;-</span> <span class="dv">5000</span>  <span class="co"># Number of samples</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>epsilon <span class="ot">&lt;-</span> <span class="fl">0.05</span>  <span class="co"># Leapfrog step size</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>num_steps <span class="ot">&lt;-</span> <span class="dv">50</span>  <span class="co"># Number of leapfrog steps</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>init_intercept <span class="ot">&lt;-</span> <span class="dv">0</span>  <span class="co"># Initial guess for intercept</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>init_slope <span class="ot">&lt;-</span> <span class="dv">0</span>  <span class="co"># Initial guess for slope</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Placeholder for storing samples</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>params_samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> num_samples, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="starting-the-sampler" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="starting-the-sampler">Starting the Sampler</h3>
+<p>Alright, let’s fire up this Hamiltonian engine and get this party started. Here’s the game plan:</p>
+<ol type="1">
+<li><strong>Create a Loop:</strong> We’ll set up a loop to simulate our little particle zooming around the parameter space.</li>
+<li><strong>Integrate Its Motion:</strong> Using our trusty leapfrog integrator, we’ll keep track of how our particle moves.</li>
+<li><strong>Grab a Sample:</strong> Once our particle has finished its dance, we’ll grab a sample at its final position.</li>
+<li><strong>Accept or Reject:</strong> We’ll play a little game of accept or reject – if the new position looks promising, we’ll keep it; if not, we’ll stick with the old one. It’s like Tinder for parameters.</li>
+<li><strong>Repeat:</strong> We’ll rinse and repeat this process until we’ve collected as many samples as we need.</li>
+</ol>
+<p>Now, <strong>to kick things off</strong>, we’ll give our imaginary particle <strong>a random speed and direction</strong> to start with, and plop it down somewhere in the parameter space. This initial kick sets the stage for our parameter exploration.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_samples) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Start with a random momentum of the particle</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  momentum_current <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">2</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># And set the initial position of the particle</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  params_proposed <span class="ot">&lt;-</span><span class="fu">c</span>(init_intercept, init_slope) </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Next, we will simulate the particle's motion using</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># leapfrog integration.</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<aside>
+<span id="note-1">†</span>: Here, I’m using the term “physical” to illustrate the concept of our particle moving through a probability space. But remember, in reality, we’re talking about the parameter space, where each position represents a coefficient for a model parameter or any other parameter that we can represent in this way.
+</aside>
+</section>
+<section id="simulating-the-particles-motion" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="simulating-the-particles-motion">Simulating the Particle’s Motion</h3>
+<p>Now that our imaginary particle is all geared up with an <strong>initial momentum and position</strong>, it’s time to let it loose and see where it goes in this <strong>parameter playground</strong>. We know we’re using Hamiltonian mechanics, but to make it computationally feasible, we’re bringing in our trusty leapfrog integrator. This bad boy <strong>discretizes the motion of our particle</strong>, making it manageable to track its journey without breaking our computers.</p>
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="canica.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="margin-caption">Marble rolling over a surface. In a perfect world, we’d love to follow our particle smoothly gliding through the parameter space, but hey, computing that would take ages. So instead, we chunk its movement into smaller steps, kind of like a flipbook, to keep tabs on its position.</figcaption>
+</figure>
+</div>
+<p>So, here’s the lowdown on what our leapfrog integrator is up to:</p>
+<ol type="1">
+<li><strong>Estimating the Slope:</strong> We start off with an initial position and estimate the slope of the terrain at that point.</li>
+<li><strong>Adjusting Momentum:</strong> This slope is like the potential energy, dictating whether our particle speeds up or slows down. So, we tweak the momentum accordingly based on this slope.</li>
+<li><strong>Taking a Step:</strong> With this momentum tweak, we move the particle for a set distance, updating its position from the starting point.</li>
+<li><strong>Repeat:</strong> Now that our particle has a new spot, we rinse and repeat – estimating the slope and adjusting momentum.</li>
+<li><strong>Keep Going:</strong> We keep this cycle going for as many steps as we want to simulate, tracking our particle’s journey through the parameter space.</li>
+</ol>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_steps) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gradient estimation</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    grad <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Gradient of the intercept of X: -sum(residuals / variance)</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      ...</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Gradient of the slope of X: -sum(residuals * X / variance)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      ...</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Momentum half update</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    momentum_current <span class="ot">&lt;-</span> momentum_current <span class="sc">-</span> epsilon <span class="sc">*</span> grad <span class="sc">*</span> <span class="fl">0.5</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Full step update for parameters</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    params_proposed <span class="ot">&lt;-</span> params_proposed <span class="sc">+</span> epsilon <span class="sc">*</span> momentum_current</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Recalculate gradient for another half step update for momentum</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    grad <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Gradient of the intercept of X: -sum(residuals / variance)</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>      ...</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Gradient of the slope of X: -sum(residuals * X / variance)</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>      ...</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Final half momentum update</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    momentum_current <span class="ot">&lt;-</span> momentum_current <span class="sc">-</span> epsilon <span class="sc">*</span> grad <span class="sc">*</span> <span class="fl">0.5</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sample-evaluation-and-acceptance" class="level3">
+<h3 class="anchored" data-anchor-id="sample-evaluation-and-acceptance">Sample Evaluation and Acceptance</h3>
+<p>After our particle has taken its fair share of steps through the parameter space, it’s decision time – <strong>should we accept or reject its proposed new position?</strong> We can’t just blindly accept every move it makes; we’ve got to be smart about it.</p>
+<p>That’s where the <strong>Metropolis acceptance criteria</strong> come into play. This handy rule determines whether a proposed new position <strong>is a good fit or not</strong>. The idea is to weigh the probability of the new position against the probability of the current one. <strong>If the new spot looks promising, we’ll move there with a certain probability</strong>, ensuring that our samples accurately reflect the shape of the distribution we’re exploring. But if it’s not a better fit, we’ll stick with where we are.</p>
+<p>The <strong>formula</strong> for this acceptance probability (<span class="math inline">\(A(q', q)\)</span>) when transitioning from the current position (<span class="math inline">\(q\)</span>) to a proposed position (<span class="math inline">\(q'\)</span>) is straightforward:</p>
+<p><span class="math display">\[
+A(q',q) = min(1,\frac{p(q')}{p(q)})
+\]</span></p>
+<p>Here, <span class="math inline">\(p(q')\)</span> is the probability density of the <strong>proposed position</strong> <span class="math inline">\(q'\)</span>, and <span class="math inline">\(p(q)\)</span> is the probability density of the <strong>current position</strong> <span class="math inline">\(q\)</span>. We’re essentially <strong>comparing the fitness of the proposed spot against where we’re currently at</strong>. If the proposed position offers a higher probability density, we’re more likely to accept it. This ensures that our samples accurately represent the target distribution.</p>
+<p>However, when dealing with very small probability values, <strong>we might run into numerical underflow issues</strong>. That’s where using the <strong>log posterior</strong> probabilities comes in handy. By taking the logarithm of the probabilities, we convert the ratio into a difference, making it <strong>easier to manage</strong>. Here’s how the acceptance criteria look with logarithms:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\alpha &amp;= \log(p(q')) - \log(p(q)) \\
+A(q',q) &amp;= min(1,exp(\alpha))
+\end{aligned}
+\]</span></p>
+<p><strong>This formulation is equivalent to the previous one</strong> but helps us avoid numerical headaches, especially when working with complex or high-dimensional data. We’re still comparing the fitness of the proposed position with our current spot, just in a more <strong>log-friendly way</strong>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate log posteriors and acceptance probability</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>log_posterior_current <span class="ot">&lt;-</span> <span class="fu">log_posterior</span>( ...current parameters... )</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>log_posterior_proposed <span class="ot">&lt;-</span> <span class="fu">log_posterior</span>( ...proposed parameters... )</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="dv">1</span>, <span class="fu">exp</span>(log_posterior_proposed <span class="sc">-</span> log_posterior_current))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Accept or reject the proposal</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> alpha) {</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  init_intercept <span class="ot">&lt;-</span> params_proposed[<span class="dv">1</span>]</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  init_slope <span class="ot">&lt;-</span> params_proposed[<span class="dv">2</span>]</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="mixing-all-toghether" class="level3">
+<h3 class="anchored" data-anchor-id="mixing-all-toghether">Mixing All Toghether</h3>
+<p>Now that we’ve broken down each piece of our HMC puzzle, it’s time <strong>to put them all together</strong> and see how the full algorithm works.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_samples) {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Randomly initialize momentum</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  momentum_current <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">2</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make a copy of the current parameters</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  params_proposed <span class="ot">&lt;-</span> <span class="fu">c</span>(init_intercept, init_slope)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Perform leapfrog integration</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_steps) {</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Half step update for momentum</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    grad <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>      <span class="sc">-</span><span class="fu">sum</span>((y <span class="sc">-</span> (params_proposed[<span class="dv">1</span>] <span class="sc">+</span> params_proposed[<span class="dv">2</span>] <span class="sc">*</span> x)) <span class="sc">/</span> sigma<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      <span class="sc">-</span><span class="fu">sum</span>((y <span class="sc">-</span> (params_proposed[<span class="dv">1</span>] <span class="sc">+</span> params_proposed[<span class="dv">2</span>] <span class="sc">*</span> x)) <span class="sc">*</span> x <span class="sc">/</span> sigma<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    momentum_current <span class="ot">&lt;-</span> momentum_current <span class="sc">-</span> epsilon <span class="sc">*</span> grad <span class="sc">*</span> <span class="fl">0.5</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Full step update for parameters</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    params_proposed <span class="ot">&lt;-</span> params_proposed <span class="sc">+</span> epsilon <span class="sc">*</span> momentum_current</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Recalculate gradient for another half step update for momentum</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    grad <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>      <span class="sc">-</span><span class="fu">sum</span>((y <span class="sc">-</span> (params_proposed[<span class="dv">1</span>] <span class="sc">+</span> params_proposed[<span class="dv">2</span>] <span class="sc">*</span> x)) <span class="sc">/</span> sigma<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>      <span class="sc">-</span><span class="fu">sum</span>((y <span class="sc">-</span> (params_proposed[<span class="dv">1</span>] <span class="sc">+</span> params_proposed[<span class="dv">2</span>] <span class="sc">*</span> x)) <span class="sc">*</span> x <span class="sc">/</span> sigma<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    momentum_current <span class="ot">&lt;-</span> momentum_current <span class="sc">-</span> epsilon <span class="sc">*</span> grad <span class="sc">*</span> <span class="fl">0.5</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the log posterior of the current and proposed parameters</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>  log_posterior_current <span class="ot">&lt;-</span> <span class="fu">log_posterior</span>(init_intercept, init_slope, x, y, sigma)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>  log_posterior_proposed <span class="ot">&lt;-</span> <span class="fu">log_posterior</span>(params_proposed[<span class="dv">1</span>], params_proposed[<span class="dv">2</span>], x, y, sigma)</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the acceptance probability</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="dv">1</span>, <span class="fu">exp</span>(log_posterior_proposed <span class="sc">-</span> log_posterior_current))</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Accept or reject the proposal</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> alpha) {</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    init_intercept <span class="ot">&lt;-</span> params_proposed[<span class="dv">1</span>]</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    init_slope <span class="ot">&lt;-</span> params_proposed[<span class="dv">2</span>]</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Save the sample</span></span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>  params_samples[i, ] <span class="ot">&lt;-</span> <span class="fu">c</span>(init_intercept, init_slope)</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="visualizing-the-final-result" class="level1">
+<h1>Visualizing the Final Result</h1>
+<p>Alright, folks, let’s wrap this up with a peek at how our little algorithm fared in estimating the true intercept and slope of our linear model.</p>
+<section id="samples-of-intercept-and-slope" class="level3">
+<h3 class="anchored" data-anchor-id="samples-of-intercept-and-slope">Samples of Intercept and Slope</h3>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(params_samples) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Slope"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="ot">&lt;-</span> <span class="fu">as.data.table</span>(params_samples)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>posterior[, sample <span class="sc">:</span><span class="er">=</span> <span class="fu">seq_len</span>(.N)]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>melt_posterior <span class="ot">&lt;-</span> <span class="fu">melt</span>(posterior, <span class="at">id.vars =</span> <span class="st">"sample"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(melt_posterior, <span class="fu">aes</span>(sample, value, <span class="at">col =</span> variable)) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(variable), <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> <span class="fu">data.frame</span>(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">hline =</span> <span class="fu">c</span>(true_intercept, true_slope),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Slope"</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  ), <span class="fu">aes</span>(<span class="at">yintercept =</span> hline), <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Samples"</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Convergence of parameter values"</span>,</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Traceplot of both the Intercept and Slope"</span>) <span class="sc">+</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this plot, we’re tracking the <strong>evolution of the intercept and slope parameters over the course of our sampling process</strong>. Each line represents a different sample from the posterior distribution, showing how these parameters fluctuate over time. The dashed lines mark the <strong>true values</strong> of the <strong>intercept</strong> and <strong>slope</strong> that we used to generate the data. Ideally, we’d like to see the samples converging around these true values, <strong>indicating that our sampler is accurately capturing the underlying structure</strong> of the data.</p>
+</section>
+<section id="data-with-true-and-estimated-regression-line" class="level3">
+<h3 class="anchored" data-anchor-id="data-with-true-and-estimated-regression-line">Data with True and Estimated Regression Line</h3>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> posterior[,<span class="fu">sample</span>(sample, <span class="at">size =</span> <span class="dv">200</span>)]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> posterior<span class="sc">$</span>Slope[ids], <span class="at">intercept =</span> posterior<span class="sc">$</span>Intercept[ids], <span class="at">col =</span> <span class="st">"steelblue"</span>, <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> true_slope, <span class="at">intercept =</span> true_intercept, <span class="at">col =</span> <span class="st">"white"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x, y), <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Data with Regression Line"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"True and HMC-estimated parameter values"</span>) <span class="sc">+</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot gives us a bird’s-eye view of our data, overlaid with both the <strong>true regression line</strong> (in white) and the <strong>estimated regression lines</strong> from our HMC sampler (in blue). The true regression line represents the ground truth relationship between our independent and dependent variables, while <strong>the estimated regression lines are sampled from the accepted values</strong> of the intercept and slope parameters sampled from the posterior distribution. By comparing these two, we can assess <strong>how well our model has captured the underlying trend</strong> in the data.</p>
+</section>
+<section id="posterior-samples-of-intercept-and-slope" class="level3">
+<h3 class="anchored" data-anchor-id="posterior-samples-of-intercept-and-slope">Posterior Samples of Intercept and Slope</h3>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(posterior, <span class="fu">aes</span>(Slope, Intercept)) <span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density2d_filled</span>(<span class="at">contour_var =</span> <span class="st">"density"</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> true_intercept, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> true_slope, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">option =</span> <span class="st">"B"</span>) <span class="sc">+</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this plot, we’re visualizing the <strong>joint posterior density</strong> of the <strong>intercept</strong> and <strong>slope</strong> parameters sampled from our model. The contours represent regions of higher density, with <strong>brighter zones indicating areas where more samples are concentrated</strong>. The white dashed lines mark the true values of the intercept and slope used to generate the data, providing a reference for comparison. Ideally, we’d like to see <strong>the contours align closely with these true values</strong>, indicating that our sampler has accurately captured the underlying distribution of the parameters.</p>
+</section>
+</section>
+<section id="wrapping-it-up" class="level1">
+<h1>Wrapping It Up</h1>
+<p>So, let’s take a moment to marvel at the marvels of Hamiltonian Monte Carlo (HMC). It’s not every day you see <strong>physics rubbing shoulders with statistics</strong>, but here we are, with HMC straddling both worlds like a boss.</p>
+<section id="bridging-physics-and-stats" class="level4">
+<h4 class="anchored" data-anchor-id="bridging-physics-and-stats">Bridging Physics and Stats</h4>
+<p>What makes HMC so darn fascinating is how it <strong>borrows tools from physics to tackle the gnarly problems of statistics</strong>. It’s like watching two old pals team up to solve a mystery, each bringing their own unique skills to the table. With HMC, we’re not just crunching numbers; we’re <strong>tapping into the underlying principles that govern the physical world</strong>. I mean, seriously, it gives me goosebumps just thinking about it.</p>
+</section>
+<section id="riding-the-simulation-wave" class="level4">
+<h4 class="anchored" data-anchor-id="riding-the-simulation-wave">Riding the Simulation Wave</h4>
+<p>But it’s not just HMC that’s shaking up the stats scene. Nope, the whole world of science is pivoting towards <strong>simulation-based statistics</strong> and <strong>Bayesian methods</strong> faster than you can say “p-value.” Why? Because in today’s data-rich landscape, traditional methods just can’t keep up. We need tools like HMC <strong>to navigate the choppy waters of high-dimensional data</strong>, to tease out the subtle patterns hiding in the noise.</p>
+</section>
+<section id="unraveling-the-mystery" class="level4">
+<h4 class="anchored" data-anchor-id="unraveling-the-mystery">Unraveling the Mystery</h4>
+<p>Now, here’s the kicker: <strong>understanding how HMC works isn’t just some academic exercise</strong>. Oh no, it’s the key to unlocking the true power of Bayesian inference. Sure, <strong>you can run your models without ever peeking under the hood</strong>, but where’s the fun in that? Knowing how HMC works gives you this intuitive grasp of what your model is up to, what might be tripping it up, and how to <strong>steer it back on course</strong> when things go sideways.</p>
+<p>So, here’s to HMC, one of the <strong>big algorithms of modern statistics</strong>, blurring the lines between physics and stats, and paving the way for a brave new world of <strong>simulation-based inference</strong>. Cheers to the leapfrogging pioneers of Bayesian stats, charting new territories and uncovering hidden truths, <em>one simulated step at a time</em>.</p>
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{castillo-aguilar2024,
+  author = {Castillo-Aguilar, Matías},
+  title = {The {Good,} {The} {Bad,} and {Hamiltonian} {Monte} {Carlo}},
+  date = {2024-05-15},
+  url = {https://bayesically-speaking.com//posts/2024-05-15 mcmc part 2},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-castillo-aguilar2024" class="csl-entry quarto-appendix-citeas" role="listitem">
+Castillo-Aguilar, Matías. 2024. <span>“The Good, The Bad, and
+Hamiltonian Monte Carlo.”</span> May 15, 2024. <a href="https://bayesically-speaking.com//posts/2024-05-15 mcmc part 2">https://bayesically-speaking.com//posts/2024-05-15
+mcmc part 2</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/bayesically-speaking\.com\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
