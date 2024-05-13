@@ -252,60 +252,6 @@ window.onload = function () {
   window.onresize = function () {
     viz.resize();
   };
-
-  gui = new dat.GUI({ width: 300 });
-
-  var f1 = gui.addFolder("Simulation options");
-  f1.add(sim, "algorithm", MCMC.algorithmNames)
-    .name("Algorithm")
-    .onChange(function (value) {
-      sim.setAlgorithm(value);
-      gui.removeFolder("Algorithm Options");
-      var f = gui.addFolder("Algorithm Options");
-      sim.mcmc.attachUI(sim.mcmc, f);
-      // f.add(sim.mcmc, 'about').name('About...');
-    f.open();
-    });
-  f1.add(sim, "target", MCMC.targetNames)
-    .name("Target distribution")
-    .onChange(function (value) {
-      sim.setTarget(value);
-    });
-  f1.add(sim, "autoplay").name("Autoplay");
-  f1.add(sim, "delay", 0, 1000)
-    .name("Autoplay delay")
-    .onChange(function (value) {
-      if (value == 0) {
-        viz.animateProposal = false;
-      } else {
-        viz.animateProposal = true;
-      }
-    });
-  f1.add(sim, "tweeningDelay", 0, 200).name("Tweening delay");
-  f1.add(sim, "step").name("Step");
-  f1.add(sim, "reset").name("Reset");
-f1.open();
-
-  var f2 = gui.addFolder("Visualization Options");
-  f2.add(viz, "animateProposal").name("Animate proposal").listen();
-  f2.add(viz, "showTargetDensity").name("Show target");
-  f2.add(viz, "showSamples").name("Show samples");
-  f2.add(viz, "showHistograms").name("Show histogram");
-  f2.add(viz, "histBins", 20, 200)
-    .step(1)
-    .name("Histogram bins")
-    .onChange(function (value) {
-      viz.drawHistograms();
-      viz.render();
-    });
-/*f2.open();*/
-
-  gui.removeFolder("Algorithm Options");
-  var f3 = gui.addFolder("Algorithm Options");
-  sim.mcmc.attachUI(sim.mcmc, f3);
-  f3.add(sim.mcmc, "about").name("About this algorithm");
-/*f3.open();*/
-  f3.close();
   
   sim.animate();
 };
