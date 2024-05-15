@@ -3,7 +3,7 @@ title: "The Good, The Bad, and Hamiltonian Monte Carlo"
 description: |
   Following the footsteps of the previous post, here we delve ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.
 date: "2024-05-15"
-#doi: "10.59350/mxfyk-6av39"
+doi: "10.59350/fa26y-xa178"
 categories: [mcmc]
 bibliography: ref.bib
 title-block-banner: title-block.png
