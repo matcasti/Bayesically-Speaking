@@ -84,13 +84,27 @@ In the following section, I provide a concise summary of my research undertaking
 :::{.grid}
 
 :::{.g-col-12}
+### 2024
+:::
+
+:::{.g-col-6 .g-col-md-4}
+Frailty, Seasonal Sensitivity and Health-related Quality of Life in Older People Living in High Southern Latitudes: a Bayesian Analysis. *Canadian Geriatrics Journal*. 
+
+<span class="badge bg-primary">Original research</span>
+
+[Diego Mabe-Castro, Karen Tobar Gómez, [Matías Castillo-Aguilar]{.text-body}, Sebastián Jannas-Velas, Eduardo Guzmán-Muñóz, Pablo Valdés-Badilla & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
+
+<a class="btn btn-outline-primary" href="https://doi.org/10.5770/cgj.27.719">Full-text {{< fa link >}}</a>
+:::
+
+:::{.g-col-12}
 ### 2023
 :::
 
 :::{.g-col-6 .g-col-md-4}
 Physical activity, seasonal sensitivity and psychological well-being of people of different age groups living in extreme environments. *International Journal of Environmental Research and Public Health*. 
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-primary">Original research</span>
 
 [Caren Alvarado-Aravena, [Matías Castillo-Aguilar]{.text-body}, Valeska Villegas, Claudia Estrada Goic, Katherine Harris, Patricio Barría, Michele Moraes, Thiago Mendes, Rosa Arantes, Pablo Valdés-Badilla & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -100,7 +114,7 @@ Physical activity, seasonal sensitivity and psychological well-being of people o
 :::{.g-col-6 .g-col-md-4}
 Validity and reliability of short-term heart rate variability parameters in older people in response to physical exercise. *International Journal of Environmental Research and Public Health*. 
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-primary">Original research</span>
 
 [[Matías Castillo-Aguilar]{.text-body}, Matías Mabe Castro, Diego Mabe Castro, Pablo Valdés-Badilla, Tomás Herrera-Valenzuela, Eduardo Guzmán-Muñoz, Morin Lang, Oscar Niño Méndez & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -110,7 +124,7 @@ Validity and reliability of short-term heart rate variability parameters in olde
 :::{.g-col-6 .g-col-md-4}
 Cardiac autonomic regulation in response to functional power threshold testing in elite cyclists. *Revista Andaluza de Medicina del Deporte*. 
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-primary">Original research</span>
 
 [[Matías Castillo-Aguilar]{.text-body}, Diego Mabe Castro, Matías Mabe Castro, Valeska Oyarzo, Katherine Harris, Pablo Valdés-Badilla, Pedro Delgado Floody, Javiera Gonzalez & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -125,7 +139,7 @@ Cardiac autonomic regulation in response to functional power threshold testing i
 Functional characterization of patients with cerebral palsy living 
 in the Magallanes region and the Chilean Antarctic. *Andes pediatrica*.
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-primary">Original research</span>
 
 [Patricio Barría Aburto, Vanessa Ruiz Barría, [Matías Castillo-Aguilar]{.text-body}, Rolando Aguilar Cárdenas, Asterio Andrade Gallardo & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -136,7 +150,7 @@ in the Magallanes region and the Chilean Antarctic. *Andes pediatrica*.
 :::{.g-col-6 .g-col-md-4}
 Relationship of cardiorespiratory control and vascular compliance in competitive young athletes. *Revista Andaluza de Medicina del Deporte*.
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-primary">Original research</span>
 
 [[Matías Castillo-Aguilar]{.text-body}, Hector Felipe Retamal Matus, Roberto Santa Cruz, Ygor Tinoco Martins, Oscar Niño Méndez & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -146,7 +160,7 @@ Relationship of cardiorespiratory control and vascular compliance in competitive
 :::{.g-col-6 .g-col-md-4}
 Clinical characteristics, comorbidity, and laboratory variables associated with hospitalization and mortality in older people with Covid-19: A systematic review. *Revista Cientı́fica Salud Uninorte*.
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-danger">Systematic review</span>
 
 [[Matías Castillo-Aguilar]{.text-body}, Vania Castillo-Aguilar, Caren Alvarado-Aravena, Rodrigo Yáñez-Yáñez, Zoila Esperanza Leiton-Espinoza & Igor Cigarroa]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -156,7 +170,7 @@ Clinical characteristics, comorbidity, and laboratory variables associated with 
 :::{.g-col-6 .g-col-md-4}
 Effect of confinement on anxiety symptoms and sleep quality during the COVID-19 pandemic. *Behavioral Sciences*.
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-primary">Original research</span>
 
 [Caren Alvarado-Aravena, Karem Arriaza, [Matías Castillo-Aguilar]{.text-body}, Karen Flores, Alexies Dagnino-Subiabre, Claudia Estrada-Goic & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -171,7 +185,7 @@ Effect of confinement on anxiety symptoms and sleep quality during the COVID-19 
 :::{.g-col-6 .g-col-md-4}
 Association between body mass index and regulation of the cardiovascular system in medical students. *Archivos de Medicina (Manizales)*.
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-primary">Original research</span>
 
 [Caren Alvarado-Aravena, [Matías Castillo-Aguilar]{.text-body}, Hector Felipe Retamal Matus, Claudia Estrada Goic & Cristian Núñez Espinosa.]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -181,7 +195,7 @@ Association between body mass index and regulation of the cardiovascular system 
 :::{.g-col-6 .g-col-md-4}
 Cardiac autonomic modulation in response to muscle fatigue and sex differences during consecutive competition periods in young swimmers: A longitudinal study. *Frontiers in Physiology*. 
 
-<span class="badge bg-primary">Journal article</span>
+<span class="badge bg-primary">Original research</span>
 
 [[Matías Castillo-Aguilar]{.text-body}, Pablo Valdés-Badilla, Tomás Herrera-Valenzuela, Eduardo Guzmán-Muñoz, Pedro Delgado-Floody, David Cristóbal Andrade, Michele Moraes, Rosa Arantes & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
 
@@ -191,7 +205,7 @@ Cardiac autonomic modulation in response to muscle fatigue and sex differences d
 :::{.g-col-6 .g-col-md-4}
 Propiedades cinemáticas de rodilla en respuesta a la posición de cuclillas: Implicancias para la rehabilitación. *Congreso IBERDISCAP*. 
 
-<span class="badge bg-primary">Conference article</span>
+<span class="badge bg-warning">Conference article</span>
 
 [Katherine Harris King, [Matías Castillo-Aguilar]{.text-body}, Patricio Barría, Rolando Aguilar, Hector Felipe Retamal & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
 
