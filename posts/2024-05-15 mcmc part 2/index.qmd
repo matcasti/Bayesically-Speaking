@@ -72,7 +72,7 @@ $$
 
 ## Wrapping Our Heads Around the Math
 
-Okay, buckle up because **Hamiltonian dynamics** can be a real **brain-buster** — trust me, it took me a hot minute to wrap my head around it. But hey, I've got an analogy that might just make it click. Let's revisit **our swing scenario**: picture a kid on a swing, right? **The swing's angle** from the vertical ($q$) tells us **where the kid is**, and **how fast** the swing's moving **is its momentum** ($p$).
+Okay, I know **Hamiltonian dynamics** can be a real **brain-buster** — trust me, it took me a hot minute to wrap my head around it. But hey, I've got an analogy that might just make it click. Let's revisit **our swing scenario**: remember our picture of a kid on a swing, right? **The swing's angle** from the vertical ($q$) tells us **where the kid is**, and momentum ($p$) is **how fast** the swing's moving.
 
 Now, let's break down those equations:
 
@@ -88,20 +88,23 @@ $$
 \frac{{dp}}{{dt}} = -\frac{{\partial H}}{{\partial q}}
 $$
 
-Now, this beauty tells us **how momentum** ($p$) **changes over time**. It's all about the energy game here — specifically, **how the swing's position** ($q$) **affects its momentum**. When the swing's at the highest point, gravity's pulling hardest, ready to send it zooming back down.
+Now, this beauty tells us **how momentum** ($p$) **changes over time**. It's all about the energy game here — specifically, **how the swing's position** ($q$) **affects its momentum**. When the swing's at the highest point, gravity's pulling hardest, ready to send him back down.
 
 So, picture this:
 
-- The kid swings forward, angle ($q$) going up, and momentum ($p$) building until bam — top of the swing.
-- At the top, the swing's momentarily still, but gravity's revving up to send it flying back down.
-- Zoom! Back down it goes, picking up speed in the opposite direction.
-- And all the while, the Hamiltonian ($H$) is keeping tabs **on the swing's total energy** — whether it's zooming at the bottom (high kinetic energy) or pausing at the top (high potential energy).
+- The kid swings forward, so the angle ($q$) goes up thanks to the momentum ($p$) building until bam — top of the swing.
+- At the top, the swing's momentarily still, but gravity's pulling to send him flying back down — hence, he is accumulating potential energy.
+- Zoom! Back down it goes, picking up speed in the opposite direction — and so, the potential energy is then transferred into kinetic energy.
+
+All the while, the Hamiltonian ($H$) is keeping tabs **on the swing's total energy** — whether it's zooming at the bottom (high kinetic energy $K(p)$, as a function of momentum $p$) or pausing at the top (high potential energy $U(q)$, as a function of position $q$).
+
+This **dance between kinetic and potential energy** is what we care within **Hamiltonian mechanics**, and also what we mean when we refer to the *phase space*, which it's nothing more than **the relationship between position and momentum**.
 
 ## Visualizing Hamilton's Equations
 
 Okay, I know we're diving into some **physics territory** here **in a stats blog**, but trust me, understanding these concepts **is key to unlocking what HMC's all about**. So, let's take a little side trip and get a feel for Hamilton's equations with a different example. **Check out the gif below** — see that weight on a string? It's doing this cool back-and-forth dance thanks to the tug-of-war between the string pulling up and gravity pulling down.
 
-![Simple harmonic oscillator. Within this example we could expect that the potential energy $U(q)$ is the greatest at the bottom or top positions $q$, primarely because is in these positions that the potential energy is greater, affecting in consequence the kinetic energy $K(p)$ of the mass attached at the bottom of the string.](oscillator.gif){width=100%}
+![Simple harmonic oscillator. Within this example we could expect that the potential energy $U(q)$ is the greatest at the bottom or top positions $q$, primarely because is in these positions that the force exerted by the string is greater, affecting in consequence the kinetic energy $K(p)$ of the mass attached at the bottom of the string.](oscillator.gif){width=100%}
 
 Now, let's get a little hands-on with some code. We're gonna simulate **a simple harmonic oscillator** — you know, like that weight on a string — and **watch how it moves through phase space**.
 
@@ -165,12 +168,12 @@ for (i in 1:num_steps) {
 
 - `U` is the **potential energy** function, kinda like how much energy's stored in that spring, if you will.
 - `K` is the **kinetic energy** function, telling us how much energy's tied up in the speed of the weight.
-- `dU_dq` is all about **how the potential energy changes** with the weight's position, aka the force.
-- `b`? That's just a fancy way of saying **how much energy the system loses** over time.
+- `dU_dq` is telling us about **how the potential energy changes** with the weight's position, aka the force.
+- `b` is just a fancy way of saying **how much energy the system loses** over time.
 - `q` and `p` are the weight's **position** and **momentum**, respectively.
-- `m`? That's the **weight's mass**, nothing fancy.
+- `m` is the **weight's mass**, nothing fancy.
 - `dt` is the time step, and `num_steps`? Well, that's just **how long we're gonna keep** this simulation running.
-- Oh, and that **leapfrog integration**? It's like stepping through time, updating the momentum, then the position, and back again.
+- Oh, and that **leapfrog integration**? It's like stepping through time, updating the momentum, then the position, and back again — but don't worry about it, we'll see it shortly.
 </aside>
 
 ```{r}
@@ -191,11 +194,11 @@ ggplot(harmonic_data, aes(`Position (q)`, `Momentum (p)`)) +
   theme_classic(base_size = 20)
 ```
 
-<aside>Check out this funky **phase space** trajectory **of a simple harmonic oscillator**! At the furthest points, it's all about **potential energy** — that's what's driving the oscillator back and forth. But in the middle? That's where the **kinetic energy's** taking over, keeping things moving.</aside>
+<aside>Check out this funky **phase space** trajectory **of a simple harmonic oscillator**! At the furthest points, the **potential energy** is the highest — that's what's driving the oscillator back and forth. But in the middle? That's where the **kinetic energy's** taking over, keeping things moving — like our example of a kid on a swing!</aside>
 
-Now, take a look at that graphic. See how the **position** ($q$) is all about **where the oscillator's** hanging out, and **momentum** ($p$)? Well, that's just **how fast the weight's swinging**. Put them together, and you've got what we call the *phase space* — basically, it's like peeking into the dance floor of these mechanical systems.
+Now, take a look at that graphic. See how the **position** ($q$) is all about **where the oscillator's** hanging out, and **momentum** ($p$)? Well, that's just **how fast the weight's swinging**. Put them together, and you've got what we call the *phase space* — basically, it's like peeking into the dance floor of these mechanical systems through the lenses of Hamiltonian dynamics.
 
-Now, in a perfect world, there'd be **no energy lost over time**. But hey, we like to keep it real, so we added a little something called **damping** — think of it **like energy leaking out over time**. In the real world, that makes sense, but **in our statistical playground, we want to keep that energy** locked in tight. After all, losing energy means we're losing precious info about our target distribution, and nobody wants that.
+Now, in a perfect world, there'd be **no energy lost over time**. But hey, we like to keep it real, so we added a little something called **damping effect** — think of it **like energy leaking out of the system over time**. In the real world, that makes sense, but **in our statistical playground, we want to keep that energy** locked in tight. After all, losing energy means we're losing precious info about our target distribution, and nobody wants that.
 
 
 ```{r}
@@ -220,19 +223,19 @@ ggplot(hamiltonian, aes(rep(1:200, times = 3), value, col = variable)) +
   theme(legend.position = "top")
 ```
 
-<aside>Check out the energy rollercoaster! This graph's showing us how the **total energy** — made up of **kinetic and potential energy** — changes over time. And yep, that damping effect? It's keeping things realistic, but in stats land, we're all about conserving that energy for our exploration.</aside>
+<aside>Check out this energy rollercoaster! This graph's showing us how the **total energy** — made up of **kinetic and potential energy** — changes over time. And yep, that damping effect? It's keeping things realistic, but in stats land, we're all about conserving that energy for our exploration.</aside>
 
-So, what's the big takeaway here? Well, whether it's a **ball rolling down a hill** or a sampler hunting for **model coefficients**, this framework's got us covered. In Bayesian land, think of $q$ **as our model's parameters** and $p$ as an auxiliary term, helping us navigate the twists and turns of parameter space. And with Hamiltonian dynamics leading the way, we're guaranteed to find our path through the distribution jungle, one efficient step at a time.
+So, what's the big takeaway here? Well, whether it's a **ball rolling down a hill** or a sampler hunting for **model coefficients**, this framework's got us covered. In Bayesian land, think of **our model's parameters as position coordinates** $q$ in some space, and $p$ is the momentum helping us navigate the twists and turns of this parameter space. And with Hamiltonian dynamics leading the way, we're guaranteed to find our path through this statistical dimension, one step at a time.
 
 # Building our own Hamiltonian Monte Carlo
 
-Imagine we're diving into some data to figure out **how an independent variable** ($x$) **and a dependent variable** ($y$) are cozying up together. We're talking about **linear regression** — you know, trying to draw a line through those scattered data points to make sense of it all. But hey, **this is Bayesian territory**, so we're not just throwing any ol' line on that plot. No, siree! We're sprinkling some prior distributions on those regression coefficients — that's the slope and intercept — to give 'em a bit of personality before the data even shows up. Then, when the data rolls in, we're smashing together that likelihood and those priors **using Bayes' theorem** to cook up a posterior distribution — **a fancy way of saying** our updated beliefs **about those coefficients** after we've seen the data.
+Now that we got some intuition about Hamiltonian mechanics, it's time we build our own HMC sampler. To accomplish this, imagine that we're diving into some data to figure out **how an independent variable** ($x$) **and a dependent variable** ($y$) are related. We're talking about **linear regression** — you know, trying to draw a line through those scattered data points to make sense of it all. But hey, **this is Bayesian territory**, so we're not just throwing any ol' line on that plot. No, sir! We're exploring the parameter space of those regression coefficients — that's the slope and intercept. Then, when the data rolls in, we're smashing together that likelihood and those priors **using Bayes' theorem** to cook up a posterior distribution — **a fancy way of saying** our updated beliefs **about those coefficients** after we've seen the data.
 
 ## Cooking Up Some Data
 
 But before we dive into the statistical kitchen, **let's whip up some synthetic data**. Picture this: we're mimicking a real-world scenario where relationships between variables are as murky as a foggy morning. So, we're gonna **conjure up a batch of data** with a simple linear relationship, jazzed up with a sprinkle of noise. Oh, and **let's keep it small** — just 20 subjects, 'cause, hey, **science "loves" a manageable sample size**.
 
-<side>Emphasis on double quotes on "loves".</side>
+<aside>Emphasis on double quotes on "loves".</aside>
 
 ```{r}
 set.seed(80) # Set seed for reproducibility
@@ -242,7 +245,7 @@ n <- 20
 x <- seq(1, 10, length.out = n)
 ```
 
-Okay, so now let's get down to business and fit ourselves a nice, cozy **linear relationship** between an independent variable ($x$) and a dependent variable ($y$). We're talking about laying down **a straight line** that best describes how $y$ changes with $x$. It's like **finding the perfect angle** for that incline on your backyard slide!
+Okay, so now let's get down to business and fit ourselves a nice, cozy **linear relationship** between an independent variable ($x$) and a dependent variable ($y$). We're talking about laying down **a straight line** that best describes how $y$ changes with $x$.
 
 So, what's our equation look like? Well, it's pretty simple:
 
@@ -265,7 +268,7 @@ true_slope <- 3
 sigma <- 5
 ```
 
-With our model all set up, **it's time to create some data points** for our $y$ variable. We'll do this using the trusty `rnorm` function, which is like a magical data generator for **normally distributed variables**.
+With our model all set up, **it's time to create some data points** for our $y$ variable. We'll do this using the `rnorm()` function, which is like a magical data generator for **normally distributed variables**.
 
 ```{r}
 # Generate the dependent variable 'y' with noise
@@ -307,9 +310,9 @@ log_prior <- function(intercept, slope) {
 }
 ```
 
-Now, here's where the real magic kicks in. **We bring our likelihood and priors together** in a beautiful dance to reveal the superstar of Bayesian statistics — **the posterior distribution!** This bad boy tells us everything we wanna know **after we've taken the data into account**. It's like combining your detective skills with a crystal ball to see into the future.
+Now, here's where the real magic kicks in. **We bring our likelihood and priors together** in a beautiful dance to reveal the superstar of Bayesian statistics — **the posterior distribution!** This bad boy tells us everything we wanna know **after we've taken the data into account**. This allow us to take into account previous knowledge — like past research, and the observed data — let's say, samples from a new experiment.
 
-We represent this posterior as the following:
+The posterior it's nothing more than the **probability associated with our parameters** of interest (aka. the slope and intercept), **given the observed data**. We represent this posterior distribution as the following:
 
 $$
 P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
@@ -330,28 +333,26 @@ log_posterior <- function(intercept, slope, x, y, sigma) {
 
 ## Building the HMC sampler
 
-Alright, let's dig into the guts of HMC and how we put it to work. Remember how HMC **takes inspiration from the momentum and potential energy** dance in physics? Well, in practice, it's like having a GPS for our parameter space, guiding us to new spots that are likely to be winners in the exploration game.
+Alright, now that we have everything ready, let's dig into the guts of HMC and how we put it to work. Remember how HMC **takes inspiration from the momentum and potential energy** dance in physics? Well, in practice, it's like having a GPS for our parameter space, guiding us to new spots that are more likely than others.
 
-But here's the thing: **our parameter space isn't some smooth highway** we can cruise along endlessly. Nope, it's more like a rugged terrain full of twists and turns. So, how do we navigate this bumpy ride? Enter the **leapfrog integration method**, the trusty minion of HMC.
-
-This method breaks down our journey **into bite-sized steps**, kind of like taking small hops across stepping stones in a river. **Each leap gets us closer to our destination**, all **while conserving the dynamics of the system**. It's like tiptoeing through the parameter space, making sure we don't miss a beat in our exploration.
+But here's the thing: **our parameter space isn't some smooth highway** we can cruise along endlessly. Nope, it's more like a rugged terrain full of twists and turns. So, how do we navigate this space? Enter the **leapfrog integration method**, the backbone of HMC.
 
 ### Leapfrog Integration
 
-So, leapfrog integration is basically this cool math trick we use in **Hamiltonian Monte Carlo** (HMC) to play out how a system moves over time using discrete steps, **so we don't have to compute every single** value along the way. This integration method also is advantageous by keeping the energy levels balanced — remember the Hamiltonian? — which is super important if you want your model to stay true to real-life systems.
+So, **leapfrog integration** is basically this cool math trick we use in HMC **to play out how a system moves over time** using discrete steps, **so we don't have to compute every single** value along the way. This integration method also is advantageous by not allowing energy leaks out of the system — remember the Hamiltonian? — which is super important if you don't want to get stuck in this statistical dimension mid exploration.
 
-Here’s how it works in HMC-lingo: we use leapfrog integration **to hop around the parameter space and grab samples from the posterior distribution**. It’s like following a recipe, but for finding the right settings for our model. The whole process goes like this:
+Here's how it works in HMC-lingo: we use leapfrog integration **to move around the parameter space in discrete steps** — rather than sliding through a continuum, and **grabbing samples from the posterior distribution**. The whole process goes like this:
 
-1. We give the **momentum** a little nudge by leveraging on the **gradient info**. The **gradient or slope** of the position we are in this parameter space ***determine by how much our momentum will change***. Like when we are in the top position in the swing — the potential energy then transfers to kinetic energy (aka. momentum).
+1. We give the **momentum** $p$ a little nudge by leveraging on the **gradient info** ($\nabla$). The **gradient or slope** of the position ($\nabla U(q)$) in this parameter space will **determine by how much our momentum will change**. Like when we are in the top position in the swing — the potential energy then transfers to kinetic energy (aka. momentum).
 2. We adjust the **position** (or parameters) based on the **momentum** boost.
 3. Then we **update the momentum** based on the gradient on that **new position**.
 4. We repeat the cycle for as many "jumps" we are doing, for each sample of the posterior we intend to draw.
 
-**Picture a frog hopping from one lily pad to another** — that’s where the name “leapfrog” comes from. It helps us **explore new spots** in the parameter space by **discretizing the motion** of this imaginary particle (or frog) by using Hamiltonian dynamics, using the slope information of the current position to gain/loss momentum and move to another position in the parameter space.
+**Picture a frog hopping from one lily pad to another** — that's where the name "leapfrog" comes from. It helps us **explore new spots** in the parameter space by **discretizing the motion** of this imaginary particle by using Hamiltonian dynamics, using the slope information ($\nabla U(q)$) of the current position $q$ to gain/loss momentum $p$ and move to another position $q$ in the parameter space.
 
 ![A frog jumping, with a fixed step size, from one point in the phase space into another.](frog-jumping.gif){width="100%"}
 
-We prefer leapfrogging over simpler methods like Euler’s method because it **keeps errors low**, both locally and globally. This stability is key, especially when we’re dealing with big, complicated systems. Plus, **it’s a champ at handling high-dimensional spaces**, where keeping energy in check is a must for the algorithm to shine.
+We prefer leapfrogging over simpler methods like Euler's method because it **keeps errors low**, both locally and globally. This stability is key, especially when we're dealing with big, complicated systems. Plus, **it's a champ at handling high-dimensional spaces**, where keeping energy in check is a must for the algorithm to converge.
 
 ### Tuning Those Hamiltonian Gears
 
@@ -359,9 +360,9 @@ Now, to get our HMC sampler purring like a kitten, we've got to **fine-tune a fe
 
 First up, we've got the **number of samples**. This determines how many times our sampler will take a peek at the parameter space before calling it a day.
 
-Next, we've got the **step size**. Imagine this as the stride length for our leapfrog integrator. Too short, and we'll be tiptoeing; too long, and we'll be taking giant leaps – neither of which gets us where we want to go. It's all about finding that sweet spot.
+Next, we've got the **step size** ($\epsilon$). Imagine this as the stride length for our leapfrog integrator. Too short, and we'll be tiptoeing; too long, and we'll be taking giant leaps – neither of which gets us where we want to go. It's all about finding that sweet spot.
 
-Then, there's the **number of steps for the leapfrog** to make. This is like deciding how many hops we'll take across those stepping stones in the river. Too few, and we risk missing key spots; too many, and we might tire ourselves out.
+Then, there's the **number of steps for the leapfrog** to make. Too few, and we risk missing key spots; too many, and we might tire ourselves out.
 
 Lastly, we need **an initial guess for the intercept and slope**. This is like dropping a pin on a map – it gives our sampler a starting point to begin its journey through the parameter space.
 
@@ -382,14 +383,13 @@ params_samples <- matrix(NA, nrow = num_samples, ncol = 2)
 
 Alright, let's fire up this Hamiltonian engine and get this party started. Here's the game plan:
 
-1. **Create a Loop:** We'll set up a loop to simulate our little particle zooming around the parameter space.
+1. **Create a Loop:** We'll set up a loop to simulate our little particle moving around the parameter space.
 2. **Integrate Its Motion:** Using our trusty leapfrog integrator, we'll keep track of how our particle moves.
 3. **Grab a Sample:** Once our particle has finished its dance, we'll grab a sample at its final position.
 4. **Accept or Reject:** We'll play a little game of accept or reject – if the new position looks promising, we'll keep it; if not, we'll stick with the old one. It's like Tinder for parameters.
 5. **Repeat:** We'll rinse and repeat this process until we've collected as many samples as we need.
 
-Now, **to kick things off**, we'll give our imaginary particle **a random speed and direction** to start with, and plop it down somewhere in the parameter space. This initial kick sets the stage for our parameter exploration.
-
+Now, **to kick things off**, we'll give our imaginary particle **a random speed and direction** to start with, and drop it down somewhere in the parameter space. This initial kick sets the stage for our parameter exploration, the rest is up to the physics.
 
 ```r
 for (i in 1:num_samples) {
@@ -404,21 +404,46 @@ for (i in 1:num_samples) {
   ...
 ```
 
-<aside>[†]{#note-1}: Here, I'm using the term "physical" to illustrate the concept of our particle moving through a probability space. But remember, in reality, we're talking about the parameter space, where each position represents a coefficient for a model parameter or any other parameter that we can represent in this way.</aside>
-
+<aside>Here, I'm using the concept of a particle moving through a probability space. But remember, in reality, we're talking about the parameter space, where each coefficient in a model parameter or any other parameter that we can represent in this way then becomes a coordinate — therefore, a position $q$, in this statistical space.</aside>
 
 ### Simulating the Particle's Motion
 
-Now that our imaginary particle is all geared up with an **initial momentum and position**, it's time to let it loose and see where it goes in this **parameter playground**. We know we're using Hamiltonian mechanics, but to make it computationally feasible, we're bringing in our trusty leapfrog integrator. This bad boy **discretizes the motion of our particle**, making it manageable to track its journey without breaking our computers.
+Now that our imaginary particle is all geared up with an **initial momentum and position**, it's time to let it loose and see where it goes in this **parameter playground**. We know we're using Hamiltonian mechanics, but to make it computationally feasible, we're bringing in our trusty leapfrog integrator. We've already seen that this bad boy **discretizes the motion of our particle**, making it manageable to track its journey without breaking our computers.
 
 ![Marble rolling over a surface. In a perfect world, we'd love to follow our particle smoothly gliding through the parameter space, but hey, computing that would take ages. So instead, we chunk its movement into smaller steps, kind of like a flipbook, to keep tabs on its position.](canica.gif){width="100%"}
 
 So, here's the lowdown on what our leapfrog integrator is up to:
 
 1. **Estimating the Slope:** We start off with an initial position and estimate the slope of the terrain at that point.
+
+$$
+\nabla U(q) = \frac{\partial U}{\partial q}
+$$
+
+<aside>Here, we calculate the gradient $\nabla$ with respect of the current position $q$</aside>
+
 2. **Adjusting Momentum:** This slope is like the potential energy, dictating whether our particle speeds up or slows down. So, we tweak the momentum accordingly based on this slope.
-3. **Taking a Step:** With this momentum tweak, we move the particle for a set distance, updating its position from the starting point.
+
+$$
+p \leftarrow p - \frac{\epsilon}{2} \cdot \nabla U(q)
+$$
+
+<aside>Then, we update the momentum $p$ with the gradient $\nabla U(q)$ by half step ($\frac{\epsilon}{2}$)</aside>
+
+3. **Taking a Step:** With this momentum tweak, we move the particle for a set distance $\epsilon$, updating its position from the starting point.
+
+$$
+q \leftarrow q - \epsilon \cdot p
+$$
+
 4. **Repeat:** Now that our particle has a new spot, we rinse and repeat – estimating the slope and adjusting momentum.
+
+$$
+p \leftarrow p - \frac{\epsilon}{2} \cdot \nabla U(q)
+$$
+
+<aside>Here, we update momentum $p$ by the other half step size on the new position $q$</aside>
+
 5. **Keep Going:** We keep this cycle going for as many steps as we want to simulate, tracking our particle's journey through the parameter space.
 
 ```r
@@ -630,7 +655,7 @@ So, let's take a moment to marvel at the marvels of Hamiltonian Monte Carlo (HMC
 
 #### Bridging Physics and Stats
 
-What makes HMC so darn fascinating is how it **borrows tools from physics to tackle the gnarly problems of statistics**. It's like watching two old pals team up to solve a mystery, each bringing their own unique skills to the table. With HMC, we're not just crunching numbers; we're **tapping into the underlying principles that govern the physical world**. I mean, seriously, it gives me goosebumps just thinking about it.
+What makes HMC so darn fascinating is how it **borrows tools from physics to tackle complex problems in statistics**. It's like watching two old pals team up to solve a mystery, each bringing their own unique skills to the table. With HMC, we're not just crunching numbers; we're **tapping into the underlying principles that govern the physical world**. I mean, seriously, it gives me goosebumps just thinking about it.
 
 #### Riding the Simulation Wave
 
@@ -640,4 +665,4 @@ But it's not just HMC that's shaking up the stats scene. Nope, the whole world o
 
 Now, here's the kicker: **understanding how HMC works isn't just some academic exercise**. Oh no, it's the key to unlocking the true power of Bayesian inference. Sure, **you can run your models without ever peeking under the hood**, but where's the fun in that? Knowing how HMC works gives you this intuitive grasp of what your model is up to, what might be tripping it up, and how to **steer it back on course** when things go sideways.
 
-So, here's to HMC, one of the **big algorithms of modern statistics**, blurring the lines between physics and stats, and paving the way for a brave new world of **simulation-based inference**. Cheers to the leapfrogging pioneers of Bayesian stats, charting new territories and uncovering hidden truths, *one simulated step at a time*.
+So, here's to HMC, one of the **big algorithms of modern statistics**, blurring the lines between physics and stats, and paving the way for a brave new world of **simulation-based inference**. Cheers to the leapfrogging pioneers of Bayesian stats, charting new territories and uncovering hidden truths, *sliding one simulated step at a time*.

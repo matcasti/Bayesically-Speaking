@@ -330,7 +330,7 @@ H(q, p) = K(p) + U(q)
 \]</span></p>
 <section id="wrapping-our-heads-around-the-math" class="level2">
 <h2 class="anchored" data-anchor-id="wrapping-our-heads-around-the-math">Wrapping Our Heads Around the Math</h2>
-<p>Okay, buckle up because <strong>Hamiltonian dynamics</strong> can be a real <strong>brain-buster</strong> — trust me, it took me a hot minute to wrap my head around it. But hey, I’ve got an analogy that might just make it click. Let’s revisit <strong>our swing scenario</strong>: picture a kid on a swing, right? <strong>The swing’s angle</strong> from the vertical (<span class="math inline">\(q\)</span>) tells us <strong>where the kid is</strong>, and <strong>how fast</strong> the swing’s moving <strong>is its momentum</strong> (<span class="math inline">\(p\)</span>).</p>
+<p>Okay, I know <strong>Hamiltonian dynamics</strong> can be a real <strong>brain-buster</strong> — trust me, it took me a hot minute to wrap my head around it. But hey, I’ve got an analogy that might just make it click. Let’s revisit <strong>our swing scenario</strong>: remember our picture of a kid on a swing, right? <strong>The swing’s angle</strong> from the vertical (<span class="math inline">\(q\)</span>) tells us <strong>where the kid is</strong>, and momentum (<span class="math inline">\(p\)</span>) is <strong>how fast</strong> the swing’s moving.</p>
 <p>Now, let’s break down those equations:</p>
 <p><span class="math display">\[
 \frac{{dq}}{{dt}} = \frac{{\partial H}}{{\partial p}}
@@ -340,14 +340,15 @@ H(q, p) = K(p) + U(q)
 <p><span class="math display">\[
 \frac{{dp}}{{dt}} = -\frac{{\partial H}}{{\partial q}}
 \]</span></p>
-<p>Now, this beauty tells us <strong>how momentum</strong> (<span class="math inline">\(p\)</span>) <strong>changes over time</strong>. It’s all about the energy game here — specifically, <strong>how the swing’s position</strong> (<span class="math inline">\(q\)</span>) <strong>affects its momentum</strong>. When the swing’s at the highest point, gravity’s pulling hardest, ready to send it zooming back down.</p>
+<p>Now, this beauty tells us <strong>how momentum</strong> (<span class="math inline">\(p\)</span>) <strong>changes over time</strong>. It’s all about the energy game here — specifically, <strong>how the swing’s position</strong> (<span class="math inline">\(q\)</span>) <strong>affects its momentum</strong>. When the swing’s at the highest point, gravity’s pulling hardest, ready to send him back down.</p>
 <p>So, picture this:</p>
 <ul>
-<li>The kid swings forward, angle (<span class="math inline">\(q\)</span>) going up, and momentum (<span class="math inline">\(p\)</span>) building until bam — top of the swing.</li>
-<li>At the top, the swing’s momentarily still, but gravity’s revving up to send it flying back down.</li>
-<li>Zoom! Back down it goes, picking up speed in the opposite direction.</li>
-<li>And all the while, the Hamiltonian (<span class="math inline">\(H\)</span>) is keeping tabs <strong>on the swing’s total energy</strong> — whether it’s zooming at the bottom (high kinetic energy) or pausing at the top (high potential energy).</li>
+<li>The kid swings forward, so the angle (<span class="math inline">\(q\)</span>) goes up thanks to the momentum (<span class="math inline">\(p\)</span>) building until bam — top of the swing.</li>
+<li>At the top, the swing’s momentarily still, but gravity’s pulling to send him flying back down — hence, he is accumulating potential energy.</li>
+<li>Zoom! Back down it goes, picking up speed in the opposite direction — and so, the potential energy is then transferred into kinetic energy.</li>
 </ul>
+<p>All the while, the Hamiltonian (<span class="math inline">\(H\)</span>) is keeping tabs <strong>on the swing’s total energy</strong> — whether it’s zooming at the bottom (high kinetic energy <span class="math inline">\(K(p)\)</span>, as a function of momentum <span class="math inline">\(p\)</span>) or pausing at the top (high potential energy <span class="math inline">\(U(q)\)</span>, as a function of position <span class="math inline">\(q\)</span>).</p>
+<p>This <strong>dance between kinetic and potential energy</strong> is what we care within <strong>Hamiltonian mechanics</strong>, and also what we mean when we refer to the <em>phase space</em>, which it’s nothing more than <strong>the relationship between position and momentum</strong>.</p>
 </section>
 <section id="visualizing-hamiltons-equations" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="visualizing-hamiltons-equations">Visualizing Hamilton’s Equations</h2>
@@ -355,7 +356,7 @@ H(q, p) = K(p) + U(q)
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
 <p><img src="oscillator.gif" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="margin-caption">Simple harmonic oscillator. Within this example we could expect that the potential energy <span class="math inline">\(U(q)\)</span> is the greatest at the bottom or top positions <span class="math inline">\(q\)</span>, primarely because is in these positions that the potential energy is greater, affecting in consequence the kinetic energy <span class="math inline">\(K(p)\)</span> of the mass attached at the bottom of the string.</figcaption>
+<figcaption class="margin-caption">Simple harmonic oscillator. Within this example we could expect that the potential energy <span class="math inline">\(U(q)\)</span> is the greatest at the bottom or top positions <span class="math inline">\(q\)</span>, primarely because is in these positions that the force exerted by the string is greater, affecting in consequence the kinetic energy <span class="math inline">\(K(p)\)</span> of the mass attached at the bottom of the string.</figcaption>
 </figure>
 </div>
 <p>Now, let’s get a little hands-on with some code. We’re gonna simulate <strong>a simple harmonic oscillator</strong> — you know, like that weight on a string — and <strong>watch how it moves through phase space</strong>.</p>
@@ -415,12 +416,12 @@ H(q, p) = K(p) + U(q)
 <ul>
 <li><code>U</code> is the <strong>potential energy</strong> function, kinda like how much energy’s stored in that spring, if you will.</li>
 <li><code>K</code> is the <strong>kinetic energy</strong> function, telling us how much energy’s tied up in the speed of the weight.</li>
-<li><code>dU_dq</code> is all about <strong>how the potential energy changes</strong> with the weight’s position, aka the force.</li>
-<li><code>b</code>? That’s just a fancy way of saying <strong>how much energy the system loses</strong> over time.</li>
+<li><code>dU_dq</code> is telling us about <strong>how the potential energy changes</strong> with the weight’s position, aka the force.</li>
+<li><code>b</code> is just a fancy way of saying <strong>how much energy the system loses</strong> over time.</li>
 <li><code>q</code> and <code>p</code> are the weight’s <strong>position</strong> and <strong>momentum</strong>, respectively.</li>
-<li><code>m</code>? That’s the <strong>weight’s mass</strong>, nothing fancy.</li>
+<li><code>m</code> is the <strong>weight’s mass</strong>, nothing fancy.</li>
 <li><code>dt</code> is the time step, and <code>num_steps</code>? Well, that’s just <strong>how long we’re gonna keep</strong> this simulation running.</li>
-<li>Oh, and that <strong>leapfrog integration</strong>? It’s like stepping through time, updating the momentum, then the position, and back again.</li>
+<li>Oh, and that <strong>leapfrog integration</strong>? It’s like stepping through time, updating the momentum, then the position, and back again — but don’t worry about it, we’ll see it shortly.</li>
 </ul>
 </aside>
 <div class="cell" data-layout-align="center">
@@ -445,10 +446,10 @@ H(q, p) = K(p) + U(q)
 </div>
 </div>
 <aside>
-Check out this funky <strong>phase space</strong> trajectory <strong>of a simple harmonic oscillator</strong>! At the furthest points, it’s all about <strong>potential energy</strong> — that’s what’s driving the oscillator back and forth. But in the middle? That’s where the <strong>kinetic energy’s</strong> taking over, keeping things moving.
+Check out this funky <strong>phase space</strong> trajectory <strong>of a simple harmonic oscillator</strong>! At the furthest points, the <strong>potential energy</strong> is the highest — that’s what’s driving the oscillator back and forth. But in the middle? That’s where the <strong>kinetic energy’s</strong> taking over, keeping things moving — like our example of a kid on a swing!
 </aside>
-<p>Now, take a look at that graphic. See how the <strong>position</strong> (<span class="math inline">\(q\)</span>) is all about <strong>where the oscillator’s</strong> hanging out, and <strong>momentum</strong> (<span class="math inline">\(p\)</span>)? Well, that’s just <strong>how fast the weight’s swinging</strong>. Put them together, and you’ve got what we call the <em>phase space</em> — basically, it’s like peeking into the dance floor of these mechanical systems.</p>
-<p>Now, in a perfect world, there’d be <strong>no energy lost over time</strong>. But hey, we like to keep it real, so we added a little something called <strong>damping</strong> — think of it <strong>like energy leaking out over time</strong>. In the real world, that makes sense, but <strong>in our statistical playground, we want to keep that energy</strong> locked in tight. After all, losing energy means we’re losing precious info about our target distribution, and nobody wants that.</p>
+<p>Now, take a look at that graphic. See how the <strong>position</strong> (<span class="math inline">\(q\)</span>) is all about <strong>where the oscillator’s</strong> hanging out, and <strong>momentum</strong> (<span class="math inline">\(p\)</span>)? Well, that’s just <strong>how fast the weight’s swinging</strong>. Put them together, and you’ve got what we call the <em>phase space</em> — basically, it’s like peeking into the dance floor of these mechanical systems through the lenses of Hamiltonian dynamics.</p>
+<p>Now, in a perfect world, there’d be <strong>no energy lost over time</strong>. But hey, we like to keep it real, so we added a little something called <strong>damping effect</strong> — think of it <strong>like energy leaking out of the system over time</strong>. In the real world, that makes sense, but <strong>in our statistical playground, we want to keep that energy</strong> locked in tight. After all, losing energy means we’re losing precious info about our target distribution, and nobody wants that.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Code</summary>
@@ -475,18 +476,20 @@ Check out this funky <strong>phase space</strong> trajectory <strong>of a simple
 </div>
 </div>
 <aside>
-Check out the energy rollercoaster! This graph’s showing us how the <strong>total energy</strong> — made up of <strong>kinetic and potential energy</strong> — changes over time. And yep, that damping effect? It’s keeping things realistic, but in stats land, we’re all about conserving that energy for our exploration.
+Check out this energy rollercoaster! This graph’s showing us how the <strong>total energy</strong> — made up of <strong>kinetic and potential energy</strong> — changes over time. And yep, that damping effect? It’s keeping things realistic, but in stats land, we’re all about conserving that energy for our exploration.
 </aside>
-<p>So, what’s the big takeaway here? Well, whether it’s a <strong>ball rolling down a hill</strong> or a sampler hunting for <strong>model coefficients</strong>, this framework’s got us covered. In Bayesian land, think of <span class="math inline">\(q\)</span> <strong>as our model’s parameters</strong> and <span class="math inline">\(p\)</span> as an auxiliary term, helping us navigate the twists and turns of parameter space. And with Hamiltonian dynamics leading the way, we’re guaranteed to find our path through the distribution jungle, one efficient step at a time.</p>
+<p>So, what’s the big takeaway here? Well, whether it’s a <strong>ball rolling down a hill</strong> or a sampler hunting for <strong>model coefficients</strong>, this framework’s got us covered. In Bayesian land, think of <strong>our model’s parameters as position coordinates</strong> <span class="math inline">\(q\)</span> in some space, and <span class="math inline">\(p\)</span> is the momentum helping us navigate the twists and turns of this parameter space. And with Hamiltonian dynamics leading the way, we’re guaranteed to find our path through this statistical dimension, one step at a time.</p>
 </section>
 </section>
 <section id="building-our-own-hamiltonian-monte-carlo" class="level1 page-columns page-full">
 <h1>Building our own Hamiltonian Monte Carlo</h1>
-<p>Imagine we’re diving into some data to figure out <strong>how an independent variable</strong> (<span class="math inline">\(x\)</span>) <strong>and a dependent variable</strong> (<span class="math inline">\(y\)</span>) are cozying up together. We’re talking about <strong>linear regression</strong> — you know, trying to draw a line through those scattered data points to make sense of it all. But hey, <strong>this is Bayesian territory</strong>, so we’re not just throwing any ol’ line on that plot. No, siree! We’re sprinkling some prior distributions on those regression coefficients — that’s the slope and intercept — to give ’em a bit of personality before the data even shows up. Then, when the data rolls in, we’re smashing together that likelihood and those priors <strong>using Bayes’ theorem</strong> to cook up a posterior distribution — <strong>a fancy way of saying</strong> our updated beliefs <strong>about those coefficients</strong> after we’ve seen the data.</p>
-<section id="cooking-up-some-data" class="level2">
+<p>Now that we got some intuition about Hamiltonian mechanics, it’s time we build our own HMC sampler. To accomplish this, imagine that we’re diving into some data to figure out <strong>how an independent variable</strong> (<span class="math inline">\(x\)</span>) <strong>and a dependent variable</strong> (<span class="math inline">\(y\)</span>) are related. We’re talking about <strong>linear regression</strong> — you know, trying to draw a line through those scattered data points to make sense of it all. But hey, <strong>this is Bayesian territory</strong>, so we’re not just throwing any ol’ line on that plot. No, sir! We’re exploring the parameter space of those regression coefficients — that’s the slope and intercept. Then, when the data rolls in, we’re smashing together that likelihood and those priors <strong>using Bayes’ theorem</strong> to cook up a posterior distribution — <strong>a fancy way of saying</strong> our updated beliefs <strong>about those coefficients</strong> after we’ve seen the data.</p>
+<section id="cooking-up-some-data" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="cooking-up-some-data">Cooking Up Some Data</h2>
 <p>But before we dive into the statistical kitchen, <strong>let’s whip up some synthetic data</strong>. Picture this: we’re mimicking a real-world scenario where relationships between variables are as murky as a foggy morning. So, we’re gonna <strong>conjure up a batch of data</strong> with a simple linear relationship, jazzed up with a sprinkle of noise. Oh, and <strong>let’s keep it small</strong> — just 20 subjects, ’cause, hey, <strong>science “loves” a manageable sample size</strong>.</p>
-<p><side>Emphasis on double quotes on “loves”.</side></p>
+<aside>
+Emphasis on double quotes on “loves”.
+</aside>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">80</span>) <span class="co"># Set seed for reproducibility</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -494,7 +497,7 @@ Check out the energy rollercoaster! This graph’s showing us how the <strong>to
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="at">length.out =</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Okay, so now let’s get down to business and fit ourselves a nice, cozy <strong>linear relationship</strong> between an independent variable (<span class="math inline">\(x\)</span>) and a dependent variable (<span class="math inline">\(y\)</span>). We’re talking about laying down <strong>a straight line</strong> that best describes how <span class="math inline">\(y\)</span> changes with <span class="math inline">\(x\)</span>. It’s like <strong>finding the perfect angle</strong> for that incline on your backyard slide!</p>
+<p>Okay, so now let’s get down to business and fit ourselves a nice, cozy <strong>linear relationship</strong> between an independent variable (<span class="math inline">\(x\)</span>) and a dependent variable (<span class="math inline">\(y\)</span>). We’re talking about laying down <strong>a straight line</strong> that best describes how <span class="math inline">\(y\)</span> changes with <span class="math inline">\(x\)</span>.</p>
 <p>So, what’s our equation look like? Well, it’s pretty simple:</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -510,7 +513,7 @@ y_i &amp;\sim \mathcal{N}(\mu_i, \sigma^2) \\
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>true_slope <span class="ot">&lt;-</span> <span class="dv">3</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="dv">5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>With our model all set up, <strong>it’s time to create some data points</strong> for our <span class="math inline">\(y\)</span> variable. We’ll do this using the trusty <code>rnorm</code> function, which is like a magical data generator for <strong>normally distributed variables</strong>.</p>
+<p>With our model all set up, <strong>it’s time to create some data points</strong> for our <span class="math inline">\(y\)</span> variable. We’ll do this using the <code>rnorm()</code> function, which is like a magical data generator for <strong>normally distributed variables</strong>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the dependent variable 'y' with noise</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mu_i <span class="ot">=</span> true_intercept <span class="sc">+</span> true_slope <span class="sc">*</span> x</span>
@@ -547,8 +550,8 @@ y_i &amp;\sim \mathcal{N}(\mu_i, \sigma^2) \\
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="dv">0</span>) </span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now, here’s where the real magic kicks in. <strong>We bring our likelihood and priors together</strong> in a beautiful dance to reveal the superstar of Bayesian statistics — <strong>the posterior distribution!</strong> This bad boy tells us everything we wanna know <strong>after we’ve taken the data into account</strong>. It’s like combining your detective skills with a crystal ball to see into the future.</p>
-<p>We represent this posterior as the following:</p>
+<p>Now, here’s where the real magic kicks in. <strong>We bring our likelihood and priors together</strong> in a beautiful dance to reveal the superstar of Bayesian statistics — <strong>the posterior distribution!</strong> This bad boy tells us everything we wanna know <strong>after we’ve taken the data into account</strong>. This allow us to take into account previous knowledge — like past research, and the observed data — let’s say, samples from a new experiment.</p>
+<p>The posterior it’s nothing more than the <strong>probability associated with our parameters</strong> of interest (aka. the slope and intercept), <strong>given the observed data</strong>. We represent this posterior distribution as the following:</p>
 <p><span class="math display">\[
 P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 \]</span></p>
@@ -565,34 +568,33 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 </section>
 <section id="building-the-hmc-sampler" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="building-the-hmc-sampler">Building the HMC sampler</h2>
-<p>Alright, let’s dig into the guts of HMC and how we put it to work. Remember how HMC <strong>takes inspiration from the momentum and potential energy</strong> dance in physics? Well, in practice, it’s like having a GPS for our parameter space, guiding us to new spots that are likely to be winners in the exploration game.</p>
-<p>But here’s the thing: <strong>our parameter space isn’t some smooth highway</strong> we can cruise along endlessly. Nope, it’s more like a rugged terrain full of twists and turns. So, how do we navigate this bumpy ride? Enter the <strong>leapfrog integration method</strong>, the trusty minion of HMC.</p>
-<p>This method breaks down our journey <strong>into bite-sized steps</strong>, kind of like taking small hops across stepping stones in a river. <strong>Each leap gets us closer to our destination</strong>, all <strong>while conserving the dynamics of the system</strong>. It’s like tiptoeing through the parameter space, making sure we don’t miss a beat in our exploration.</p>
+<p>Alright, now that we have everything ready, let’s dig into the guts of HMC and how we put it to work. Remember how HMC <strong>takes inspiration from the momentum and potential energy</strong> dance in physics? Well, in practice, it’s like having a GPS for our parameter space, guiding us to new spots that are more likely than others.</p>
+<p>But here’s the thing: <strong>our parameter space isn’t some smooth highway</strong> we can cruise along endlessly. Nope, it’s more like a rugged terrain full of twists and turns. So, how do we navigate this space? Enter the <strong>leapfrog integration method</strong>, the backbone of HMC.</p>
 <section id="leapfrog-integration" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="leapfrog-integration">Leapfrog Integration</h3>
-<p>So, leapfrog integration is basically this cool math trick we use in <strong>Hamiltonian Monte Carlo</strong> (HMC) to play out how a system moves over time using discrete steps, <strong>so we don’t have to compute every single</strong> value along the way. This integration method also is advantageous by keeping the energy levels balanced — remember the Hamiltonian? — which is super important if you want your model to stay true to real-life systems.</p>
-<p>Here’s how it works in HMC-lingo: we use leapfrog integration <strong>to hop around the parameter space and grab samples from the posterior distribution</strong>. It’s like following a recipe, but for finding the right settings for our model. The whole process goes like this:</p>
+<p>So, <strong>leapfrog integration</strong> is basically this cool math trick we use in HMC <strong>to play out how a system moves over time</strong> using discrete steps, <strong>so we don’t have to compute every single</strong> value along the way. This integration method also is advantageous by not allowing energy leaks out of the system — remember the Hamiltonian? — which is super important if you don’t want to get stuck in this statistical dimension mid exploration.</p>
+<p>Here’s how it works in HMC-lingo: we use leapfrog integration <strong>to move around the parameter space in discrete steps</strong> — rather than sliding through a continuum, and <strong>grabbing samples from the posterior distribution</strong>. The whole process goes like this:</p>
 <ol type="1">
-<li>We give the <strong>momentum</strong> a little nudge by leveraging on the <strong>gradient info</strong>. The <strong>gradient or slope</strong> of the position we are in this parameter space <strong><em>determine by how much our momentum will change</em></strong>. Like when we are in the top position in the swing — the potential energy then transfers to kinetic energy (aka. momentum).</li>
+<li>We give the <strong>momentum</strong> <span class="math inline">\(p\)</span> a little nudge by leveraging on the <strong>gradient info</strong> (<span class="math inline">\(\nabla\)</span>). The <strong>gradient or slope</strong> of the position (<span class="math inline">\(\nabla U(q)\)</span>) in this parameter space will <strong>determine by how much our momentum will change</strong>. Like when we are in the top position in the swing — the potential energy then transfers to kinetic energy (aka. momentum).</li>
 <li>We adjust the <strong>position</strong> (or parameters) based on the <strong>momentum</strong> boost.</li>
 <li>Then we <strong>update the momentum</strong> based on the gradient on that <strong>new position</strong>.</li>
 <li>We repeat the cycle for as many “jumps” we are doing, for each sample of the posterior we intend to draw.</li>
 </ol>
-<p><strong>Picture a frog hopping from one lily pad to another</strong> — that’s where the name “leapfrog” comes from. It helps us <strong>explore new spots</strong> in the parameter space by <strong>discretizing the motion</strong> of this imaginary particle (or frog) by using Hamiltonian dynamics, using the slope information of the current position to gain/loss momentum and move to another position in the parameter space.</p>
+<p><strong>Picture a frog hopping from one lily pad to another</strong> — that’s where the name “leapfrog” comes from. It helps us <strong>explore new spots</strong> in the parameter space by <strong>discretizing the motion</strong> of this imaginary particle by using Hamiltonian dynamics, using the slope information (<span class="math inline">\(\nabla U(q)\)</span>) of the current position <span class="math inline">\(q\)</span> to gain/loss momentum <span class="math inline">\(p\)</span> and move to another position <span class="math inline">\(q\)</span> in the parameter space.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
 <p><img src="frog-jumping.gif" class="img-fluid figure-img" style="width:100.0%"></p>
 <figcaption class="margin-caption">A frog jumping, with a fixed step size, from one point in the phase space into another.</figcaption>
 </figure>
 </div>
-<p>We prefer leapfrogging over simpler methods like Euler’s method because it <strong>keeps errors low</strong>, both locally and globally. This stability is key, especially when we’re dealing with big, complicated systems. Plus, <strong>it’s a champ at handling high-dimensional spaces</strong>, where keeping energy in check is a must for the algorithm to shine.</p>
+<p>We prefer leapfrogging over simpler methods like Euler’s method because it <strong>keeps errors low</strong>, both locally and globally. This stability is key, especially when we’re dealing with big, complicated systems. Plus, <strong>it’s a champ at handling high-dimensional spaces</strong>, where keeping energy in check is a must for the algorithm to converge.</p>
 </section>
 <section id="tuning-those-hamiltonian-gears" class="level3">
 <h3 class="anchored" data-anchor-id="tuning-those-hamiltonian-gears">Tuning Those Hamiltonian Gears</h3>
 <p>Now, to get our HMC sampler purring like a kitten, we’ve got to <strong>fine-tune a few gears</strong>. Think of these as the knobs and dials on your favorite sound system – adjust them just right, and you’ll be <strong>grooving to the perfect beat</strong>.</p>
 <p>First up, we’ve got the <strong>number of samples</strong>. This determines how many times our sampler will take a peek at the parameter space before calling it a day.</p>
-<p>Next, we’ve got the <strong>step size</strong>. Imagine this as the stride length for our leapfrog integrator. Too short, and we’ll be tiptoeing; too long, and we’ll be taking giant leaps – neither of which gets us where we want to go. It’s all about finding that sweet spot.</p>
-<p>Then, there’s the <strong>number of steps for the leapfrog</strong> to make. This is like deciding how many hops we’ll take across those stepping stones in the river. Too few, and we risk missing key spots; too many, and we might tire ourselves out.</p>
+<p>Next, we’ve got the <strong>step size</strong> (<span class="math inline">\(\epsilon\)</span>). Imagine this as the stride length for our leapfrog integrator. Too short, and we’ll be tiptoeing; too long, and we’ll be taking giant leaps – neither of which gets us where we want to go. It’s all about finding that sweet spot.</p>
+<p>Then, there’s the <strong>number of steps for the leapfrog</strong> to make. Too few, and we risk missing key spots; too many, and we might tire ourselves out.</p>
 <p>Lastly, we need <strong>an initial guess for the intercept and slope</strong>. This is like dropping a pin on a map – it gives our sampler a starting point to begin its journey through the parameter space.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialization of the sampler</span></span>
@@ -610,13 +612,13 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 <h3 class="anchored" data-anchor-id="starting-the-sampler">Starting the Sampler</h3>
 <p>Alright, let’s fire up this Hamiltonian engine and get this party started. Here’s the game plan:</p>
 <ol type="1">
-<li><strong>Create a Loop:</strong> We’ll set up a loop to simulate our little particle zooming around the parameter space.</li>
+<li><strong>Create a Loop:</strong> We’ll set up a loop to simulate our little particle moving around the parameter space.</li>
 <li><strong>Integrate Its Motion:</strong> Using our trusty leapfrog integrator, we’ll keep track of how our particle moves.</li>
 <li><strong>Grab a Sample:</strong> Once our particle has finished its dance, we’ll grab a sample at its final position.</li>
 <li><strong>Accept or Reject:</strong> We’ll play a little game of accept or reject – if the new position looks promising, we’ll keep it; if not, we’ll stick with the old one. It’s like Tinder for parameters.</li>
 <li><strong>Repeat:</strong> We’ll rinse and repeat this process until we’ve collected as many samples as we need.</li>
 </ol>
-<p>Now, <strong>to kick things off</strong>, we’ll give our imaginary particle <strong>a random speed and direction</strong> to start with, and plop it down somewhere in the parameter space. This initial kick sets the stage for our parameter exploration.</p>
+<p>Now, <strong>to kick things off</strong>, we’ll give our imaginary particle <strong>a random speed and direction</strong> to start with, and drop it down somewhere in the parameter space. This initial kick sets the stage for our parameter exploration, the rest is up to the physics.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_samples) {</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Start with a random momentum of the particle</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  momentum_current <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">2</span>)</span>
@@ -628,12 +630,12 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># leapfrog integration.</span></span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <aside>
-<span id="note-1">†</span>: Here, I’m using the term “physical” to illustrate the concept of our particle moving through a probability space. But remember, in reality, we’re talking about the parameter space, where each position represents a coefficient for a model parameter or any other parameter that we can represent in this way.
+Here, I’m using the concept of a particle moving through a probability space. But remember, in reality, we’re talking about the parameter space, where each coefficient in a model parameter or any other parameter that we can represent in this way then becomes a coordinate — therefore, a position <span class="math inline">\(q\)</span>, in this statistical space.
 </aside>
 </section>
 <section id="simulating-the-particles-motion" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="simulating-the-particles-motion">Simulating the Particle’s Motion</h3>
-<p>Now that our imaginary particle is all geared up with an <strong>initial momentum and position</strong>, it’s time to let it loose and see where it goes in this <strong>parameter playground</strong>. We know we’re using Hamiltonian mechanics, but to make it computationally feasible, we’re bringing in our trusty leapfrog integrator. This bad boy <strong>discretizes the motion of our particle</strong>, making it manageable to track its journey without breaking our computers.</p>
+<p>Now that our imaginary particle is all geared up with an <strong>initial momentum and position</strong>, it’s time to let it loose and see where it goes in this <strong>parameter playground</strong>. We know we’re using Hamiltonian mechanics, but to make it computationally feasible, we’re bringing in our trusty leapfrog integrator. We’ve already seen that this bad boy <strong>discretizes the motion of our particle</strong>, making it manageable to track its journey without breaking our computers.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
 <p><img src="canica.gif" class="img-fluid figure-img" style="width:100.0%"></p>
@@ -643,9 +645,38 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 <p>So, here’s the lowdown on what our leapfrog integrator is up to:</p>
 <ol type="1">
 <li><strong>Estimating the Slope:</strong> We start off with an initial position and estimate the slope of the terrain at that point.</li>
+</ol>
+<p><span class="math display">\[
+\nabla U(q) = \frac{\partial U}{\partial q}
+\]</span></p>
+<aside>
+Here, we calculate the gradient <span class="math inline">\(\nabla\)</span> with respect of the current position <span class="math inline">\(q\)</span>
+</aside>
+<ol start="2" type="1">
 <li><strong>Adjusting Momentum:</strong> This slope is like the potential energy, dictating whether our particle speeds up or slows down. So, we tweak the momentum accordingly based on this slope.</li>
-<li><strong>Taking a Step:</strong> With this momentum tweak, we move the particle for a set distance, updating its position from the starting point.</li>
+</ol>
+<p><span class="math display">\[
+p \leftarrow p - \frac{\epsilon}{2} \cdot \nabla U(q)
+\]</span></p>
+<aside>
+Then, we update the momentum <span class="math inline">\(p\)</span> with the gradient <span class="math inline">\(\nabla U(q)\)</span> by half step (<span class="math inline">\(\frac{\epsilon}{2}\)</span>)
+</aside>
+<ol start="3" type="1">
+<li><strong>Taking a Step:</strong> With this momentum tweak, we move the particle for a set distance <span class="math inline">\(\epsilon\)</span>, updating its position from the starting point.</li>
+</ol>
+<p><span class="math display">\[
+q \leftarrow q - \epsilon \cdot p
+\]</span></p>
+<ol start="4" type="1">
 <li><strong>Repeat:</strong> Now that our particle has a new spot, we rinse and repeat – estimating the slope and adjusting momentum.</li>
+</ol>
+<p><span class="math display">\[
+p \leftarrow p - \frac{\epsilon}{2} \cdot \nabla U(q)
+\]</span></p>
+<aside>
+Here, we update momentum <span class="math inline">\(p\)</span> by the other half step size on the new position <span class="math inline">\(q\)</span>
+</aside>
+<ol start="5" type="1">
 <li><strong>Keep Going:</strong> We keep this cycle going for as many steps as we want to simulate, tracking our particle’s journey through the parameter space.</li>
 </ol>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_steps) {</span>
@@ -851,7 +882,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <p>So, let’s take a moment to marvel at the marvels of Hamiltonian Monte Carlo (HMC). It’s not every day you see <strong>physics rubbing shoulders with statistics</strong>, but here we are, with HMC straddling both worlds like a boss.</p>
 <section id="bridging-physics-and-stats" class="level4">
 <h4 class="anchored" data-anchor-id="bridging-physics-and-stats">Bridging Physics and Stats</h4>
-<p>What makes HMC so darn fascinating is how it <strong>borrows tools from physics to tackle the gnarly problems of statistics</strong>. It’s like watching two old pals team up to solve a mystery, each bringing their own unique skills to the table. With HMC, we’re not just crunching numbers; we’re <strong>tapping into the underlying principles that govern the physical world</strong>. I mean, seriously, it gives me goosebumps just thinking about it.</p>
+<p>What makes HMC so darn fascinating is how it <strong>borrows tools from physics to tackle complex problems in statistics</strong>. It’s like watching two old pals team up to solve a mystery, each bringing their own unique skills to the table. With HMC, we’re not just crunching numbers; we’re <strong>tapping into the underlying principles that govern the physical world</strong>. I mean, seriously, it gives me goosebumps just thinking about it.</p>
 </section>
 <section id="riding-the-simulation-wave" class="level4">
 <h4 class="anchored" data-anchor-id="riding-the-simulation-wave">Riding the Simulation Wave</h4>
@@ -860,7 +891,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <section id="unraveling-the-mystery" class="level4">
 <h4 class="anchored" data-anchor-id="unraveling-the-mystery">Unraveling the Mystery</h4>
 <p>Now, here’s the kicker: <strong>understanding how HMC works isn’t just some academic exercise</strong>. Oh no, it’s the key to unlocking the true power of Bayesian inference. Sure, <strong>you can run your models without ever peeking under the hood</strong>, but where’s the fun in that? Knowing how HMC works gives you this intuitive grasp of what your model is up to, what might be tripping it up, and how to <strong>steer it back on course</strong> when things go sideways.</p>
-<p>So, here’s to HMC, one of the <strong>big algorithms of modern statistics</strong>, blurring the lines between physics and stats, and paving the way for a brave new world of <strong>simulation-based inference</strong>. Cheers to the leapfrogging pioneers of Bayesian stats, charting new territories and uncovering hidden truths, <em>one simulated step at a time</em>.</p>
+<p>So, here’s to HMC, one of the <strong>big algorithms of modern statistics</strong>, blurring the lines between physics and stats, and paving the way for a brave new world of <strong>simulation-based inference</strong>. Cheers to the leapfrogging pioneers of Bayesian stats, charting new territories and uncovering hidden truths, <em>sliding one simulated step at a time</em>.</p>
 
 
 </section>
