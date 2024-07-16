@@ -88,6 +88,27 @@ In the following section, I provide a concise summary of my research undertaking
 :::
 
 :::{.g-col-6 .g-col-md-4}
+The High Sensitivity of Sensory Processing and its relationship with postural balance in older people. *Retos*. 
+
+<span class="badge bg-primary">Original research</span>
+
+[Leyla Huirimilla Casanova, Jonathan Henrriquez Luhr, [Matías Castillo-Aguilar]{.text-body}, Antonio Chacón, Manuela Perez-Chacón, Katherine Harris King
+, Alexies Dagnino-Subiabre, Eduardo Guzmán-Muñoz & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
+
+<a class="btn btn-outline-primary" href="http://dx.doi.org/10.47197/retos.v58.106788">Full-text {{< fa link >}}</a>
+:::
+
+:::{.g-col-6 .g-col-md-4}
+Anthropometric analysis and body composition in women rugby seven players training athigh southern latitudes: comparison by playing position (backs vs. forwards). *Journal of Movement and Health*. 
+
+<span class="badge bg-primary">Original research</span>
+
+[Marcelo Andrade, Rodrigo Valdés Carrion, [Matías Castillo-Aguilar]{.text-body} & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
+
+<a class="btn btn-outline-primary" href="https://www.researchgate.net/publication/381957157_Analisis_antropometrico_y_composicion_corporal_en_jugadoras_de_rugby_seven_que_entrenan_en_latitudes_altas_del_sur_descripcion_y_comparacion_segun_la_posicion_en_el_campo_backs_vs_forwards">Full-text {{< fa link >}}</a>
+:::
+
+:::{.g-col-6 .g-col-md-4}
 Frailty, Seasonal Sensitivity and Health-related Quality of Life in Older People Living in High Southern Latitudes: a Bayesian Analysis. *Canadian Geriatrics Journal*. 
 
 <span class="badge bg-primary">Original research</span>

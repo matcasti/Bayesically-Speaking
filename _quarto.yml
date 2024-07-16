@@ -16,6 +16,8 @@ website:
     right:
       - text: "Blog"
         href: blog.qmd
+      - text: "Services"
+        href: services.qmd
       - text: "About"
         href: about.qmd
       - text: "CV"

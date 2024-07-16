@@ -36,8 +36,3 @@ canvas{
     background-attachment: inherit;
   }
 }
-
-/* ---- General toc behaviour ---- */ 
-.zindex-over-content{
-  display: none;
-}
