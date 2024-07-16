@@ -36,10 +36,7 @@ title-block-banner: false
 
 If you are curious about how to use data and probability to understand and visualize real world problems, you have come to the right place. 
 
-<div class="grid">
-<div class="g-col-12 g-col-sm-6"><a class="btn btn-outline-light" href="about.html">{{< fa circle-info >}} About</a></div>
-<div class="g-col-12 g-col-sm-6"><a class="btn btn-outline-light" href="cv.html">{{< fa suitcase >}} Related work</a></div>
-</div>
+<a class="btn btn-outline-light" href="about.html">{{< fa circle-info >}} About</a> <a class="btn btn-outline-light" href="cv.html">{{< fa suitcase >}} Related work</a>
 :::
 
 :::
@@ -52,21 +49,29 @@ If you are curious about how to use data and probability to understand and visua
 
 # Latest posts
 
+<a class="btn btn-outline-primary" href="blog.html">{{< fa newspaper >}} See all posts</a>
+
 <div id="sample-listings"></div>
 
 <br>
 
-<!--- 
 
-:::{.parallax style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(images/home_parallax-2.jpeg); min-height: 500px;"}
-:::{.column-page .text-light .py-5}
-# Plots and Visualizations
 
-Coming soon!
+:::{.parallax style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(images/business.jpeg); min-height: 500px;"}
+
+:::{.grid .column-page .text-light .my-auto .py-5}
+
+:::{.g-col-12 .g-col-sm-7 .g-start-sm-4}
+# Need asistance with your analyses?
+
+Whether you need assistance performing complex statistical analysis for your project or simply need help wrapping your head around some statistics concepts, our team is ready to assist you.
+
+<a class="btn btn-outline-light" href="services.html">{{< fa suitcase >}} Check our services</a> <a class="btn btn-outline-light" href="mailto:mca.datasolutions@gmail.com">{{< fa envelope >}} Contact us</a>
 :::
 :::
+:::
 
-### --->
+
 
 <script src="libs/particles.js"></script> 
 <script src="libs/app.js"></script> 
