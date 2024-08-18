@@ -1,0 +1,276 @@
+---
+title: "Non-linear models: Pharmacokinetics and Indomethacin"
+description: |
+  Here we dive in the process of making a non-linear model to predict the decay of plasma levels of an anti-inflammatory drug, and compare frequentist and bayesian methods.
+date: "2024-08-20"
+fig-format: svg
+fig-width: 12
+fig-responsive: true
+fig-asp: .5
+# doi: "doi aca"
+categories: [non-linear]
+bibliography: ref.bib
+title-block-banner: title-block.jpeg
+image: body_1.webp
+# resources: 
+#   - null
+---
+
+```{r}
+#| include: false
+library(ggplot2)
+library(data.table)
+library(nlme)
+library(brms)
+
+theme_set(new = theme_classic(base_size = 20))
+```
+
+# Introduction
+
+Let's be honest, being a statistician or a scientist isn't just about crunching numbers all day. It's more like being a detective, a problem solver, and yeah, throwing in some math for good measure. When we get into non-linear models, things really start to get interesting. We're not just drawing straight lines anymore; we're wrestling with curves, untangling complicated relationships, and trying to figure out what's really going on behind the scenes.
+
+Take pharmacokinetics, for example. Sounds fancy, right? But at the core, it's just about what happens to a drug inside the body, and for us, that's where the real statistical fun begins. Predicting how a drug's concentration changes in the bloodstream over time isn't just about plotting some points and calling it a day. It's about understanding how the data dances with biology, and then figuring out the best way to describe that dance. And let's not forget the little thrill of choosing your weapon: Frequentist or Bayesian? It's like deciding between coffee or mate (and let's be real, I'm down for both). Each one has its perks, but the choice depends on the situation—and maybe how you're feeling that day.
+
+In this post, we're going to roll up our sleeves and dig into building a non-linear model to predict how something—let's say, a drug disappears from the bloodstream. But we're not stopping there. Nope, we're also going to throw in a showdown between two big players: the frequentist and Bayesian methods. Think of it like a friendly face-off between two old rivals, each with its own style, strengths, and die-hard fans.
+
+But here's the thing: this isn't just about which method wins on paper. It's about the real-life, day-to-day grind of working with data. It's about those moments when you're staring at your screen, trying to make sense of a stubborn parameter that just won't cooperate. It's about knowing when to trust the numbers and when to rely on your gut, your experience, and maybe even a bit of luck.
+
+So whether you're a seasoned pro who's been around the block or someone just dipping their toes into the world of applied stats, this post is for you. We're going to dive in, compare, and yeah, maybe even have a little fun along the way. Because in the world of science and stats, the journey is half the adventure.
+
+# A drug example
+
+Traditionally, when using frequentist tools for inference, we often focus on estimating a single effect of interest. For example, let's consider estimating the plasma concentrations of the anti-inflammatory drug indomethacin over several hours. We observe the following behavior
+
+```{r}
+#| message: false
+data(Indometh)
+ggplot(Indometh, aes(time, conc, col = Subject)) +
+  labs(y = "Plasma levels (mcg/ml)", x = "Time (hours)") +
+  geom_point(cex = 3) +
+  geom_smooth(se = FALSE, linewidth = 1)
+```
+
+Even though this is clearly a non-linear problem, just for the sake of learning and illustrating how would it look, we'll fit a simple linear model to the data. For this, even though is a simple linear model, we still need to specify the model we are fitting to understand what the model is implying about the relationship:
+
+$$
+\begin{aligned}
+y_i &\sim \mathcal{N}(\mu_i, \sigma) \\
+\mu_i &= \beta_0 + \beta_1 \cdot time_i
+\end{aligned}
+$$
+
+This is a the standard linear model, in which we are assuming that for each observation $i$, indomethacin plasma levels $y_i$ comes from a normal distribution with mean $\mu_i$, and standard deviation $\sigma$. Additionally, the intercept $\beta_0$ indicates the plasma levels when time is zero. The $\beta_1$ coefficient indicates the slope at which the pass of time changes the plasma levels in indomethacin, assuming the change is linear and constant through time (which by the previous plot, we can assure is not linear). 
+
+All models can replicate in some approximate manner the data generation process by which we observe many phenomena in real world scenarios. This is a good thing about writing down your models in equations; it becomes clear what the data generation process is, whether is correct or not.
+
+In addition, we need to be very thoughtful about the not-so-obvious implications of a model when trying to force the data to fit the model. That's why we should always think to fit our models to the data and not the data to the models. But, of course, that is harder given that it require of us to think harder about the problems we are intending to solve, instead to only reporting significant results in order to publish.
+
+One thing that you might noted from the previous model notation, is that we have a $\mu$ for each observation but only one $\sigma$ for the whole $y_i$. This implies that the dispersion must be equal for all expected plasma levels $\mu_i$, which it could be more or less realistic depending of type the problem you are working with.
+
+Let's look to the fit of the linear model:
+
+```{r}
+lm_freq <- lm(conc ~ 1 + time, data = Indometh)
+
+summary(lm_freq)
+```
+
+This linear model is telling us that the baseline plasma levels of indomethacin at time 0 ($\beta_0$) is 1.12 mcg/ml, which not seems very realistic, specially given that initially, most of the subjects had from 1.6 to 2.4 mcg/ml. The slope for time ($\beta_1$) indicates that for every additional hour, there is a linear decrease in 0.18 mcg/ml in plasma levels of the drug. Let's see how it looks when we try to fit the model to the original data:
+
+```{r}
+lm_predict <- do.call(cbind, predict(lm_freq, se.fit = TRUE,))
+
+ggplot(cbind(Indometh, lm_predict), aes(time, conc)) +
+  facet_wrap(~ Subject) +
+  labs(y = "Plasma levels (mcg/ml)", x = "Time (hours)") +
+  geom_point(aes(col = Subject), cex = 3) +
+  geom_line(aes(y = fit, col = Subject), linewidth = 1) +
+  geom_ribbon(aes(ymin = fit + se.fit * qnorm(0.025), 
+                  ymax = fit + se.fit * qnorm(0.975), 
+                  fill = Subject), alpha = .3)
+```
+
+Clearly, our linear model is not doing a good job capturing the non-linear nature of our data (as expected). Up next, we'll try some non-linear modeling using a more thoughtful approach.
+
+## Designing a solution
+
+It appears that the concentration of indomethacin decreases according to an inverse exponential function of time. We can model this relationship with:
+
+$$
+\begin{aligned}
+y_i &\sim \mathcal{N}(\mu_i, \sigma) \\
+\mu_i &= \alpha + \beta \cdot \exp(\lambda \cdot time_i)
+\end{aligned}
+$$
+
+In this model, $\lambda$ represents the rate of decay in the plasma concentration of indomethacin ($y_i$), starting from a baseline concentration ($\beta$). The term $\alpha$ estimates the minimum plasma concentration level over the observed time frame. We assume that the variance is constant across expected indomethacin plasma concentrations ($\mu$) for each subject ($i$).
+
+However, given that we have repeated measurements from multiple individuals, we need to account for variability in the initial plasma concentrations across subjects. To address this, we introduce a random effect ($\phi_i$) into the model:
+
+$$
+\begin{aligned}
+\mu_i &= \alpha + (\beta + \phi_i) \cdot \exp(\lambda \cdot time_i)
+\end{aligned}
+$$
+
+Here, $\phi_i$ represents the deviation from the baseline plasma level ($\beta$) for subject $i$. We keep $\lambda$ and $\alpha$ fixed because we're interested in estimating population parameters to describe the pharmacokinetics of the drug.
+
+## `nlme` approach
+
+Let's dive into fitting a non-linear model using the `nlme` R package, which allows us to specify custom model forms:
+
+```{r}
+nlm_freq <- nlme::nlme(
+  ## Model previously described
+  model = conc ~ alpha + (beta + phi) * exp(lambda * time),
+  data = Indometh,
+  ## Fixed effects
+  fixed = alpha + beta + lambda ~ 1,
+  ## Random effects
+  random = phi ~ 1 | Subject, 
+  ## Starting proposal values
+  start = list(fixed = c(0, 2, -1)))
+
+## Confidence intervals for fixed effects
+nlme::intervals(nlm_freq, which = "fixed")
+```
+
+Let's kick things off by looking at where we stand with indomethacin's plasma levels. At time zero, we're seeing baseline concentrations hovering around 2.74 mcg/ml. Not too shabby, right? But this little molecule doesn't stick around for long—our decay rate clocks in at about $\exp(-1.61) \approx 0.20$, which translates to a swift 80% drop in those levels each hour. Eventually, the levels bottom out at around 0.13 mcg/ml, where the decline takes a bit of a breather.
+
+Now, if you were paying close attention to the code, you might have noticed something interesting: when we're playing in the frequentist sandbox, particularly with non-linear models, we've got to give the algorithm a little nudge with some starting values. It's like setting up the board for a game—these initial values are where the algorithm begins its quest through the likelihood landscape, hunting down the most likely parameters that explain our data. Remember that [previous post about Hamiltonian Monte Carlo?](https://doi.org/10.59350/fa26y-xa178) Well, this is a bit like rolling a ball down a hill of parameter space, but here we're aiming to land on the single spot that maximizes our chances of observing the data we have.
+
+But enough with the theory, let's dive back into our non-linear model and see how these predicted plasma levels measure up against the real-world data we've got in hand:
+
+```{r}
+freq_pred <- predict(nlm_freq)
+
+ggplot(cbind(Indometh, pred = freq_pred), aes(time, conc)) +
+  facet_wrap(~ Subject) +
+  labs(y = "Plasma levels (mcg/ml)", x = "Time (hours)") +
+  geom_point(aes(col = Subject), cex = 3) +
+  geom_line(aes(y = pred, col = Subject), linewidth = 1)
+```
+
+Our model does a decent job fitting the observed data. But what's the story beyond standard errors? How do we quantify uncertainty in our model parameters? What's the likelihood of observing a specific decay rate or baseline level? With frequentist methods, our insights are somewhat limited to point estimates and standard errors. We need a broader view.
+
+## `brms` approach
+
+To harness the power of the Bayesian framework, we need to not only define our model but also incorporate prior beliefs about the parameters. Let's revisit our parameters:
+
+- $\alpha$: Minimum plasma levels of the drug.
+- $\beta$: Baseline plasma levels at time zero.
+- $\phi$: Subject-specific deviation from the population $\beta$.
+- $\lambda$: The amount of exponential decay.
+
+We'll assign prior distributions based on prior knowledge and results from our frequentist model. Here's the prior setup:
+
+- For $\alpha$, we'll use a normal distribution centered around 0.1 mcg/ml with a standard deviation of 0.5 mcg/ml. We'll truncate this prior at zero, since negative plasma levels aren't physically meaningful.
+- For $\beta$, we'll specify a normal distribution centered around 2.5 mcg/ml with a standard deviation of 3 mcg/ml to avoid overly restricting the parameter space. We'll also set a lower bound of zero.
+- For $\phi$, we'll use a normal prior centered on 0.5 mcg/ml with a moderate standard deviation of 2 mcg/ml to capture variability around baseline levels.
+- For $\lambda$, we'll set a weakly informative prior centered around -1 with a standard deviation of 3. This reflects our expectation of a negative decay rate, with the upper bound fixed at zero to prevent increases in plasma levels.
+
+The priors for our model parameters are:
+
+$$
+\begin{aligned}
+\alpha &\sim \mathcal{N}(0.1, 0.5) \\
+\beta &\sim \mathcal{N}(2.5, 3.0) \\
+\phi &\sim \mathcal{N}(0.5, 2.0) \\
+\lambda &\sim \mathcal{N}(-1.0, 3.0) \\
+\end{aligned}
+$$
+
+So now that we have what we need we can already proceed to fit our bayesian non-linear model:
+
+```{r}
+nlme_brms <- brm(
+  ## Formula
+  formula = bf(conc ~ alpha + (beta + phi) * exp(lambda * time),
+               alpha + beta + lambda ~ 1, phi ~ 1 | Subject,
+               nl = TRUE),
+  data = Indometh,
+  ## Priors
+  prior = prior(normal(0.1, 0.5), nlpar = "alpha", lb = 0) +
+    prior(normal(2.5, 3.0), nlpar = "beta", lb = 0) +
+    prior(normal(0.5, 2.0), nlpar = "phi") +
+    prior(normal(-1.0, 3.0), nlpar = "lambda", ub = 0),
+  ## MCMC hyperparameters
+  chains = 5, iter = 4000, 
+  warmup = 2000, cores = 5,
+  ## More flexible exploration parameters
+  control = list(adapt_delta = 0.99, 
+                 max_treedepth = 50),
+  ## For reproducibility
+  seed = 1234, file = "nlme_brms.RDS"
+)
+
+fixef(nlme_brms)
+```
+
+In this Bayesian model, we get not just point estimates but full distributions for each parameter. This approach allows us to explore the probable range of parameter values and answer probabilistic questions. But first, let's see how well our Bayesian model fits the observed data:
+
+```{r}
+bmrs_pred <- predict(nlme_brms)
+
+ggplot(cbind(Indometh, bmrs_pred), aes(time, conc)) +
+  facet_wrap(~ Subject) +
+  labs(y = "Plasma levels (mcg/ml)", x = "Time (hours)") +
+  geom_point(aes(col = Subject), cex = 3) +
+  geom_line(aes(y = Estimate, col = Subject), linewidth = 1) +
+  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5, fill = Subject), alpha = .3)
+```
+
+The Bayesian model's fitted effects align nicely with the observed data, and the uncertainty around the expected plasma concentrations is well-represented. To explore the range of parameters compatible with our data, we can plot the posterior distributions:
+
+```{r}
+#| fig-asp: 1
+plot(nlme_brms, variable = "^b_", regex = TRUE)
+```
+
+These plots reveal a spectrum of parameter values that fit the observed data. For the decay parameter $\lambda$, we can expect a 78% ($1 - \exp(-1.5)$) to 83% ($1 - \exp(-1.8)$) decrease in indomethacin plasma concentrations per hour.
+
+We can further explore the posterior distributions. For example, transforming the $\lambda$ parameter into a percentage decay scale:
+
+```{r}
+posterior_dist <- as_draws_df(nlme_brms, variable = "b_lambda_Intercept")
+posterior_dist$prob_decay <- (1 - exp(posterior_dist$b_lambda_Intercept))
+
+ggplot(posterior_dist, aes(x = prob_decay)) +
+  tidybayes::stat_halfeye(fill = "lightblue") +
+  labs(y = "Density", x = "Decay of plasma levels per hour (%)") +
+  scale_x_continuous(labels = scales::label_percent(), n.breaks = 8)
+```
+
+This flexibility in the Bayesian framework allows us to interpret the decay rate in more intuitive terms, reflecting a range of plausible rates consistent with our data. We can now communicate the percent decay of indomethacin plasma levels in a more accessible manner, considering the variability captured by our model.
+
+## Comparing models
+
+So now that we have implemented a linear, non-linear, and a bayesian non-linear model, it's time to compare the performance across them. We need to consider that these models have unique performance metrics that makes them harder to compare between them. However, we can compute the root-square of the mean of the square residuals (RMSE) to get an intuition of the mean error in the scale of the predictor that the model make when predicting the plasma level for each observation:
+
+```{r}
+#| message: false
+#| warning: false
+
+data.frame(
+  lm = performance::performance_rmse(lm_freq),
+  nlme = performance::performance_rmse(nlm_freq),
+  brms = performance::performance_rmse(nlme_brms)
+)
+```
+
+Here, we can observe that both the frequentist and bayesian non-linear models performed much better than the simple linear model. Small RMSE values indicates better performance overall, and in the scale of the predictor, the bayesian model performed marginally better than the frequentist model for a difference of 0.000402 mcg/ml (RMSE(nlme) - RMSE(brms)), considering that the standard deviation of the plasma levels is 0.63 mcg/ml, which can be noted as a insignificant from a practical stand.
+
+# Final Remarks
+
+After fitting three different models (two of which were non-linear) it becomes apparent that model selection isn't just a mechanical task; it's a deliberate and thoughtful process that requires us to deeply consider the scientific meaning behind the equations we use. This is where the art of modeling comes into play. Simply plugging numbers into an algorithm can give you results, but those results are only as meaningful as the assumptions underpinning them.
+
+When we lay down equations, we're not just scribbling mathematical symbols; we're making statements about how we believe the world works. In the case of indomethacin, our model reflects the assumption that its plasma levels decay exponentially over time, a reasonable assumption based on pharmacokinetic principles. But it's also crucial to remember that every equation carries with it a set of assumptions, some explicit and others hidden beneath layers of mathematical complexity. Recognizing and challenging these assumptions is where the real insight lies.
+
+Historically, the evolution of statistical modeling has been shaped by this very tension between complexity and clarity. Think back to the early days of regression analysis in the 19th century when pioneers like [Francis Galton and Karl Pearson](https://doi.org/10.1080/10691898.2001.11910537) were laying the groundwork for modern statistics. They weren't just crunching numbers—they were developing tools to describe the relationships they observed in the natural world. Their work was as much about understanding the data as it was about interpreting the equations they devised.
+
+Fast forward to today, and the principles remain the same, even as our tools have become more sophisticated. The move from linear to non-linear models mirrors our growing understanding of the world's complexities. We know now that relationships aren't always straight lines; they can bend, twist, and curve in ways that linear models can't capture. Yet, with this power comes responsibility. Non-linear models, while more flexible, also require us to be more vigilant about the assumptions we're making.
+
+As we've seen with our indomethacin example, the choice of model has a profound impact on the conclusions we draw. The frequentist and Bayesian approaches each bring their own perspectives, but neither is inherently superior. Instead, the best approach depends on the context of the problem and the nature of the data. In the end, the goal isn't to find the "right" model but to find a model that best captures the underlying reality we're trying to understand.
+
+So, as we continue to develop and apply statistical models, let's do so with a sense of curiosity and caution. Let's appreciate the historical context that brought us here, and let's always be aware of the assumptions we're making—because in the world of statistics, those assumptions shape the stories we tell.

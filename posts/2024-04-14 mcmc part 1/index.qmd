@@ -18,6 +18,8 @@ library(ggplot2)
 library(plotly)
 library(bayestestR)
 library(data.table)
+library(ggside)
+library(ggsci)
 ```
 
 # Introduction
