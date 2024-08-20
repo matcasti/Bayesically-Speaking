@@ -7,7 +7,7 @@ fig-format: svg
 fig-width: 12
 fig-responsive: true
 fig-asp: .5
-# doi: "doi aca"
+doi: "10.59350/r62fn-8h720"
 categories: [non-linear]
 bibliography: ref.bib
 title-block-banner: title-block.jpeg

@@ -866,7 +866,7 @@ font-style: inherit;">performance_rmse</span>(nlme_brms)</span>
 <span id="cb13-5">)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         lm      nlme      brms
-1 0.4417804 0.1080546 0.1078646</code></pre>
+1 0.4417804 0.1080546 0.1076928</code></pre>
 </div>
 </div>
 <p>Here, we can see that <strong>both the frequentist and Bayesian non-linear models outperformed the simple linear model</strong> by a significant margin. The lower RMSE values indicate a better overall fit. Interestingly, the Bayesian model edged out the frequentist model by a tiny margin, with a difference of just 0.000402 mcg/ml in RMSE (<img src="https://latex.codecogs.com/png.latex?%5Ctext%7BRMSE%7D(M_%7Bnlme%7D)%20-%20%5Ctext%7BRMSE%7D(M_%7Bbrms%7D)">). Given that the standard deviation of the plasma levels is 0.63 mcg/ml, this difference is practically negligible and unlikely to be meaningful in a real-world context.</p>
@@ -889,12 +889,12 @@ font-style: inherit;">performance_rmse</span>(nlme_brms)</span>
   title = {Non-Linear Models: {Pharmacokinetics} and {Indomethacin}},
   date = {2024-08-20},
   url = {https://bayesically-speaking.com/posts/2024-08-05 non-linear-models part 1/},
+  doi = {10.59350/r62fn-8h720},
   langid = {en}
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-castillo-aguilar2024" class="csl-entry quarto-appendix-citeas">
 Castillo-Aguilar, Matías. 2024. <span>“Non-Linear Models:
-Pharmacokinetics and Indomethacin.”</span> August 20, 2024. <a href="https://bayesically-speaking.com/posts/2024-08-05 non-linear-models part 1/">https://bayesically-speaking.com/posts/2024-08-05
-non-linear-models part 1/</a>.
+Pharmacokinetics and Indomethacin.”</span> August 20, 2024. <a href="https://doi.org/10.59350/r62fn-8h720">https://doi.org/10.59350/r62fn-8h720</a>.
 </div></div></section></div> ]]></description>
   <category>non-linear</category>
   <guid>https://bayesically-speaking.com/posts/2024-08-05 non-linear-models part 1/</guid>
