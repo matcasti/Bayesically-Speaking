@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.55">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Matías Castillo-Aguilar">
+<meta name="dcterms.date" content="2024-12-14">
+<meta name="description" content="In this second edition we’ll be discussing the role of long term potentiation and depression, a form of neuroplasticity, and their dynamics using non-linear models. Here, we’ll dig deep into the statistical intricacies of the overlapping dynamics of synaptic neuroplasticity.">
+
+<title>Non-linear models: A Case for Synaptic Plasticity – Bayesically Speaking</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/logo.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-H5JH00934M"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-H5JH00934M', { 'anonymize_ip': true});
+</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(title-block.jpeg);
+background-size: cover;
+      }
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta name="citation_title" content="Non-linear models: A Case for Synaptic Plasticity">
+<meta name="citation_author" content="Matías Castillo-Aguilar">
+<meta name="citation_publication_date" content="2024-12-14">
+<meta name="citation_cover_date" content="2024-12-14">
+<meta name="citation_year" content="2024">
+<meta name="citation_online_date" content="2024-12-14">
+<meta name="citation_fulltext_html_url" content="https://bayesically-speaking.com/posts/2024-12-10 a-case-for-synaptic-plasticity/">
+<meta name="citation_language" content="en">
+<meta name="citation_reference" content="citation_title=Philosophy and the practice of bayesian statistics;,citation_author=Andrew Gelman;,citation_author=Cosma Rohilla Shalizi;,citation_publication_date=2013;,citation_cover_date=2013;,citation_year=2013;,citation_issue=1;,citation_volume=66;,citation_journal_title=British Journal of Mathematical and Statistical Psychology;,citation_publisher=Wiley Online Library;">
+<meta name="citation_reference" content="citation_title=The long-term potential of LTP;,citation_author=Robert C Malenka;,citation_publication_date=2003;,citation_cover_date=2003;,citation_year=2003;,citation_issue=11;,citation_volume=4;,citation_journal_title=Nature Reviews Neuroscience;,citation_publisher=Nature Publishing Group UK London;">
+<meta name="citation_reference" content="citation_title=Mechanisms of CaMKII action in long-term potentiation;,citation_author=John Lisman;,citation_author=Ryohei Yasuda;,citation_author=Sridhar Raghavachari;,citation_publication_date=2012;,citation_cover_date=2012;,citation_year=2012;,citation_issue=3;,citation_volume=13;,citation_journal_title=Nature reviews neuroscience;,citation_publisher=Nature Publishing Group UK London;">
+<meta name="citation_reference" content="citation_title=CaMKII: A central molecular organizer of synaptic plasticity, learning and memory;,citation_author=Ryohei Yasuda;,citation_author=Yasunori Hayashi;,citation_author=Johannes W Hell;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_issue=11;,citation_volume=23;,citation_journal_title=Nature Reviews Neuroscience;,citation_publisher=Nature Publishing Group UK London;">
+<meta name="citation_reference" content="citation_title=Adaptive control of synaptic plasticity integrates micro-and macroscopic network function;,citation_author=Daniel N Scott;,citation_author=Michael J Frank;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=1;,citation_volume=48;,citation_journal_title=Neuropsychopharmacology;,citation_publisher=Springer International Publishing Cham;">
+<meta name="citation_reference" content="citation_title=Ketamine and rapid antidepressant action: New treatments and novel synaptic signaling mechanisms;,citation_author=John H Krystal;,citation_author=Ege T Kavalali;,citation_author=Lisa M Monteggia;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_issue=1;,citation_volume=49;,citation_journal_title=Neuropsychopharmacology;,citation_publisher=Springer International Publishing Cham;">
+<meta name="citation_reference" content="citation_title=Loss of long-term potentiation at hippocampal output synapses in experimental temporal lobe epilepsy;,citation_author=Sabine Grosser;,citation_author=Nadine Buck;,citation_author=Karl-Heinz Braunewell;,citation_author=Kate E Gilling;,citation_author=Christian Wozny;,citation_author=Pawel Fidzinski;,citation_author=Joachim Behr;,citation_publication_date=2020;,citation_cover_date=2020;,citation_year=2020;,citation_volume=13;,citation_journal_title=Frontiers in Molecular Neuroscience;,citation_publisher=Frontiers Media SA;">
+<meta name="citation_reference" content="citation_title=Down-regulation of AMPA receptors and long-term potentiation during early epileptogenesis;,citation_author=Yasmin Cruz Del Angel;,citation_author=James E Orfila;,citation_author=Paco S Herson;,citation_author=Amy Brooks-Kayal;,citation_author=Marco I González;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_volume=124;,citation_journal_title=Epilepsy &amp;amp;amp; Behavior;,citation_publisher=Elsevier;">
+<meta name="citation_reference" content="citation_title=Synaptic plasticity and mental health: Methods, challenges and opportunities;,citation_author=Lawrence G Appelbaum;,citation_author=Mohammad Ali Shenasa;,citation_author=Louise Stolz;,citation_author=Zafiris Daskalakis;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=1;,citation_volume=48;,citation_journal_title=Neuropsychopharmacology;,citation_publisher=Springer International Publishing Cham;">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bayesically Speaking</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../services.html"> 
+<span class="menu-text">Services</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../cv.html"> 
+<span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/matcasti"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/matias_science"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../blog.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Non-linear models: A Case for Synaptic Plasticity</h1>
+                  <div>
+        <div class="description">
+          <p>In this second edition we’ll be discussing the role of long term potentiation and depression, a form of neuroplasticity, and their dynamics using non-linear models. Here, we’ll dig deep into the statistical intricacies of the overlapping dynamics of synaptic neuroplasticity.</p>
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">non-linear</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p><a href="https://bayesically-speaking.com/cv">Matías Castillo-Aguilar</a> <a href="mailto:m99castillo@gmail.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-7291-247X" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 14, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level1 page-columns page-full">
+<h1>Introduction</h1>
+<p>The human brain is a show-off, really. It’s constantly <strong>rewiring itself</strong>, adapting to new challenges, and making you forget where you put your keys (all at the same time). This remarkable ability, called <strong>neuronal plasticity</strong>, is the brain’s way of saying, “Don’t worry, I can learn, unlearn, and even relearn, if necessary.” <strong>Imagine a guitarist practicing a tricky solo</strong>. With each attempt (and many failed ones), the neurons involved in mastering that melody become like overzealous gym buddies: stronger, faster, and annoyingly efficient. That’s plasticity in action.</p>
+<p>But <strong>capturing this in a model?</strong> Oh, that’s another story. Modeling neuronal plasticity is like <strong>trying to explain a teenager’s mood swings</strong> (messy, non-linear, and full of unexpected spikes). The process involves sharp changes in synaptic strength, calcium signaling thresholds that act like overly jealous gatekeepers, and dynamics so complex <strong>they make rocket science look like child’s play</strong>. Traditional models just shrug and wave the white flag.</p>
+<p>Let’s welcome the <strong>non-linear models</strong>, the superheroes of mathematical modeling. In this post, we’ll take a closer look at how these models, specifically <strong>logistic growth equations</strong>, can tame the chaos of neuronal plasticity. We’ll demystify the biology, <strong>turn it into manageable math</strong>, and then buckle up to simulate it all in R. Yes, R… the land of syntax errors and endless parentheses, but don’t worry, I’ll guide you.</p>
+<p>By the end of this journey, you’ll not only appreciate the elegance of neuronal plasticity but also see how non-linear modeling can turn <strong>brain mysteries into manageable equations</strong>. So whether you’re a neuroscience nerd, or someone who just likes the idea of <strong>bossing around neurons via code</strong>, this post has something for you. Let’s dive in, and don’t forget to pack your sense of humor. You’re going to need it!</p>
+<p class="page-columns page-full"><img src="neurons-firing-2.webp" class="img-fluid column-screen" style="width:100.0%"></p>
+</section>
+<section id="understanding-neuronal-plasticity" class="level1 page-columns page-full">
+<h1>Understanding Neuronal Plasticity</h1>
+<p><strong>Neuronal plasticity</strong> is the brain’s way of being a multitasking genius or (depending on your perspective), a workaholic control freak. At its heart, it’s the <strong>neurons’ ability to adapt</strong> their structure and function, responding to experiences, activity, <strong>or the occasional existential crisis</strong>. This adaptability powers the brain’s greatest hits: learning, memory, and <strong>even bouncing back from injuries</strong>. This concept, stating that neuronal connections can be remodeled by experience, is also known as <a href="https://www.sciencedirect.com/topics/neuroscience/hebbian-theory">Hebbian Theory</a>, and its behind many studied mechanisms by which plastic changes occurs at the synapse-level <span class="citation" data-cites="scott2023adaptive">(<a href="#ref-scott2023adaptive" role="doc-biblioref">Scott and Frank 2023</a>)</span>. Think of it as the neural equivalent of turning your spare bedroom into a home gym, if neurons are adaptable, why shouldn’t you be?</p>
+<section id="the-role-of-synaptic-strength" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="the-role-of-synaptic-strength">The Role of Synaptic Strength</h4>
+<p>Plasticity does its magic at the <strong>synapse</strong>, that microscopic handshake where one neuron whispers (or yells) to another. The strength of this connection, aptly named <strong>synaptic strength</strong>, determines how effectively neurons gossip. Strengthening these connections, a process grandiosely called <strong>Long-Term Potentiation (LTP)</strong>, makes neural communication as smooth as butter on warm toast <span class="citation" data-cites="malenka2003long">(<a href="#ref-malenka2003long" role="doc-biblioref">Malenka 2003</a>)</span>. On the flip side, <strong>Long-Term Depression (LTD)</strong> weakens connections, pruning the neural network like a gardener trimming overzealous hedges. Goodbye, redundant pathways; hello, optimization.</p>
+<div class="page-columns page-full"><p><img src="ltp-ltd-synapse.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Long-Term Potentiation (LTP) and Long-Term Depression (LTD) occurs <strong>as a function of synapse communication</strong>. This is what makes some brain pathways stronger or weaker over time, contributing to both the acquiring and loosing cognitive functions and motor skills.</span></div></div>
+</section>
+<section id="calcium-the-master-regulator" class="level4">
+<h4 class="anchored" data-anchor-id="calcium-the-master-regulator">Calcium: The Master Regulator</h4>
+<p>If synaptic strength is the party, <strong>calcium ions</strong> (<span class="math inline">\(Ca^{2+}\)</span>) are the overzealous DJ deciding whether to pump up the volume or call it a night. Calcium levels dictate <strong>whether the synapse becomes stronger or weaker</strong>, essentially flipping the plasticity switches:</p>
+<ul>
+<li><strong>High</strong> calcium levels? Cue the <strong>LTP rave</strong>, connections strengthen, neurons fire happily ever after.</li>
+<li><strong>Low</strong> calcium levels? Time for the <strong>LTD chill-out session</strong>, synapses quiet down and pathways are pruned.</li>
+</ul>
+<p>The drama <strong>lies in the thresholds</strong>. Calcium must hit the sweet spot: too high, and it’s all systems go for strengthening; too low, and the neuron gets out its metaphorical scissors. <strong>Anything in between is neural purgatory</strong> (synaptic strength stays stable), which is another way of saying, “Meh, let’s just keep things as they are.”</p>
+</section>
+<section id="dynamic-and-non-linear-nature" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="dynamic-and-non-linear-nature">Dynamic and Non-Linear Nature</h4>
+<p>Here’s where things get tricky: <strong>the relationship between calcium levels and synaptic strength isn’t linear</strong>, because why would the brain ever take the easy route? A tiny nudge in calcium concentration can tip the balance dramatically, depending on whether those pesky thresholds are crossed. <strong>Feedback loops ensure that synaptic adjustments don’t spiral out of control</strong>, think of them as neural quality control, keeping things proportional and adaptive <span class="citation" data-cites="lisman2012mechanisms yasuda2022camkii">(<a href="#ref-lisman2012mechanisms" role="doc-biblioref">Lisman, Yasuda, and Raghavachari 2012</a>; <a href="#ref-yasuda2022camkii" role="doc-biblioref">Yasuda, Hayashi, and Hell 2022</a>)</span>.</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define calcium levels and thresholds</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>calcium_levels <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="at">by =</span> <span class="fl">0.01</span>) <span class="co"># Simulated calcium levels (arbitrary units)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>ltp_threshold <span class="ot">&lt;-</span> <span class="fl">1.2</span>  <span class="co"># Threshold for LTP activation</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ltd_threshold <span class="ot">&lt;-</span> <span class="fl">0.8</span>  <span class="co"># Threshold for LTD activation</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define synaptic strength change based on calcium</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>synaptic_strength_change <span class="ot">&lt;-</span> <span class="cf">function</span>(calcium, ltp_thresh, ltd_thresh) {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Non-linear responses for LTP and LTD</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  ltp_response <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(calcium <span class="sc">&gt;</span> ltp_thresh, (calcium <span class="sc">-</span> ltp_thresh)<span class="sc">^</span><span class="dv">2</span>, <span class="dv">0</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  ltd_response <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(calcium <span class="sc">&lt;</span> ltd_thresh, <span class="sc">-</span>(ltd_thresh <span class="sc">-</span> calcium)<span class="sc">^</span><span class="dv">2</span>, <span class="dv">0</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  ltp_response <span class="sc">+</span> ltd_response</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute synaptic strength changes</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>strength_changes <span class="ot">&lt;-</span> <span class="fu">synaptic_strength_change</span>(calcium_levels, ltp_threshold, ltd_threshold)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame for plotting</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Calcium =</span> calcium_levels,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">StrengthChange =</span> strength_changes</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> Calcium, <span class="at">y =</span> StrengthChange)) <span class="sc">+</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"orange"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> ltp_threshold, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> ltd_threshold, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"darkred"</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> ltp_threshold <span class="sc">+</span> <span class="fl">0.01</span>, <span class="at">y =</span> <span class="fl">0.5</span>, <span class="at">label =</span> <span class="st">"LTP Threshold"</span>, <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> ltd_threshold <span class="sc">-</span> <span class="fl">0.01</span>, <span class="at">y =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">label =</span> <span class="st">"LTD Threshold"</span>, <span class="at">color =</span> <span class="st">"darkred"</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Non-Linear Relationship Between Calcium and Synaptic Strength"</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Calcium Levels (arbitrary units)"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Change in Synaptic Strength"</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption">Here, the relationship between calcium levels and the change in synaptic strength is simplified to illustrate the relationship between calcium dynamics and synaptic plasticity.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This <strong>delicate dance</strong> between calcium signaling, thresholds, and synaptic strength <strong>is the essence of neuronal plasticity’s beauty</strong>. It’s also the reason why modeling this process is <strong>as tricky as explaining quantum physics</strong> to a toddler. But don’t worry; the non-linear models we’ll tackle next will help demystify this wild ride.</p>
+</section>
+</section>
+<section id="the-challenge-of-modeling-neuronal-plasticity" class="level1 page-columns page-full">
+<h1>The Challenge of Modeling Neuronal Plasticity</h1>
+<p>Modeling neuronal plasticity is like <strong>trying to choreograph a dance for cats</strong>: dynamic, unpredictable, and prone to sudden chaos. The brain doesn’t play by the simple rules of linear systems. Instead, it thrives on thresholds, feedback loops, and behaviors that emerge <strong>as if neurons decided to collectively say, “Let’s make this interesting.”</strong></p>
+<section id="the-complexity-of-biological-systems" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="the-complexity-of-biological-systems">The Complexity of Biological Systems</h4>
+<div class="page-columns page-full"><p><img src="synapse.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Depiction of the step-by-step communication between neurons at the synapse-level through calcium signaling.</span></div></div>
+<p>Neuronal plasticity isn’t just complex, it’s a web of biochemical drama. Take <strong>calcium concentration dynamics</strong>, these levels don’t just sit still like a well-behaved variable. <strong>They oscillate wildly</strong>, influenced by synaptic activity and timing, like calcium’s trying out for a rhythm section. <strong>These oscillations trigger intracellular signaling cascades</strong> that either crank up the volume or dial it down, depending on the situation. And then there’s <strong>synaptic change over time</strong>, a gradual process, <strong>often following a sigmoid or exponential curve</strong>. In other words, synaptic strength doesn’t just flick a switch; it warms up, stretches, and then decides if it’s going to do some serious lifting.</p>
+<p>Linear models? They try their best but are basically out of their depth here. Sure, they can hint at early synaptic changes, but when feedback mechanisms, thresholds, and saturation effects enter the chat, <strong>linear models might as well pack up and go home</strong>.</p>
+</section>
+<section id="threshold-dependent-behavior" class="level4">
+<h4 class="anchored" data-anchor-id="threshold-dependent-behavior">Threshold-Dependent Behavior</h4>
+<p>Calcium thresholds are where the real drama unfolds. Picture this: when <span class="math inline">\(Ca^{2+}\)</span> crosses the high threshold (<span class="math inline">\(C_{\text{LTP}}\)</span>), <strong>synaptic strength goes into overdrive</strong>, climbing exponentially until it maxes out like a hiker who’s finally reached the summit. But if <span class="math inline">\(Ca^{2+}\)</span> drops below the low threshold (<span class="math inline">\(C_{\text{LTD}}\)</span>), <strong>it’s pruning time</strong>, and synaptic strength takes a sharp nosedive to the baseline. These thresholds create <strong>non-linearity</strong>, where tiny calcium fluctuations can flip the synaptic switch from party mode to shutdown in a heartbeat.</p>
+</section>
+<section id="feedback-and-regulation" class="level4">
+<h4 class="anchored" data-anchor-id="feedback-and-regulation">Feedback and Regulation</h4>
+<p>If thresholds are the stage, feedback mechanisms are the stagehands, constantly adjusting the scene. <strong>Positive feedback</strong> amplifies responses, with <strong>LTP inviting more calcium to the party</strong> and reinforcing synaptic strengthening. <strong>Negative feedback</strong>, on the other hand, keeps <strong>LTD from going full demolition crew by dialing down activity</strong> and avoiding unnecessary pruning. Together, these loops keep the system both chaotic and oddly balanced, a testament to biological ingenuity (or masochism).</p>
+</section>
+<section id="variability-and-noise" class="level4">
+<h4 class="anchored" data-anchor-id="variability-and-noise">Variability and Noise</h4>
+<p>And let’s not forget the noise. <strong>Neurons are the original rebels</strong>, no two behave identically. Calcium concentrations fluctuate, <strong>receptors show wildly different sensitivities</strong>, and neurotransmitter release has a habit of being unpredictable. Stochastic effects at the molecular level add another layer of randomness, making modeling this system <strong>akin to predicting the stock market in a thunderstorm</strong>.</p>
+</section>
+<section id="why-non-linear-models" class="level4">
+<h4 class="anchored" data-anchor-id="why-non-linear-models">Why Non-Linear Models?</h4>
+<p>Non-linear models, like logistic growth equations, come to the rescue with their ability to handle the brain’s antics. They’re perfect for capturing <strong>threshold-dependent</strong> dynamics, <strong>saturation</strong> effects, and <strong>time-dependent</strong> changes, all while leaving room for noise and feedback. It’s as if these models were built specifically for <strong>taming the wild world of neuronal plasticity</strong>.</p>
+<p>In the next section, we’ll get ready the magic of non-linear modeling, focusing on <strong>logistic growth equations</strong>. Spoiler: these equations are like cheat codes for understanding synaptic strength changes. Let’s see them in action!</p>
+</section>
+</section>
+<section id="introducing-the-non-linear-model" class="level1">
+<h1>Introducing the Non-Linear Model</h1>
+<p>To simulate the dynamics of neuronal plasticity, <strong>we need a model that doesn’t crumble under the weight of complexity</strong>. Let me introduce you the <strong>logistic growth model</strong>, our mathematical hero. This model elegantly captures the key ingredients of synaptic changes:</p>
+<ul>
+<li><strong>Threshold behavior</strong>: Synaptic strength only changes when stimulation crosses a “Do Not Disturb” threshold.<br>
+</li>
+<li><strong>Saturation</strong>: Synaptic strength doesn’t keep growing forever (because even neurons know their limits).<br>
+</li>
+<li><strong>Time-dependence</strong>: Synaptic changes are gradual, like making sourdough bread. Patience is key.</li>
+</ul>
+<p>Logistic equations are pretty simple at its core, they all follow the same structure.</p>
+<p><span class="math display">\[
+f(x) = \frac{1}{1 + e^{-x}}
+\]</span></p>
+<p>This kind of equations will (in general) yield the following behavior.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>logistic <span class="ot">&lt;-</span> <span class="cf">function</span>(x) { <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x)) }</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray50"</span>) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> logistic, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">10</span>, <span class="dv">10</span>), <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">label =</span> <span class="st">"f(x) == frac(1,1 + e^{-x})"</span>, <span class="at">x =</span> <span class="sc">-</span><span class="dv">3</span>, <span class="at">y =</span> <span class="fl">0.5</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Asymptotic Behavior of Logistic Functions"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">expression</span>(<span class="fu">italic</span>(f)(x)),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">expression</span>(<span class="fu">italic</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This logistic growth model <strong>is widely used in biology</strong> to describe systems where growth starts slow, accelerates, and then hits a plateau (also called, asymptotes). In our case, it’s the perfect candidate for <strong>modeling synaptic strength</strong> during LTP and LTD, <strong>all while looking deceptively simple</strong>.</p>
+<section id="looking-into-the-model" class="level4">
+<h4 class="anchored" data-anchor-id="looking-into-the-model">Looking into the model</h4>
+<p>If we tweak the forementioned logistic equation, we get something like this:</p>
+<p><span class="math display">\[
+S(t) = S_{\text{min}} + \frac{S_{\text{max}} - S_{\text{min}}}{1 + e^{-\lambda (t - t_0)}}
+\]</span></p>
+<p>Let’s break it down without making your eyes glaze over:</p>
+<ul>
+<li><span class="math inline">\(S(t)\)</span>: Synaptic strength at time <span class="math inline">\(t\)</span>. This is what we’re modeling.<br>
+</li>
+<li><span class="math inline">\(S_{\text{min}}\)</span>: The baseline synaptic strength, think of it as the starting line.<br>
+</li>
+<li><span class="math inline">\(S_{\text{max}}\)</span>: The upper limit of synaptic strength after all the excitement of LTP.<br>
+</li>
+<li><span class="math inline">\(\lambda\)</span>: The rate of change, or how quickly the synapse is building muscle.<br>
+</li>
+<li><span class="math inline">\(t_0\)</span>: The starting point of stimulation, shifting the curve along the time axis.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pedagogic convenience
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Using synaptic strength is simpler and more abstract, making it <strong>easier to fit and interpret</strong> in many contexts, especially when data on calcium dynamics is unavailable.</p>
+<p>Explicitly modeling calcium dynamics and thresholds can provide deeper biological insights but <strong>at the cost of added complexity</strong>.</p>
+</div>
+</div>
+</div>
+<p>Here’s why this logistic structure is very convenient:</p>
+<ol type="1">
+<li>Synaptic strength starts close to <span class="math inline">\(S_{\text{min}}\)</span> when time is still warming up (<span class="math inline">\(t \ll t_0\)</span>).<br>
+</li>
+<li>It ramps up as <span class="math inline">\(t\)</span> approaches <span class="math inline">\(t_0\)</span>, because neurons love to make a dramatic entrance.<br>
+</li>
+<li>Growth slows as <span class="math inline">\(S(t)\)</span> nears <span class="math inline">\(S_{\text{max}}\)</span>, reflecting the biological saturation point (like most physiological processes).</li>
+</ol>
+</section>
+<section id="modeling-ltp-the-big-boost" class="level4">
+<h4 class="anchored" data-anchor-id="modeling-ltp-the-big-boost">Modeling LTP: The Big Boost</h4>
+<p>In <strong>Long-Term Potentiation (LTP)</strong>, the synapse gets a power-up, causing a rapid and lasting increase in strength. Using the logistic growth model:</p>
+<ul>
+<li><span class="math inline">\(S_{\text{min}}\)</span> is the baseline <strong>before</strong> stimulation.<br>
+</li>
+<li><span class="math inline">\(S_{\text{max}}\)</span> is the exciting new level of strength <strong>after LTP has worked</strong> its magic.</li>
+</ul>
+<p>Tweaking <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(t_0\)</span> lets us control <strong>how quickly and when the synapse gets its boost</strong>, perfect for simulating the effects of different stimuli.</p>
+</section>
+<section id="modeling-ltd-the-great-decline" class="level4">
+<h4 class="anchored" data-anchor-id="modeling-ltd-the-great-decline">Modeling LTD: The Great Decline</h4>
+<p>In <strong>Long-Term Depression (LTD)</strong>, the synapse doesn’t throw a party, it hits the brakes instead. For this, we flip the logistic equation on its head, <strong>changing the sign on the logistic part</strong> of the function:</p>
+<p><span class="math display">\[
+S(t) = S_{\text{max}} - \frac{S_{\text{max}} - S_{\text{min}}}{1 + e^{-\lambda (t - t_0)}}
+\]</span></p>
+<p>Here:</p>
+<ul>
+<li><span class="math inline">\(S_{\text{max}}\)</span> is where the synaptic strength starts <strong>before LTD</strong> brings it down a notch.<br>
+</li>
+<li><span class="math inline">\(S_{\text{min}}\)</span> is the new baseline <strong>after the synapse gets reorganized</strong>.</li>
+</ul>
+<p>It’s like a reverse LTP (same logistics), but with a <strong>focus on pruning rather than boosting</strong>.</p>
+</section>
+<section id="combining-ltp-and-ltd-the-balancing-act" class="level4">
+<h4 class="anchored" data-anchor-id="combining-ltp-and-ltd-the-balancing-act">Combining LTP and LTD: The Balancing Act</h4>
+<p>Neurons aren’t simple creatures. They often experience <strong>LTP and LTD simultaneously</strong>, like trying to watch a movie while your neighbor is mowing the lawn. To capture this, we combine two logistic equations into one glorious model:</p>
+<p><span class="math display">\[
+S(t) = S_{\text{baseline}} + \frac{\Delta S_{\text{LTP}}}{1 + e^{-\lambda_{\text{LTP}} (t - t_{\text{LTP}})}} - \frac{\Delta S_{\text{LTD}}}{1 + e^{-\lambda_{\text{LTD}} (t - t_{\text{LTD}})}}
+\]</span></p>
+<p>I know what you’re thinking… it seems like its too much. However, for sanity sakes lets break it down:</p>
+<ul>
+<li><span class="math inline">\(S_{\text{baseline}}\)</span>: The synaptic strength before anything exciting happens.</li>
+<li><span class="math inline">\(\Delta S_{\text{LTP}} = S_{\text{max}} - S_{\text{baseline}}\)</span>: The increase due to LTP.</li>
+<li><span class="math inline">\(\Delta S_{\text{LTD}} = S_{\text{baseline}} - S_{\text{min}}\)</span>: The decrease due to LTD.</li>
+<li><span class="math inline">\(\lambda_{\text{LTP}}\)</span> and <span class="math inline">\(\lambda_{\text{LTD}}\)</span>: Rates of change for LTP and LTD (i.e., the “how quickly” part).</li>
+<li><span class="math inline">\(t_{\text{LTP}}\)</span> and <span class="math inline">\(t_{\text{LTD}}\)</span>: Onset times for LTP and LTD (i.e., the “when” part).</li>
+</ul>
+<p>This combined model lets us handle real-world complexity, where <strong>strengthening and weakening signals overlap</strong> like a neural tug-of-war.</p>
+</section>
+<section id="why-two-logistic-functions" class="level4">
+<h4 class="anchored" data-anchor-id="why-two-logistic-functions">Why Two Logistic Functions?</h4>
+<p>You might wonder <strong>why we bother with two logistic functions</strong> instead of just one that switches direction halfway. The answer: <strong>biology loves chaos</strong>.</p>
+<ul>
+<li>LTP and LTD <strong>aren’t mutually exclusive</strong>. They can overlap, fight, or ignore each other altogether.<br>
+</li>
+<li>Their onset times (<span class="math inline">\(t_{\text{LTP}}\)</span> and <span class="math inline">\(t_{\text{LTD}}\)</span>) and rates (<span class="math inline">\(\lambda_{\text{LTP}}\)</span>, <span class="math inline">\(\lambda_{\text{LTD}}\)</span>) often vary, making a single equation woefully inadequate.</li>
+</ul>
+<p>Of course, we could have just used a single logistic function. However, in most real-world scenarios, beyond the pedagogic convenience, <strong>simple models are just the initial phase of any model building process</strong>.</p>
+<p>Despite any complexity we could add to the model, we must always remember that <strong>any model is always “an approximation to reality”</strong> at best. Or, as the famous George Box would say:</p>
+<blockquote class="blockquote">
+<p>“Essentially all models are wrong, but some are useful”</p>
+</blockquote>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+LTP and LTD at the Same Time?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>In some fascinating scenarios, neurons manage to pull off the ultimate balancing act: <strong>inducing both LTP and LTD simultaneously</strong>. This can happen when synaptic inputs are spatially separated, allowing different synapses on the same neuron to independently engage in potentiation or depression <strong>based on local calcium dynamics</strong> <span class="citation" data-cites="scott2023adaptive">(<a href="#ref-scott2023adaptive" role="doc-biblioref">Scott and Frank 2023</a>)</span>. It’s like a multi-tasking maniac performing two distinct solos at once. Similarly, in <strong>spike-timing-dependent plasticity</strong> (discussed up ahead), complex spike-timing patterns <strong>can produce overlaps in the conditions for LTP and LTD</strong>, with some synapses “winning” in one direction and others in the opposite.</p>
+<p>Sometimes, the brain’s calcium dynamics get a little wild, <strong>oscillating between the ranges required for LTP and LTD</strong> due to the convergence of excitatory and inhibitory inputs. Throw in a dash of neuromodulation (like dopamine or acetylcholine tweaking thresholds) and some synapses might lean toward strengthening while others favor weakening. This interplay can also occur when synapses start in different states: <strong>stronger synapses may undergo LTD</strong> to maintain homeostasis, while <strong>weaker ones are busy potentiating</strong> <span class="citation" data-cites="scott2023adaptive">(<a href="#ref-scott2023adaptive" role="doc-biblioref">Scott and Frank 2023</a>)</span>. Interestingly, experimental protocols designed to study synaptic plasticity in mood disorders often force these conditions, with pharmacological interventions inducing <strong>concurrent LTP and LTD</strong> in some brain areas <span class="citation" data-cites="krystal2024ketamine">(<a href="#ref-krystal2024ketamine" role="doc-biblioref">Krystal, Kavalali, and Monteggia 2024</a>)</span>.</p>
+</div>
+</div>
+</div>
+<p>Two logistic functions give us the flexibility to capture these dynamics <strong>without assuming biology plays nice</strong>.</p>
+<p>In the next section, we’ll fire up R and use these equations <strong>to simulate synaptic strength changes</strong>. Spoiler: it’s going to be visually satisfying, so stick around!</p>
+</section>
+</section>
+<section id="simulating-synaptic-plasticity-in-r" class="level1">
+<h1>Simulating Synaptic Plasticity in R</h1>
+<p>Now that we’ve got our fancy non-linear model ready to roll, it’s <strong>time to turn theory into practice</strong> (or, more specifically, into code). Let’s use R to simulate synaptic changes over time. Think of <strong>this as our chance to play neuroscientific alchemist</strong>, blending math, biology, and programming into a beautiful plot. Spoiler alert: things will go up, things will go down, and everything will make sense… eventually.</p>
+<section id="step-1-defining-the-model" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-defining-the-model">Step 1: Defining the Model</h4>
+<p>First, <strong>we need to teach R how to think like a synapse</strong>. We’ll define our logistic functions for LTP and LTD, then combine them to model the overall synaptic strength. <strong>It’s like giving R its own brain</strong>, except this one follows your rules and doesn’t forget where it put the car keys.</p>
+<p>The logistic function describes <strong>how synaptic strength changes with time</strong>. For LTP, strength rises from a baseline to a maximum. For LTD, the opposite happens: it’s the digital equivalent of neurons ghosting each other.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the logistic function</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>logistic <span class="ot">&lt;-</span> <span class="cf">function</span>(t, t_onset, lambda, delta_S) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  delta_S <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>lambda <span class="sc">*</span> (t <span class="sc">-</span> t_onset)))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the combined model</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>synaptic_strength <span class="ot">&lt;-</span> <span class="cf">function</span>(t, S_baseline, t_LTP, lambda_LTP, delta_LTP,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                               t_LTD, lambda_LTD, delta_LTD) {</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  ltp <span class="ot">&lt;-</span> <span class="fu">logistic</span>(t, t_LTP, lambda_LTP, delta_LTP)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  ltd <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">logistic</span>(t, t_LTD, lambda_LTD, delta_LTD)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  strength <span class="ot">&lt;-</span> S_baseline <span class="sc">+</span> ltp <span class="sc">+</span> ltd</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  data.table<span class="sc">::</span><span class="fu">data.table</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">Time =</span> t, </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">LTP =</span> ltp,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">LTD =</span> ltd,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">Strength =</span> strength</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Notice how LTP and LTD are <strong>modeled as separate entities</strong> but combine their forces (or opposing forces) in the overall strength equation. It’s teamwork, or in this case, team tug-of-war.</p>
+</section>
+<section id="step-2-setting-the-stage" class="level4">
+<h4 class="anchored" data-anchor-id="step-2-setting-the-stage">Step 2: Setting the Stage</h4>
+<p>Next, we’ll define some parameters. Think of this as <strong>setting up your neural experiment in a lab</strong>, but with fewer pipettes and a lot more debugging.</p>
+<p>We’ll start with baseline <strong>synaptic strength set to 1</strong> (for our convenience), simulate <strong>LTP kicking in at time 5</strong>, and introduce <strong>LTD at time 10</strong>. Each process has its own speed (<span class="math inline">\(\lambda\)</span>) and magnitude (<span class="math inline">\(\Delta S\)</span>).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters for the simulation</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>S_baseline <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>t_LTP <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>lambda_LTP <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>delta_LTP <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>t_LTD <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>lambda_LTD <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>delta_LTD <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Time range for simulation</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">20</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute synaptic strength over time</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">synaptic_strength</span>(time, S_baseline, t_LTP, lambda_LTP, delta_LTP,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                       t_LTD, lambda_LTD, delta_LTD)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Format the resulting simulation into a convenient plotting format for later</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">melt</span>(S, <span class="at">id.vars =</span> <span class="st">"Time"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>By now, <strong>we’ve turned R into a synaptic storyteller</strong>, weaving tales of LTP, LTD, and the epic battle for dominance over synaptic strength.</p>
+</section>
+<section id="step-3-plotting-the-results" class="level4">
+<h4 class="anchored" data-anchor-id="step-3-plotting-the-results">Step 3: Plotting the Results</h4>
+<p>It’s time for the <em>pièce de résistance</em>: visualization! Using <code>ggplot2</code>, we’ll craft a plot that shows <strong>how synaptic strength evolves</strong>. Imagine this as the biologist’s equivalent of putting your art project on the fridge.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the synaptic strength</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(S, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> variable), <span class="at">size =</span> <span class="dv">1</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.01</span>)) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Synaptic Strength Over Time"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time (arbitrary units)"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Synaptic Strength"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The resulting plot reveals that the <strong>resulting synaptic strength</strong> is the result of the simultaneously <strong>gradual rise in synaptic strength</strong> thanks to LTP, <strong>followed by a dip as LTD gets its turn</strong> (plus the constant that determines the baseline strength). It’s like a see-saw, but the laws of biochemistry decide who gets to go up or down.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What do the units of synaptic strength means?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>The synaptic strength (<span class="math inline">\(S\)</span>) in the model is <strong>dimensionless</strong>. It represents a normalized value that captures the <strong>relative magnitude of potentiation or depression</strong> of a synapse, typically scaled between <span class="math inline">\(S_{\text{min}}\)</span> and <span class="math inline">\(S_{\text{max}}\)</span> (e.g., 0.5 to 1.5 in the upcoming extended model). This normalization <strong>simplifies the model</strong> by abstracting away specific biophysical units, such as conductance (<span class="math inline">\(\mu S\)</span>) or post-synaptic current (<span class="math inline">\(pA\)</span>), to <strong>focus on the dynamics</strong> of synaptic changes.</p>
+<p>If needed, <strong>the model could be adapted to use specific units</strong>, like synaptic conductance, by rescaling <span class="math inline">\(S\)</span> and its parameters to reflect <strong>actual physiological measurements</strong>. For instance, calcium oscillation amplitudes and the associated logistic functions would need to be parameterized <strong>according to empirical data</strong> from experiments measuring synaptic responses.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="step-4-playing-with-parameters" class="level4">
+<h4 class="anchored" data-anchor-id="step-4-playing-with-parameters">Step 4: Playing with Parameters</h4>
+<p>This is where things get really fun. <strong>By tweaking parameters</strong>, you can explore different scenarios, like what happens if neurons get hyped with LTP or slack off on LTD. For example, cranking up the LTP magnitude to 1.5 (from 0.5) while leaving LTD at 0.3 <strong>results in a net strengthening</strong> of the synapse.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Modify LTP magnitude</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>delta_LTP <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Recompute synaptic strength</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>data_modified <span class="ot">&lt;-</span> <span class="fu">lapply</span>(delta_LTP, <span class="cf">function</span>(x) {</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  strength <span class="ot">&lt;-</span> <span class="fu">synaptic_strength</span>(time, S_baseline, t_LTP, lambda_LTP, x,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                                t_LTD, lambda_LTD, delta_LTD)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  strength<span class="sc">$</span>delta_ltp <span class="ot">&lt;-</span> x</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  strength</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbindlist</span>()</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the modified synaptic strength</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_modified, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> Strength, <span class="at">col =</span> <span class="fu">ordered</span>(delta_ltp))) <span class="sc">+</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Modified Synaptic Strength (Stronger LTP)"</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time (arbitrary units)"</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Synaptic Strength"</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">expression</span>(Delta<span class="sc">*</span><span class="st">"S"</span>[LTP]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This flexibility lets you conduct <strong>virtual experiments</strong>, saving you from lab-induced caffeine dependency while still yielding <strong>valuable insights</strong>.</p>
+<p>In the next section, we’ll explore the <strong>implications of these simulations</strong> and explore how tweaking parameters can reveal deeper truths about <strong>neuronal plasticity</strong>. Stay tuned because in science, even the tiniest tweak can lead to a plot twist.</p>
+</section>
+</section>
+<section id="extending-the-model-to-include-ltp-and-ltd-dynamics" class="level1">
+<h1>Extending the Model to Include LTP and LTD Dynamics</h1>
+<p><strong>Our model so far is like a sturdy bicycle</strong>: simple, reliable, and great for short trips. But neuroscience is a highway with twists, turns, and occasional potholes, so it’s time to upgrade to a more dynamic model, think of this as <strong>strapping a rocket engine to that bike</strong>. Synaptic plasticity isn’t just about changes in strength; timing, saturation, and other nuances come into play. Let’s extend our model to capture some of these <strong>complexities</strong>.</p>
+<section id="incorporating-temporal-dependencies" class="level4">
+<h4 class="anchored" data-anchor-id="incorporating-temporal-dependencies">Incorporating Temporal Dependencies</h4>
+<p><strong>Timing is everything</strong> in neuroscience. In the world of synapses, when <strong>presynaptic</strong> and <strong>postsynaptic</strong> neurons fire relative to each other determines <strong>whether you get LTP or LTD</strong>. It’s a bit like a dance: if one partner steps too late, the magic is lost, and the audience (synaptic strength) is unimpressed.</p>
+<p>This timing phenomenon, called <strong>spike-timing-dependent plasticity</strong> (STDP), hinges on <span class="math inline">\(\Delta t\)</span> (the interval between pre- and postsynaptic spikes). <strong>LTP loves when presynaptic spikes lead the way</strong>, while LTD thrives when postsynaptic spikes take the lead <span class="citation" data-cites="scott2023adaptive">(<a href="#ref-scott2023adaptive" role="doc-biblioref">Scott and Frank 2023</a>)</span>.</p>
+<p>To capture this, we introduce exponential decay functions for the magnitudes of LTP and LTD:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\Delta S_{\text{LTP}} &amp;= A_{\text{LTP}} \cdot e^{-\frac{\Delta t}{\tau_{\text{LTP}}}} \\
+\Delta S_{\text{LTD}} &amp;= A_{\text{LTD}} \cdot e^{-\frac{\Delta t}{\tau_{\text{LTD}}}}
+\end{aligned}
+\]</span></p>
+<p>Here, <span class="math inline">\(A_{\text{LTP}}\)</span> and <span class="math inline">\(A_{\text{LTD}}\)</span> are the <strong>maximum amplitudes of change in synaptic strength</strong>, equivalent to <span class="math inline">\(\Delta S\)</span> (the size of the “dance move”), and <span class="math inline">\(\tau_{\text{LTP}}\)</span>, <span class="math inline">\(\tau_{\text{LTD}}\)</span> are time constants that govern <strong>how quickly the effect of time between spikes (<span class="math inline">\(\Delta t\)</span>) fades</strong>. If you’ve ever tried to tell a joke but botched the timing, you already understand how crucial these constants are.</p>
+<p>Now, let’s see how each of these parameters affects the synaptic choreography. If <span class="math inline">\(A_{\text{LTP}}\)</span> (the amplitude of the LTP move) is cranked up, the presynaptic dancer delivers an eye-catching performance, resulting in a stronger synapse. A <strong>higher amplitude</strong> here means even a moderately timed spike can still <strong>significantly strengthen the synapse</strong>. However, if <span class="math inline">\(A_{\text{LTD}}\)</span> takes center stage, the postsynaptic dancer has the spotlight, <strong>weakening the synapse more dramatically</strong>. Reducing either amplitude dulls their impact; it’s like both dancers are phoning it in, leaving the synapse barely moved, regardless of the timing.</p>
+<p>Now, consider <span class="math inline">\(\tau_{\text{LTP}}\)</span> and <span class="math inline">\(\tau_{\text{LTD}}\)</span>, the time constants that <strong>control how forgiving the synapse is about timing</strong>. A large <span class="math inline">\(\tau_{\text{LTP}}\)</span> means <strong>the presynaptic dancer gets more leeway</strong>; even if the moves are slightly late, the synapse is still impressed, leading to a <strong>broader window for LTP</strong>. In contrast, a smaller <span class="math inline">\(\tau_{\text{LTP}}\)</span> <strong>signals a pickier synapse</strong>, <strong>rewarding only perfectly timed presynaptic spikes</strong>. Similarly, a long <span class="math inline">\(\tau_{\text{LTD}}\)</span> gives the postsynaptic neuron plenty of room to weaken the synapse, tolerating more variability in timing. With a shorter <span class="math inline">\(\tau_{\text{LTD}}\)</span>, the postsynaptic dancer must hit the perfect beat to have any meaningful impact.</p>
+<p>The plot below illustrates the STDP model, showing <strong>how the magnitude of synaptic changes depends on the timing</strong> (<span class="math inline">\(\Delta t\)</span>). Positive <span class="math inline">\(\Delta t\)</span> corresponds to presynaptic spikes leading, favoring LTP, while negative <span class="math inline">\(\Delta t\)</span> corresponds to postsynaptic spikes leading, favoring LTD.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters for STDP</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>A_LTP <span class="ot">&lt;-</span> <span class="fl">0.5</span>  <span class="co"># Maximum potentiation amplitude</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>tau_LTP <span class="ot">&lt;-</span> <span class="dv">20</span>  <span class="co"># LTP time constant</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>A_LTD <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.5</span>  <span class="co"># Maximum depression amplitude (negative)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>tau_LTD <span class="ot">&lt;-</span> <span class="dv">20</span>  <span class="co"># LTD time constant</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to compute LTP and LTD effects</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>STDP_effect <span class="ot">&lt;-</span> <span class="cf">function</span>(delta_t) {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(delta_t <span class="sc">&gt;=</span> <span class="dv">0</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>         A_LTP <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>delta_t <span class="sc">/</span> tau_LTP),  <span class="co"># LTP for positive delta_t</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>         A_LTD <span class="sc">*</span> <span class="fu">exp</span>(delta_t <span class="sc">/</span> tau_LTD))  <span class="co"># LTD for negative delta_t</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>delta_t <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">50</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>synaptic_changes <span class="ot">&lt;-</span> <span class="fu">sapply</span>(delta_t, STDP_effect)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame for plotting</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(delta_t, synaptic_changes)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the STDP curve</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> delta_t, <span class="at">y =</span> synaptic_changes)) <span class="sc">+</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"orange"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Spike-Timing-Dependent Plasticity (STDP) Curve"</span>,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time Difference (Δt, ms)"</span>,</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Synaptic Change (ΔS)"</span>) <span class="sc">+</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray"</span>) <span class="sc">+</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">30</span>, <span class="at">y =</span> <span class="fl">0.5</span>, <span class="at">label =</span> <span class="st">"LTP Zone"</span>, <span class="at">size =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="sc">-</span><span class="dv">30</span>, <span class="at">y =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">label =</span> <span class="st">"LTD Zone"</span>, <span class="at">size =</span> <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot captures <strong>the essence of STDP</strong>. It extends the model by introducing <span class="math inline">\(\Delta t\)</span> as a critical parameter, <strong>linking the timing</strong> of neural activity directly <strong>to the direction and magnitude</strong> of synaptic changes. It bridges abstract mathematical functions with tangible biological timing phenomena, making the model more representative of <strong>real neural processes</strong>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Addressing Saturation Effects
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Synaptic strength isn’t infinite, it has <strong>physiological constraints</strong>. However, in the current model, <strong>this limitation is already handled</strong> effectively by the logistic framework and STDP parameters. The logistic function naturally ensures that synaptic strength asymptotes at biologically meaningful <strong>upper and lower bounds</strong>, dictated by parameters like <span class="math inline">\(A_{\text{LTP}}\)</span> and <span class="math inline">\(A_{\text{LTD}}\)</span>. These parameters <strong>cap the magnitude of synaptic changes</strong>, avoiding unbounded potentiation or depression.</p>
+<p>Introducing additional saturation mechanisms, such as hard boundaries on <span class="math inline">\(S(t)\)</span>, would be <strong>redundant in this context</strong>. The plateau behavior of the logistic function inherently <strong>aligns with physiological observations</strong>, maintaining synaptic changes within plausible limits without requiring explicit constraints. This reflects the elegance of using non-linear models: the <strong>boundaries are built into the system’s behavior</strong>, reducing the need for arbitrary external adjustments.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="simulating-the-extended-model" class="level4">
+<h4 class="anchored" data-anchor-id="simulating-the-extended-model">Simulating the Extended Model</h4>
+<p>Let’s see these concepts in action using R. By adding the timing-dependent amplitudes and enforcing strength limits, we <strong>upgrade our model</strong> to reflect these new dynamics.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters for STDP-based dynamics</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>A_LTP <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>tau_LTP <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>A_LTD <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>tau_LTD <span class="ot">&lt;-</span> <span class="dv">15</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># STDP-based amplitude functions</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>amplitude_LTP <span class="ot">&lt;-</span> <span class="cf">function</span>(delta_t, A_LTP, tau_LTP) {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  A_LTP <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">abs</span>(delta_t) <span class="sc">/</span> tau_LTP)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>amplitude_LTD <span class="ot">&lt;-</span> <span class="cf">function</span>(delta_t, A_LTD, tau_LTD) {</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  A_LTD <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">abs</span>(delta_t) <span class="sc">/</span> tau_LTD)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Extended model with saturation effects</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>extended_synaptic_strength <span class="ot">&lt;-</span> <span class="cf">function</span>(t, S_baseline, </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                                       t_LTP, lambda_LTP, A_LTP, tau_LTP, </span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                                       t_LTD, lambda_LTD, A_LTD, tau_LTD, </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                                       delta_t) {</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  S_baseline <span class="sc">+</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>       <span class="fu">amplitude_LTP</span>(delta_t, A_LTP, tau_LTP) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>lambda_LTP <span class="sc">*</span> (t <span class="sc">-</span> t_LTP))) <span class="sc">-</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>       <span class="fu">amplitude_LTD</span>(delta_t, A_LTD, tau_LTD) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>lambda_LTD <span class="sc">*</span> (t <span class="sc">-</span> t_LTD)))</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>delta_t <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">^</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>)  <span class="co"># Example time difference between spikes</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate the extended model</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>S_extended <span class="ot">&lt;-</span> <span class="fu">lapply</span>(delta_t, <span class="cf">function</span>(x) {</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.table</span>(<span class="at">delta_t =</span> x, </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>             <span class="at">time =</span> time,</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>             <span class="at">strength =</span> <span class="fu">extended_synaptic_strength</span>(time, S_baseline, </span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>                                                   t_LTP, lambda_LTP, A_LTP, tau_LTP, </span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                                                   t_LTD, lambda_LTD, A_LTD, tau_LTD, </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                                                   <span class="at">delta_t =</span> x) )</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbindlist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>With this setup, our model now considers both the <strong>timing of spikes</strong> and the <strong>physiological constraints</strong> on synaptic strength.</p>
+</section>
+<section id="visualizing-the-extended-model" class="level4">
+<h4 class="anchored" data-anchor-id="visualizing-the-extended-model">Visualizing the Extended Model</h4>
+<p>Let’s plot the extended model to visualize these added dynamics.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the extended synaptic strength</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(S_extended, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> strength, <span class="at">col =</span> <span class="fu">ordered</span>(delta_t))) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Extended Synaptic Strength with Dynamics"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time (arbitrary units)"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Synaptic Strength"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">expression</span>(Delta<span class="sc">*</span><span class="fu">italic</span>(t)<span class="sc">~</span><span class="st">"Between Spikes"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The plot reveals two key features:</p>
+<ol type="1">
+<li><strong>STDP Influence</strong>: LTP and LTD magnitudes decay and flow based on spike timing (<span class="math inline">\(\Delta t\)</span>), showing how temporal precision can shape neural connections.</li>
+<li><strong>Saturation Effects</strong>: Synaptic strength remains bounded thanks to parameters like <span class="math inline">\(A_{\text{LTP}}\)</span> and <span class="math inline">\(A_{\text{LTD}}\)</span>, showcasing the physiological checks and balances that prevent runaway excitation or extreme depression.</li>
+</ol>
+</section>
+<section id="further-extensions" class="level4">
+<h4 class="anchored" data-anchor-id="further-extensions">Further Extensions</h4>
+<p>What’s next? We could incorporate <strong>frequency-dependent plasticity</strong> to explore how high-frequency stimulation turbocharges LTP or how low-frequency inputs foster LTD. Or we could unleash this model on a <strong>network of neurons</strong> to study how multiple synapses interact. The possibilities are endless!</p>
+<p>By extending the model, we’re not just adding bells and whistles. We’re <strong>crafting a tool</strong> that captures the messy, dynamic beauty of real-world synaptic plasticity.</p>
+</section>
+</section>
+<section id="exploring-parameter-effects" class="level1 page-columns page-full">
+<h1>Exploring Parameter Effects</h1>
+<p>Our extended model is like a well-equipped chemistry set for the brain, where <strong>each parameter represents a crucial ingredient</strong> in the recipe of synaptic plasticity. By varying these parameters, we can simulate <strong>how neurons behave under different conditions</strong>, from hyperactive learning states to subdued inhibition. This section focus on how key parameters influence the model’s behavior, explores their <strong>biological significance</strong>, and demonstrates how to experiment with them in R to uncover fascinating insights.</p>
+<section id="sensitivity-analysis" class="level4">
+<h4 class="anchored" data-anchor-id="sensitivity-analysis">Sensitivity Analysis</h4>
+<p>Sensitivity analysis is a systematic way of tweaking the model’s parameters <strong>to observe their impact on synaptic strength</strong>. It’s <strong>akin to turning the dials on a stereo system</strong> to find the perfect sound balance, adjusting bass, treble, and volume to craft the desired output. In our case, the knobs control properties like <strong>calcium dynamics</strong>, <strong>synaptic decay rates</strong>, and <strong>baseline strength</strong>. These adjustments not only refine the model but also provide valuable biological insights into how real-life neurons might behave in various scenarios, <strong>from learning and memory</strong> formation to <strong>neurological disorders</strong>.</p>
+<p>Here’s an example of how you can experiment with the parameters in R to visualize their effects:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a range of parameter values</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>lambda_LTP_vals <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="dv">2</span>, <span class="at">by =</span> <span class="fl">0.5</span>)  <span class="co"># Example: Steepness of LTP</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>lambda_LTD_vals <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="dv">2</span>, <span class="at">by =</span> <span class="fl">0.5</span>)  <span class="co"># Example: Steepness of LTD</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate model for different parameters</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> time, <span class="at">S_baseline =</span> S_baseline, </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">t_LTP =</span> t_LTP, <span class="at">lambda_LTP =</span> lambda_LTP_vals, <span class="at">A_LTP =</span> A_LTP, <span class="at">tau_LTP =</span> tau_LTP,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">t_LTD =</span> t_LTD, <span class="at">lambda_LTD =</span> lambda_LTD_vals, <span class="at">A_LTD =</span> A_LTD, <span class="at">tau_LTD =</span> tau_LTD,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta_t =</span> <span class="dv">0</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>results<span class="sc">$</span>strength <span class="ot">&lt;-</span> <span class="fu">mapply</span>(extended_synaptic_strength, </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                           results<span class="sc">$</span>time, results<span class="sc">$</span>S_baseline,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>                           results<span class="sc">$</span>t_LTP, results<span class="sc">$</span>lambda_LTP, results<span class="sc">$</span>A_LTP, results<span class="sc">$</span>tau_LTP,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                           results<span class="sc">$</span>t_LTD, results<span class="sc">$</span>lambda_LTD, results<span class="sc">$</span>A_LTD, results<span class="sc">$</span>tau_LTD,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                           results<span class="sc">$</span>delta_t)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot sensitivity to lambda parameters</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> strength)) <span class="sc">+</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> <span class="fu">ordered</span>(lambda_LTD, <span class="at">levels =</span> lambda_LTD_vals, </span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">paste0</span>(<span class="st">"LTD Growth Rate = "</span>, lambda_LTD_vals)), <span class="at">nrow =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">ordered</span>(lambda_LTP)), <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Sensitivity Analysis: Impact of LTP and LTP Rate"</span>,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time (arbitrary units)"</span>, <span class="at">y =</span> <span class="st">"Synaptic Strength"</span>,</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"LTP Decay Rate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-11-1.svg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="from-model-parameters-to-biological-applications" class="level4">
+<h4 class="anchored" data-anchor-id="from-model-parameters-to-biological-applications">From Model Parameters to Biological Applications</h4>
+<p>The calcium oscillation amplitude, <span class="math inline">\(A_{\text{LTP}}\)</span> and <span class="math inline">\(A_{\text{LTD}}\)</span>, <strong>dictates the maximum strength</strong> of synaptic potentiation and depression. <strong>Imagine these amplitudes as the size of a neuron’s emotional response</strong>, whether it leaps for joy (LTP) or sighs deeply in despair (LTD). Increasing <span class="math inline">\(A_{\text{LTP}}\)</span> simulates a brain on overdrive, as in heightened learning states, while lowering it mirrors synaptic inhibition or even neurodegeneration.</p>
+<p>The decay constants, <span class="math inline">\(\tau_{\text{LTP}}\)</span> and <span class="math inline">\(\tau_{\text{LTD}}\)</span>, add a temporal layer to this story. These parameters determine <strong>how quickly the effects of potentiation and depression fade over time</strong>, similar to how fast a good mood or a bad one dissipates. <strong>Short decay constants</strong> are like fleeting bursts of inspiration, ideal for circuits needing rapid adaptation, such as the visual system. In contrast, <strong>long decay constants</strong> suit processes like memory consolidation in the hippocampus, where stability over time is crucial.</p>
+<p>Growth rates, denoted by <span class="math inline">\(\lambda_{\text{LTP}}\)</span> and <span class="math inline">\(\lambda_{\text{LTD}}\)</span>, control <strong>how steeply synaptic strength transitions in response to stimuli</strong>. Think of these as the sensitivity of a neuron’s accelerator pedal. <strong>A steep curve</strong> means the synapse reacts instantly to changes, akin to a sprinter’s quick start. <strong>Shallow growth rates</strong>, on the other hand, are like a marathon runner pacing themselves, better reflecting gradual changes in long-term neural adaptation.</p>
+<p>Finally, the baseline synaptic strength, <span class="math inline">\(S_{\text{baseline}}\)</span>, <strong>sets the initial tone of the model</strong>. This parameter represents the synapse’s “default mood” <strong>before any plasticity occurs</strong>. Adjusting <span class="math inline">\(S_{\text{baseline}}\)</span> allows us to model different <strong>starting conditions</strong>, from a highly potentiated synapse involved in an established skill to a depressed one, such as in the aging brain or during neurodegeneration.</p>
+</section>
+<section id="further-applications" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="further-applications">Further Applications</h4>
+<p>Exploring these parameters <strong>is not just a theoretical exercise</strong>; it has practical applications in neuroscience research and beyond. Researchers can use sensitivity analysis <strong>to design experiments</strong> or predict neuronal responses to stimuli. Educators can use these <strong>simulations as teaching tools</strong> to demonstrate the complexity of synaptic plasticity. Clinicians might find such models useful for <strong>exploring the effects of treatments</strong> targeting synaptic mechanisms, providing insights into potential therapies for conditions like Alzheimer’s disease or epilepsy.</p>
+<p>Ultimately, parameter exploration transforms our model into a versatile tool for <strong>understanding the dynamic interplay of synaptic mechanisms</strong>. It serves as a gateway to uncovering the mysteries of <strong>learning, memory, and neurological disorders</strong> while offering practical insights into experimental and therapeutic approaches.</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a range of parameter values</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">synapse_id =</span> <span class="fu">seq_len</span>(n),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">S_baseline =</span> <span class="fu">runif</span>(n, <span class="fl">0.8</span>, <span class="fl">1.2</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">t_LTP =</span> <span class="fu">runif</span>(n, <span class="dv">0</span>, <span class="dv">20</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">t_LTD =</span> <span class="fu">runif</span>(n, <span class="dv">0</span>, <span class="dv">20</span>),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda_LTP =</span> <span class="fu">runif</span>(n, <span class="fl">1.0</span>, <span class="fl">1.5</span>),</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda_LTD =</span> <span class="fu">runif</span>(n, <span class="fl">0.5</span>, <span class="fl">1.0</span>),</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">A_LTP =</span> <span class="fu">runif</span>(n, <span class="fl">1.0</span>, <span class="fl">1.5</span>),</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">A_LTD =</span> <span class="fu">runif</span>(n, <span class="fl">0.5</span>, <span class="fl">1.0</span>),</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_LTP =</span> <span class="fu">runif</span>(n, <span class="dv">15</span>, <span class="dv">20</span>),</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_LTD =</span> <span class="fu">runif</span>(n, <span class="dv">10</span>, <span class="dv">25</span>),</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta_t =</span> <span class="fu">runif</span>(n, <span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> vals[vals[, <span class="fu">list</span>(<span class="at">t =</span> time), synapse_id], on <span class="ot">=</span> <span class="st">"synapse_id"</span>]</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>vals[, synapse_strength <span class="sc">:</span><span class="er">=</span> <span class="fu">extended_synaptic_strength</span>(</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  t, S_baseline, t_LTP, lambda_LTP, A_LTP, tau_LTP, </span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  t_LTD, lambda_LTD, A_LTD, tau_LTD, delta_t</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(t), <span class="dv">0</span>, <span class="fl">0.05</span>), synapse_id]</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot sensitivity to lambda parameters</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(vals, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> synapse_strength)) <span class="sc">+</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> synapse_id), <span class="at">color =</span> <span class="st">"gray85"</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"gray20"</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom =</span> <span class="st">"line"</span>, <span class="at">fun =</span> mean, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Simulating Many Synapses: Stochastic Processes"</span>,</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Time (arbitrary units)"</span>, <span class="at">y =</span> <span class="st">"Synaptic Strength"</span>) <span class="sc">+</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">17</span>, <span class="at">y =</span> <span class="fl">1.1</span>, <span class="at">label =</span> <span class="st">"LTP"</span>, <span class="at">size =</span> <span class="dv">6</span>, <span class="at">color =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">17</span>, <span class="at">y =</span> <span class="fl">0.9</span>, <span class="at">label =</span> <span class="st">"LTD"</span>, <span class="at">size =</span> <span class="dv">6</span>, <span class="at">color =</span> <span class="st">"darkred"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption">Orange line denotes the mean synaptic strength over time.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="final-remarks" class="level1 page-columns page-full">
+<h1>Final Remarks</h1>
+<p>Embarking on this journey through non-linear modeling of <strong>neuronal plasticity</strong>, we’ve uncovered the intricate dynamics of <strong>how synaptic strength shifts over time</strong> under the competing forces of LTP and LTD. By leveraging <strong>coupled logistic functions</strong>, we’ve illuminated the non-linear and time-sensitive nature of synaptic changes, emphasizing the <strong>crucial role of calcium oscillations</strong> as the molecular metronomes orchestrating these processes.</p>
+<p>Throughout this exploration, <strong>several pivotal lessons can be drawn</strong>. Logistic functions proved to be elegant tools for <strong>capturing the threshold-dependent behavior</strong> of synaptic transitions, moving beyond gradual shifts to reveal the tipping points <strong>inherent in plasticity</strong>. Moreover, we’ve seen how <strong>tweaking parameters</strong> like calcium amplitude or decay rates <strong>can profoundly alter synaptic behavior</strong>, echoing the biological reality where minor molecular adjustments yield vastly different functional outcomes. Finally, the extended model demonstrated its robustness by integrating dynamic <strong>temporal dependencies</strong> and <strong>saturation effects</strong>, offering a nuanced depiction of synaptic adaptation to stimuli.</p>
+<p>This is but the tip of the iceberg. The framework we’ve developed invites exploration into <strong>countless other physiological processes</strong> where non-linear dynamics reign supreme. Consider <strong>extending these concepts to other forms of plasticity</strong>, such as structural changes in dendrites or the fine-tuning of synaptic homeostasis. Similar models can be applied to <strong>cardiac autonomic modulation</strong><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, where the balance of sympathetic and parasympathetic activity <strong>echoes the interplay of LTP and LTD</strong>. Or consider the feedback loops governing hormonal or metabolic regulation, fertile grounds for non-linear interactions.</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;A big surprise in this regard is coming up for the next post!!</p></div></div><p>For the intrepid explorer of neuronal plasticity, <strong>there’s much to be done</strong>. Experiment with the model’s parameters, simulate pathological scenarios, or <strong>challenge the boundaries of its assumptions</strong>. With each iteration, you’ll not only refine your understanding of synaptic plasticity but also contribute to the broader pursuit of understanding life’s complexities <strong>through mathematics and computation</strong>.</p>
+<p>Neuroscience (or science in general) thrives at the nexus of <strong>theory, experimentation, and computation</strong>. Non-linear models are indispensable in <strong>bridging these fields</strong>, revealing the brain’s staggering capacity for adaptation and resilience. Whether you’re a scientist, student, or curious mind, there’s always room to stay inquisitive, tinker with ideas, and <strong>push the boundaries of what we know</strong>.</p>
+<p>So, grab your equations, fire up R, and <strong>let curiosity lead the way</strong>. Biology and mathematics are waiting to converge in ways that can transform how we understand the very essence of life. Stay curious, and <strong>never stop exploring</strong>!</p>
+
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-krystal2024ketamine" class="csl-entry" role="listitem">
+Krystal, John H, Ege T Kavalali, and Lisa M Monteggia. 2024. <span>“Ketamine and Rapid Antidepressant Action: New Treatments and Novel Synaptic Signaling Mechanisms.”</span> <em>Neuropsychopharmacology</em> 49 (1): 41–50.
+</div>
+<div id="ref-lisman2012mechanisms" class="csl-entry" role="listitem">
+Lisman, John, Ryohei Yasuda, and Sridhar Raghavachari. 2012. <span>“Mechanisms of CaMKII Action in Long-Term Potentiation.”</span> <em>Nature Reviews Neuroscience</em> 13 (3): 169–82.
+</div>
+<div id="ref-malenka2003long" class="csl-entry" role="listitem">
+Malenka, Robert C. 2003. <span>“The Long-Term Potential of LTP.”</span> <em>Nature Reviews Neuroscience</em> 4 (11): 923–26.
+</div>
+<div id="ref-scott2023adaptive" class="csl-entry" role="listitem">
+Scott, Daniel N, and Michael J Frank. 2023. <span>“Adaptive Control of Synaptic Plasticity Integrates Micro-and Macroscopic Network Function.”</span> <em>Neuropsychopharmacology</em> 48 (1): 121–44.
+</div>
+<div id="ref-yasuda2022camkii" class="csl-entry" role="listitem">
+Yasuda, Ryohei, Yasunori Hayashi, and Johannes W Hell. 2022. <span>“CaMKII: A Central Molecular Organizer of Synaptic Plasticity, Learning and Memory.”</span> <em>Nature Reviews Neuroscience</em> 23 (11): 666–82.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{castillo-aguilar2024,
+  author = {Castillo-Aguilar, Matías},
+  title = {Non-Linear Models: {A} {Case} for {Synaptic} {Plasticity}},
+  date = {2024-12-14},
+  url = {https://bayesically-speaking.com/posts/2024-12-10 a-case-for-synaptic-plasticity/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-castillo-aguilar2024" class="csl-entry quarto-appendix-citeas" role="listitem">
+Castillo-Aguilar, Matías. 2024. <span>“Non-Linear Models: A Case for
+Synaptic Plasticity.”</span> December 14, 2024. <a href="https://bayesically-speaking.com/posts/2024-12-10 a-case-for-synaptic-plasticity/">https://bayesically-speaking.com/posts/2024-12-10
+a-case-for-synaptic-plasticity/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/bayesically-speaking\.com\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

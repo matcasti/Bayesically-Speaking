@@ -1,0 +1,655 @@
+---
+title: "Non-linear models: A Case for Synaptic Plasticity"
+description: |
+  In this second edition we'll be discussing the role of long term potentiation and depression, a form of neuroplasticity, and their dynamics using non-linear models. Here, we'll dig deep into the statistical intricacies of the overlapping dynamics of synaptic neuroplasticity.
+date: "2024-12-14"
+fig-format: svg
+fig-width: 12
+fig-responsive: true
+fig-asp: .5
+execute: 
+  warning: false
+  error: false
+#doi: "10.59350/r62fn-8h720"
+categories: [non-linear]
+bibliography: ref.bib
+title-block-banner: title-block.jpeg
+image: body_1.jpeg
+# resources: 
+#   - null
+---
+
+```{r}
+#| include: false
+library(ggplot2)
+library(data.table)
+library(nlme)
+library(brms)
+
+theme_set(new = theme_classic(base_size = 20))
+```
+
+# Introduction
+
+The human brain is a show-off, really. It's constantly **rewiring itself**, adapting to new challenges, and making you forget where you put your keys (all at the same time). This remarkable ability, called **neuronal plasticity**, is the brain's way of saying, "Don't worry, I can learn, unlearn, and even relearn, if necessary." **Imagine a guitarist practicing a tricky solo**. With each attempt (and many failed ones), the neurons involved in mastering that melody become like overzealous gym buddies: stronger, faster, and annoyingly efficient. That's plasticity in action.
+
+But **capturing this in a model?** Oh, that's another story. Modeling neuronal plasticity is like **trying to explain a teenager's mood swings** (messy, non-linear, and full of unexpected spikes). The process involves sharp changes in synaptic strength, calcium signaling thresholds that act like overly jealous gatekeepers, and dynamics so complex **they make rocket science look like child's play**. Traditional models just shrug and wave the white flag.
+
+Let's welcome the **non-linear models**, the superheroes of mathematical modeling. In this post, we'll take a closer look at how these models, specifically **logistic growth equations**, can tame the chaos of neuronal plasticity. We'll demystify the biology, **turn it into manageable math**, and then buckle up to simulate it all in R. Yes, R... the land of syntax errors and endless parentheses, but don't worry, I'll guide you.
+
+By the end of this journey, you'll not only appreciate the elegance of neuronal plasticity but also see how non-linear modeling can turn **brain mysteries into manageable equations**. So whether you're a neuroscience nerd, or someone who just likes the idea of **bossing around neurons via code**, this post has something for you. Let's dive in, and don't forget to pack your sense of humor. You're going to need it! 
+
+![](neurons-firing-2.webp){.column-screen .img-fluid width="100%"}
+
+# Understanding Neuronal Plasticity
+
+**Neuronal plasticity** is the brain's way of being a multitasking genius or (depending on your perspective), a workaholic control freak. At its heart, it's the **neurons' ability to adapt** their structure and function, responding to experiences, activity, **or the occasional existential crisis**. This adaptability powers the brain's greatest hits: learning, memory, and **even bouncing back from injuries**. This concept, stating that neuronal connections can be remodeled by experience, is also known as [Hebbian Theory](https://www.sciencedirect.com/topics/neuroscience/hebbian-theory), and its behind many studied mechanisms by which plastic changes occurs at the synapse-level [@scott2023adaptive]. Think of it as the neural equivalent of turning your spare bedroom into a home gym, if neurons are adaptable, why shouldn't you be? 
+
+#### The Role of Synaptic Strength
+
+Plasticity does its magic at the **synapse**, that microscopic handshake where one neuron whispers (or yells) to another. The strength of this connection, aptly named **synaptic strength**, determines how effectively neurons gossip. Strengthening these connections, a process grandiosely called **Long-Term Potentiation (LTP)**, makes neural communication as smooth as butter on warm toast [@malenka2003long]. On the flip side, **Long-Term Depression (LTD)** weakens connections, pruning the neural network like a gardener trimming overzealous hedges. Goodbye, redundant pathways; hello, optimization.
+
+![](ltp-ltd-synapse.jpeg){.img-fluid width="100%"}
+[Long-Term Potentiation (LTP) and Long-Term Depression (LTD) occurs **as a function of synapse communication**. This is what makes some brain pathways stronger or weaker over time, contributing to both the acquiring and loosing cognitive functions and motor skills.]{.aside}
+
+#### Calcium: The Master Regulator
+
+If synaptic strength is the party, **calcium ions** ($Ca^{2+}$) are the overzealous DJ deciding whether to pump up the volume or call it a night. Calcium levels dictate **whether the synapse becomes stronger or weaker**, essentially flipping the plasticity switches:
+
+-  **High** calcium levels? Cue the **LTP rave**, connections strengthen, neurons fire happily ever after.
+-  **Low** calcium levels? Time for the **LTD chill-out session**, synapses quiet down and pathways are pruned.
+
+The drama **lies in the thresholds**. Calcium must hit the sweet spot: too high, and it's all systems go for strengthening; too low, and the neuron gets out its metaphorical scissors. **Anything in between is neural purgatory** (synaptic strength stays stable), which is another way of saying, "Meh, let's just keep things as they are."
+
+#### Dynamic and Non-Linear Nature
+
+Here's where things get tricky: **the relationship between calcium levels and synaptic strength isn't linear**, because why would the brain ever take the easy route? A tiny nudge in calcium concentration can tip the balance dramatically, depending on whether those pesky thresholds are crossed. **Feedback loops ensure that synaptic adjustments don't spiral out of control**, think of them as neural quality control, keeping things proportional and adaptive [@lisman2012mechanisms; @yasuda2022camkii].
+
+```{r}
+#| code-fold: true
+#| fig-cap: "Here, the relationship between calcium levels and the change in synaptic strength is simplified to illustrate the relationship between calcium dynamics and synaptic plasticity."
+
+
+# Define calcium levels and thresholds
+calcium_levels <- seq(0, 2, by = 0.01) # Simulated calcium levels (arbitrary units)
+ltp_threshold <- 1.2  # Threshold for LTP activation
+ltd_threshold <- 0.8  # Threshold for LTD activation
+
+# Define synaptic strength change based on calcium
+synaptic_strength_change <- function(calcium, ltp_thresh, ltd_thresh) {
+  # Non-linear responses for LTP and LTD
+  ltp_response <- ifelse(calcium > ltp_thresh, (calcium - ltp_thresh)^2, 0)
+  ltd_response <- ifelse(calcium < ltd_thresh, -(ltd_thresh - calcium)^2, 0)
+  ltp_response + ltd_response
+}
+
+# Compute synaptic strength changes
+strength_changes <- synaptic_strength_change(calcium_levels, ltp_threshold, ltd_threshold)
+
+# Create a data frame for plotting
+data <- data.frame(
+  Calcium = calcium_levels,
+  StrengthChange = strength_changes
+)
+
+# Plot
+ggplot(data, aes(x = Calcium, y = StrengthChange)) +
+  geom_line(color = "orange", size = 1) +
+  geom_vline(xintercept = ltp_threshold, linetype = "dashed", color = "darkgreen", size = 1/2) +
+  geom_vline(xintercept = ltd_threshold, linetype = "dashed", color = "darkred", size = 1/2) +
+  annotate("text", x = ltp_threshold + 0.01, y = 0.5, label = "LTP Threshold", color = "darkgreen", hjust = 0, size = 6) +
+  annotate("text", x = ltd_threshold - 0.01, y = -0.5, label = "LTD Threshold", color = "darkred", hjust = 1, size = 6) +
+  labs(
+    title = "Non-Linear Relationship Between Calcium and Synaptic Strength",
+    x = "Calcium Levels (arbitrary units)",
+    y = "Change in Synaptic Strength"
+  )
+
+```
+
+This **delicate dance** between calcium signaling, thresholds, and synaptic strength **is the essence of neuronal plasticity's beauty**. It's also the reason why modeling this process is **as tricky as explaining quantum physics** to a toddler. But don't worry; the non-linear models we'll tackle next will help demystify this wild ride.
+
+# The Challenge of Modeling Neuronal Plasticity
+
+Modeling neuronal plasticity is like **trying to choreograph a dance for cats**: dynamic, unpredictable, and prone to sudden chaos. The brain doesn't play by the simple rules of linear systems. Instead, it thrives on thresholds, feedback loops, and behaviors that emerge **as if neurons decided to collectively say, "Let's make this interesting."** 
+
+#### The Complexity of Biological Systems
+
+![](synapse.png){.img-fluid width="100%"}
+[Depiction of the step-by-step communication between neurons at the synapse-level through calcium signaling.]{.aside}
+
+Neuronal plasticity isn't just complex, it's a web of biochemical drama. Take **calcium concentration dynamics**, these levels don't just sit still like a well-behaved variable. **They oscillate wildly**, influenced by synaptic activity and timing, like calcium's trying out for a rhythm section. **These oscillations trigger intracellular signaling cascades** that either crank up the volume or dial it down, depending on the situation. And then there's **synaptic change over time**, a gradual process, **often following a sigmoid or exponential curve**. In other words, synaptic strength doesn't just flick a switch; it warms up, stretches, and then decides if it's going to do some serious lifting.
+
+Linear models? They try their best but are basically out of their depth here. Sure, they can hint at early synaptic changes, but when feedback mechanisms, thresholds, and saturation effects enter the chat, **linear models might as well pack up and go home**.
+
+#### Threshold-Dependent Behavior
+
+Calcium thresholds are where the real drama unfolds. Picture this: when $Ca^{2+}$ crosses the high threshold ($C_{\text{LTP}}$), **synaptic strength goes into overdrive**, climbing exponentially until it maxes out like a hiker who's finally reached the summit. But if $Ca^{2+}$ drops below the low threshold ($C_{\text{LTD}}$), **it's pruning time**, and synaptic strength takes a sharp nosedive to the baseline. These thresholds create **non-linearity**, where tiny calcium fluctuations can flip the synaptic switch from party mode to shutdown in a heartbeat.
+
+#### Feedback and Regulation
+
+If thresholds are the stage, feedback mechanisms are the stagehands, constantly adjusting the scene. **Positive feedback** amplifies responses, with **LTP inviting more calcium to the party** and reinforcing synaptic strengthening. **Negative feedback**, on the other hand, keeps **LTD from going full demolition crew by dialing down activity** and avoiding unnecessary pruning. Together, these loops keep the system both chaotic and oddly balanced, a testament to biological ingenuity (or masochism).
+
+#### Variability and Noise
+
+And let's not forget the noise. **Neurons are the original rebels**, no two behave identically. Calcium concentrations fluctuate, **receptors show wildly different sensitivities**, and neurotransmitter release has a habit of being unpredictable. Stochastic effects at the molecular level add another layer of randomness, making modeling this system **akin to predicting the stock market in a thunderstorm**.
+
+#### Why Non-Linear Models?
+
+Non-linear models, like logistic growth equations, come to the rescue with their ability to handle the brain's antics. They're perfect for capturing **threshold-dependent** dynamics, **saturation** effects, and **time-dependent** changes, all while leaving room for noise and feedback. It's as if these models were built specifically for **taming the wild world of neuronal plasticity**.
+
+In the next section, we'll get ready the magic of non-linear modeling, focusing on **logistic growth equations**. Spoiler: these equations are like cheat codes for understanding synaptic strength changes. Let's see them in action!
+
+# Introducing the Non-Linear Model
+
+To simulate the dynamics of neuronal plasticity, **we need a model that doesn't crumble under the weight of complexity**. Let me introduce you the **logistic growth model**, our mathematical hero. This model elegantly captures the key ingredients of synaptic changes:
+
+- **Threshold behavior**: Synaptic strength only changes when stimulation crosses a "Do Not Disturb" threshold.  
+- **Saturation**: Synaptic strength doesn't keep growing forever (because even neurons know their limits).  
+- **Time-dependence**: Synaptic changes are gradual, like making sourdough bread. Patience is key.  
+
+Logistic equations are pretty simple at its core, they all follow the same structure.
+
+$$
+f(x) = \frac{1}{1 + e^{-x}}
+$$
+
+This kind of equations will (in general) yield the following behavior.
+
+```{r}
+#| code-fold: true
+
+logistic <- function(x) { 1 / (1 + exp(-x)) }
+
+ggplot() +
+  geom_hline(yintercept = c(0, 1), linetype = 2, size = 1/2, col = "gray50") +
+  stat_function(fun = logistic, xlim = c(-10, 10), linewidth = 1, col = "orange") +
+  annotate(geom = "text", label = "f(x) == frac(1,1 + e^{-x})", x = -3, y = 0.5, parse = TRUE, size = 6) +
+  labs(title = "Asymptotic Behavior of Logistic Functions",
+       y = expression(italic(f)(x)),
+       x = expression(italic(x)))
+```
+
+This logistic growth model **is widely used in biology** to describe systems where growth starts slow, accelerates, and then hits a plateau (also called, asymptotes). In our case, it's the perfect candidate for **modeling synaptic strength** during LTP and LTD, **all while looking deceptively simple**.
+
+#### Looking into the model
+
+If we tweak the forementioned logistic equation, we get something like this:  
+
+$$
+S(t) = S_{\text{min}} + \frac{S_{\text{max}} - S_{\text{min}}}{1 + e^{-\lambda (t - t_0)}}
+$$
+
+Let's break it down without making your eyes glaze over:
+
+-  $S(t)$: Synaptic strength at time $t$. This is what we're modeling.  
+-  $S_{\text{min}}$: The baseline synaptic strength, think of it as the starting line.  
+-  $S_{\text{max}}$: The upper limit of synaptic strength after all the excitement of LTP.  
+-  $\lambda$: The rate of change, or how quickly the synapse is building muscle.  
+-  $t_0$: The starting point of stimulation, shifting the curve along the time axis.  
+
+::: {.callout-note collapse=false}
+## Pedagogic convenience
+
+Using synaptic strength is simpler and more abstract, making it **easier to fit and interpret** in many contexts, especially when data on calcium dynamics is unavailable.
+
+Explicitly modeling calcium dynamics and thresholds can provide deeper biological insights but **at the cost of added complexity**.
+:::
+
+Here's why this logistic structure is very convenient:  
+
+1. Synaptic strength starts close to $S_{\text{min}}$ when time is still warming up ($t \ll t_0$).  
+2. It ramps up as $t$ approaches $t_0$, because neurons love to make a dramatic entrance.  
+3. Growth slows as $S(t)$ nears $S_{\text{max}}$, reflecting the biological saturation point (like most physiological processes).
+
+#### Modeling LTP: The Big Boost
+
+In **Long-Term Potentiation (LTP)**, the synapse gets a power-up, causing a rapid and lasting increase in strength. Using the logistic growth model:  
+
+- $S_{\text{min}}$ is the baseline **before** stimulation.  
+- $S_{\text{max}}$ is the exciting new level of strength **after LTP has worked** its magic.  
+
+Tweaking $\lambda$ and $t_0$ lets us control **how quickly and when the synapse gets its boost**, perfect for simulating the effects of different stimuli.
+
+#### Modeling LTD: The Great Decline
+
+In **Long-Term Depression (LTD)**, the synapse doesn't throw a party, it hits the brakes instead. For this, we flip the logistic equation on its head, **changing the sign on the logistic part** of the function:
+
+$$
+S(t) = S_{\text{max}} - \frac{S_{\text{max}} - S_{\text{min}}}{1 + e^{-\lambda (t - t_0)}}
+$$
+
+Here:
+
+-  $S_{\text{max}}$ is where the synaptic strength starts **before LTD** brings it down a notch.  
+-  $S_{\text{min}}$ is the new baseline **after the synapse gets reorganized**.
+
+It's like a reverse LTP (same logistics), but with a **focus on pruning rather than boosting**.
+
+#### Combining LTP and LTD: The Balancing Act
+
+Neurons aren't simple creatures. They often experience **LTP and LTD simultaneously**, like trying to watch a movie while your neighbor is mowing the lawn. To capture this, we combine two logistic equations into one glorious model:
+
+$$
+S(t) = S_{\text{baseline}} + \frac{\Delta S_{\text{LTP}}}{1 + e^{-\lambda_{\text{LTP}} (t - t_{\text{LTP}})}} - \frac{\Delta S_{\text{LTD}}}{1 + e^{-\lambda_{\text{LTD}} (t - t_{\text{LTD}})}}
+$$
+
+I know what you're thinking... it seems like its too much. However, for sanity sakes lets break it down:
+
+- $S_{\text{baseline}}$: The synaptic strength before anything exciting happens.
+- $\Delta S_{\text{LTP}} = S_{\text{max}} - S_{\text{baseline}}$: The increase due to LTP.
+- $\Delta S_{\text{LTD}} = S_{\text{baseline}} - S_{\text{min}}$: The decrease due to LTD.
+- $\lambda_{\text{LTP}}$ and $\lambda_{\text{LTD}}$: Rates of change for LTP and LTD (i.e., the "how quickly" part).
+- $t_{\text{LTP}}$ and $t_{\text{LTD}}$: Onset times for LTP and LTD (i.e., the "when" part).
+
+This combined model lets us handle real-world complexity, where **strengthening and weakening signals overlap** like a neural tug-of-war.
+
+#### Why Two Logistic Functions?
+
+You might wonder **why we bother with two logistic functions** instead of just one that switches direction halfway. The answer: **biology loves chaos**.  
+
+- LTP and LTD **aren't mutually exclusive**. They can overlap, fight, or ignore each other altogether.  
+- Their onset times ($t_{\text{LTP}}$ and $t_{\text{LTD}}$) and rates ($\lambda_{\text{LTP}}$, $\lambda_{\text{LTD}}$) often vary, making a single equation woefully inadequate.
+
+Of course, we could have just used a single logistic function. However, in most real-world scenarios, beyond the pedagogic convenience, **simple models are just the initial phase of any model building process**. 
+
+Despite any complexity we could add to the model, we must always remember that **any model is always "an approximation to reality"** at best. Or, as the famous George Box would say:
+
+> "Essentially all models are wrong, but some are useful"
+
+::: {.callout-note collapse=false}
+## LTP and LTD at the Same Time?
+
+In some fascinating scenarios, neurons manage to pull off the ultimate balancing act: **inducing both LTP and LTD simultaneously**. This can happen when synaptic inputs are spatially separated, allowing different synapses on the same neuron to independently engage in potentiation or depression **based on local calcium dynamics** [@scott2023adaptive]. It's like a multi-tasking maniac performing two distinct solos at once. Similarly, in **spike-timing-dependent plasticity** (discussed up ahead), complex spike-timing patterns **can produce overlaps in the conditions for LTP and LTD**, with some synapses "winning" in one direction and others in the opposite.
+
+Sometimes, the brain's calcium dynamics get a little wild, **oscillating between the ranges required for LTP and LTD** due to the convergence of excitatory and inhibitory inputs. Throw in a dash of neuromodulation (like dopamine or acetylcholine tweaking thresholds) and some synapses might lean toward strengthening while others favor weakening. This interplay can also occur when synapses start in different states: **stronger synapses may undergo LTD** to maintain homeostasis, while **weaker ones are busy potentiating** [@scott2023adaptive]. Interestingly, experimental protocols designed to study synaptic plasticity in mood disorders often force these conditions, with pharmacological interventions inducing **concurrent LTP and LTD** in some brain areas [@krystal2024ketamine].
+:::
+
+Two logistic functions give us the flexibility to capture these dynamics **without assuming biology plays nice**.
+
+In the next section, we'll fire up R and use these equations **to simulate synaptic strength changes**. Spoiler: it's going to be visually satisfying, so stick around!  
+
+# Simulating Synaptic Plasticity in R  
+
+Now that we've got our fancy non-linear model ready to roll, it's **time to turn theory into practice** (or, more specifically, into code). Let's use R to simulate synaptic changes over time. Think of **this as our chance to play neuroscientific alchemist**, blending math, biology, and programming into a beautiful plot. Spoiler alert: things will go up, things will go down, and everything will make sense... eventually.
+
+#### Step 1: Defining the Model  
+
+First, **we need to teach R how to think like a synapse**. We'll define our logistic functions for LTP and LTD, then combine them to model the overall synaptic strength. **It's like giving R its own brain**, except this one follows your rules and doesn't forget where it put the car keys.  
+
+The logistic function describes **how synaptic strength changes with time**. For LTP, strength rises from a baseline to a maximum. For LTD, the opposite happens: it's the digital equivalent of neurons ghosting each other.  
+
+```{r}
+#| code-fold: show
+
+# Define the logistic function
+logistic <- function(t, t_onset, lambda, delta_S) {
+  delta_S / (1 + exp(-lambda * (t - t_onset)))
+}
+
+# Define the combined model
+synaptic_strength <- function(t, S_baseline, t_LTP, lambda_LTP, delta_LTP,
+                               t_LTD, lambda_LTD, delta_LTD) {
+  
+  ltp <- logistic(t, t_LTP, lambda_LTP, delta_LTP)
+  ltd <- -logistic(t, t_LTD, lambda_LTD, delta_LTD)
+  strength <- S_baseline + ltp + ltd
+  
+  data.table::data.table(
+    Time = t, 
+    LTP = ltp,
+    LTD = ltd,
+    Strength = strength
+  )
+}
+```
+
+Notice how LTP and LTD are **modeled as separate entities** but combine their forces (or opposing forces) in the overall strength equation. It's teamwork, or in this case, team tug-of-war.  
+
+#### Step 2: Setting the Stage  
+
+Next, we'll define some parameters. Think of this as **setting up your neural experiment in a lab**, but with fewer pipettes and a lot more debugging.  
+
+We'll start with baseline **synaptic strength set to 1** (for our convenience), simulate **LTP kicking in at time 5**, and introduce **LTD at time 10**. Each process has its own speed ($\lambda$) and magnitude ($\Delta S$).  
+
+```{r}
+#| code-fold: show
+
+# Parameters for the simulation
+S_baseline <- 1
+t_LTP <- 5
+lambda_LTP <- 0.5
+delta_LTP <- 0.5
+t_LTD <- 10
+lambda_LTD <- 0.3
+delta_LTD <- 0.3
+
+# Time range for simulation
+time <- seq(0, 20, by = 0.1)
+
+# Compute synaptic strength over time
+S <- synaptic_strength(time, S_baseline, t_LTP, lambda_LTP, delta_LTP,
+                       t_LTD, lambda_LTD, delta_LTD)
+
+## Format the resulting simulation into a convenient plotting format for later
+S <- data.table::melt(S, id.vars = "Time")
+```
+
+By now, **we've turned R into a synaptic storyteller**, weaving tales of LTP, LTD, and the epic battle for dominance over synaptic strength.
+
+#### Step 3: Plotting the Results  
+
+It's time for the *pièce de résistance*: visualization! Using `ggplot2`, we'll craft a plot that shows **how synaptic strength evolves**. Imagine this as the biologist's equivalent of putting your art project on the fridge.  
+
+```{r}
+#| code-fold: true
+
+# Plot the synaptic strength
+ggplot(S, aes(x = Time, y = value)) +
+  facet_wrap(~ variable, scales = "free_y", nrow = 1) +
+  geom_line(aes(color = variable), size = 1, show.legend = FALSE) +
+  scale_x_continuous(expand = c(0,0,0,0.01)) +
+  scale_y_continuous(n.breaks = 6) +
+  labs(title = "Synaptic Strength Over Time",
+       x = "Time (arbitrary units)",
+       y = "Synaptic Strength") 
+```
+
+The resulting plot reveals that the **resulting synaptic strength** is the result of the simultaneously **gradual rise in synaptic strength** thanks to LTP, **followed by a dip as LTD gets its turn** (plus the constant that determines the baseline strength). It's like a see-saw, but the laws of biochemistry decide who gets to go up or down.  
+
+::: {.callout-note collapse=false}
+## What do the units of synaptic strength means?
+
+The synaptic strength ($S$) in the model is **dimensionless**. It represents a normalized value that captures the **relative magnitude of potentiation or depression** of a synapse, typically scaled between $S_{\text{min}}$ and $S_{\text{max}}$ (e.g., 0.5 to 1.5 in the upcoming extended model). This normalization **simplifies the model** by abstracting away specific biophysical units, such as conductance ($\mu S$) or post-synaptic current ($pA$), to **focus on the dynamics** of synaptic changes.
+
+If needed, **the model could be adapted to use specific units**, like synaptic conductance, by rescaling $S$ and its parameters to reflect **actual physiological measurements**. For instance, calcium oscillation amplitudes and the associated logistic functions would need to be parameterized **according to empirical data** from experiments measuring synaptic responses.
+:::
+
+#### Step 4: Playing with Parameters  
+
+This is where things get really fun. **By tweaking parameters**, you can explore different scenarios, like what happens if neurons get hyped with LTP or slack off on LTD. For example, cranking up the LTP magnitude to 1.5 (from 0.5) while leaving LTD at 0.3 **results in a net strengthening** of the synapse.  
+
+```{r}
+#| code-fold: true
+
+# Example: Modify LTP magnitude
+delta_LTP <- seq(0.5, 1.5, by = 0.1)
+
+# Recompute synaptic strength
+data_modified <- lapply(delta_LTP, function(x) {
+  strength <- synaptic_strength(time, S_baseline, t_LTP, lambda_LTP, x,
+                                t_LTD, lambda_LTD, delta_LTD)
+  strength$delta_ltp <- x
+  strength
+}) |> 
+  rbindlist()
+
+# Plot the modified synaptic strength
+ggplot(data_modified, aes(x = Time, y = Strength, col = ordered(delta_ltp))) +
+  geom_line(size = 1) +
+  labs(title = "Modified Synaptic Strength (Stronger LTP)",
+       x = "Time (arbitrary units)",
+       y = "Synaptic Strength",
+       col = expression(Delta*"S"[LTP]))
+```
+
+This flexibility lets you conduct **virtual experiments**, saving you from lab-induced caffeine dependency while still yielding **valuable insights**.  
+
+In the next section, we'll explore the **implications of these simulations** and explore how tweaking parameters can reveal deeper truths about **neuronal plasticity**. Stay tuned because in science, even the tiniest tweak can lead to a plot twist.  
+
+# Extending the Model to Include LTP and LTD Dynamics
+
+**Our model so far is like a sturdy bicycle**: simple, reliable, and great for short trips. But neuroscience is a highway with twists, turns, and occasional potholes, so it's time to upgrade to a more dynamic model, think of this as **strapping a rocket engine to that bike**. Synaptic plasticity isn't just about changes in strength; timing, saturation, and other nuances come into play. Let's extend our model to capture some of these **complexities**.  
+
+#### Incorporating Temporal Dependencies  
+
+**Timing is everything** in neuroscience. In the world of synapses, when **presynaptic** and **postsynaptic** neurons fire relative to each other determines **whether you get LTP or LTD**. It's a bit like a dance: if one partner steps too late, the magic is lost, and the audience (synaptic strength) is unimpressed.  
+
+This timing phenomenon, called **spike-timing-dependent plasticity** (STDP), hinges on $\Delta t$ (the interval between pre- and postsynaptic spikes). **LTP loves when presynaptic spikes lead the way**, while LTD thrives when postsynaptic spikes take the lead [@scott2023adaptive].
+
+To capture this, we introduce exponential decay functions for the magnitudes of LTP and LTD:  
+
+$$
+\begin{aligned}
+\Delta S_{\text{LTP}} &= A_{\text{LTP}} \cdot e^{-\frac{\Delta t}{\tau_{\text{LTP}}}} \\
+\Delta S_{\text{LTD}} &= A_{\text{LTD}} \cdot e^{-\frac{\Delta t}{\tau_{\text{LTD}}}}
+\end{aligned}
+$$
+
+Here, $A_{\text{LTP}}$ and $A_{\text{LTD}}$ are the **maximum amplitudes of change in synaptic strength**, equivalent to $\Delta S$ (the size of the "dance move"), and $\tau_{\text{LTP}}$, $\tau_{\text{LTD}}$ are time constants that govern **how quickly the effect of time between spikes ($\Delta t$) fades**. If you've ever tried to tell a joke but botched the timing, you already understand how crucial these constants are.  
+
+Now, let's see how each of these parameters affects the synaptic choreography. If $A_{\text{LTP}}$ (the amplitude of the LTP move) is cranked up, the presynaptic dancer delivers an eye-catching performance, resulting in a stronger synapse. A **higher amplitude** here means even a moderately timed spike can still **significantly strengthen the synapse**. However, if $A_{\text{LTD}}$ takes center stage, the postsynaptic dancer has the spotlight, **weakening the synapse more dramatically**. Reducing either amplitude dulls their impact; it's like both dancers are phoning it in, leaving the synapse barely moved, regardless of the timing.  
+
+Now, consider $\tau_{\text{LTP}}$ and $\tau_{\text{LTD}}$, the time constants that **control how forgiving the synapse is about timing**. A large $\tau_{\text{LTP}}$ means **the presynaptic dancer gets more leeway**; even if the moves are slightly late, the synapse is still impressed, leading to a **broader window for LTP**. In contrast, a smaller $\tau_{\text{LTP}}$ **signals a pickier synapse**, **rewarding only perfectly timed presynaptic spikes**. Similarly, a long $\tau_{\text{LTD}}$ gives the postsynaptic neuron plenty of room to weaken the synapse, tolerating more variability in timing. With a shorter $\tau_{\text{LTD}}$, the postsynaptic dancer must hit the perfect beat to have any meaningful impact.  
+
+The plot below illustrates the STDP model, showing **how the magnitude of synaptic changes depends on the timing** ($\Delta t$). Positive $\Delta t$ corresponds to presynaptic spikes leading, favoring LTP, while negative $\Delta t$ corresponds to postsynaptic spikes leading, favoring LTD.  
+
+```{r}
+#| code-fold: true
+
+# Parameters for STDP
+A_LTP <- 0.5  # Maximum potentiation amplitude
+tau_LTP <- 20  # LTP time constant
+A_LTD <- -0.5  # Maximum depression amplitude (negative)
+tau_LTD <- 20  # LTD time constant
+
+# Function to compute LTP and LTD effects
+STDP_effect <- function(delta_t) {
+  ifelse(delta_t >= 0,
+         A_LTP * exp(-delta_t / tau_LTP),  # LTP for positive delta_t
+         A_LTD * exp(delta_t / tau_LTD))  # LTD for negative delta_t
+}
+
+# Simulate data
+delta_t <- seq(-50, 50, by = 1)
+synaptic_changes <- sapply(delta_t, STDP_effect)
+
+# Create a data frame for plotting
+data <- data.frame(delta_t, synaptic_changes)
+
+# Plot the STDP curve
+ggplot(data, aes(x = delta_t, y = synaptic_changes)) +
+  geom_line(color = "orange", size = 1) +
+  labs(title = "Spike-Timing-Dependent Plasticity (STDP) Curve",
+       x = "Time Difference (Δt, ms)",
+       y = "Synaptic Change (ΔS)") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
+  annotate("text", x = 30, y = 0.5, label = "LTP Zone", size = 6) +
+  annotate("text", x = -30, y = -0.3, label = "LTD Zone", size = 6)
+```
+
+This plot captures **the essence of STDP**. It extends the model by introducing $\Delta t$ as a critical parameter, **linking the timing** of neural activity directly **to the direction and magnitude** of synaptic changes. It bridges abstract mathematical functions with tangible biological timing phenomena, making the model more representative of **real neural processes**.  
+
+::: {.callout-note collapse=false}
+## Addressing Saturation Effects  
+
+Synaptic strength isn't infinite, it has **physiological constraints**. However, in the current model, **this limitation is already handled** effectively by the logistic framework and STDP parameters. The logistic function naturally ensures that synaptic strength asymptotes at biologically meaningful **upper and lower bounds**, dictated by parameters like $A_{\text{LTP}}$ and $A_{\text{LTD}}$. These parameters **cap the magnitude of synaptic changes**, avoiding unbounded potentiation or depression.  
+
+Introducing additional saturation mechanisms, such as hard boundaries on $S(t)$, would be **redundant in this context**. The plateau behavior of the logistic function inherently **aligns with physiological observations**, maintaining synaptic changes within plausible limits without requiring explicit constraints. This reflects the elegance of using non-linear models: the **boundaries are built into the system's behavior**, reducing the need for arbitrary external adjustments.
+:::
+
+#### Simulating the Extended Model  
+
+Let's see these concepts in action using R. By adding the timing-dependent amplitudes and enforcing strength limits, we **upgrade our model** to reflect these new dynamics.  
+
+```{r}
+#| code-fold: true
+
+# Parameters for STDP-based dynamics
+A_LTP <- 0.5
+tau_LTP <- 20
+A_LTD <- 0.3
+tau_LTD <- 15
+
+# STDP-based amplitude functions
+amplitude_LTP <- function(delta_t, A_LTP, tau_LTP) {
+  A_LTP * exp(-abs(delta_t) / tau_LTP)
+}
+
+amplitude_LTD <- function(delta_t, A_LTD, tau_LTD) {
+  A_LTD * exp(-abs(delta_t) / tau_LTD)
+}
+
+# Extended model with saturation effects
+extended_synaptic_strength <- function(t, S_baseline, 
+                                       t_LTP, lambda_LTP, A_LTP, tau_LTP, 
+                                       t_LTD, lambda_LTD, A_LTD, tau_LTD, 
+                                       delta_t) {
+  S_baseline +
+       amplitude_LTP(delta_t, A_LTP, tau_LTP) / (1 + exp(-lambda_LTP * (t - t_LTP))) -
+       amplitude_LTD(delta_t, A_LTD, tau_LTD) / (1 + exp(-lambda_LTD * (t - t_LTD)))
+}
+
+delta_t <- 2^c(0:4)  # Example time difference between spikes
+
+# Simulate the extended model
+S_extended <- lapply(delta_t, function(x) {
+  data.table(delta_t = x, 
+             time = time,
+             strength = extended_synaptic_strength(time, S_baseline, 
+                                                   t_LTP, lambda_LTP, A_LTP, tau_LTP, 
+                                                   t_LTD, lambda_LTD, A_LTD, tau_LTD, 
+                                                   delta_t = x) )
+}) |> 
+  rbindlist()
+
+```  
+
+With this setup, our model now considers both the **timing of spikes** and the **physiological constraints** on synaptic strength.  
+
+#### Visualizing the Extended Model  
+
+Let's plot the extended model to visualize these added dynamics.
+
+```{r}
+#| code-fold: true
+
+# Plot the extended synaptic strength
+ggplot(S_extended, aes(x = time, y = strength, col = ordered(delta_t))) +
+  geom_line(size = 1) +
+  labs(title = "Extended Synaptic Strength with Dynamics",
+       x = "Time (arbitrary units)",
+       y = "Synaptic Strength",
+       col = expression(Delta*italic(t)~"Between Spikes"))
+```  
+
+The plot reveals two key features:  
+
+1.  **STDP Influence**: LTP and LTD magnitudes decay and flow based on spike timing ($\Delta t$), showing how temporal precision can shape neural connections.
+2. **Saturation Effects**: Synaptic strength remains bounded thanks to parameters like $A_{\text{LTP}}$ and $A_{\text{LTD}}$, showcasing the physiological checks and balances that prevent runaway excitation or extreme depression.  
+
+#### Further Extensions  
+
+What's next? We could incorporate **frequency-dependent plasticity** to explore how high-frequency stimulation turbocharges LTP or how low-frequency inputs foster LTD. Or we could unleash this model on a **network of neurons** to study how multiple synapses interact. The possibilities are endless!  
+
+By extending the model, we're not just adding bells and whistles. We're **crafting a tool** that captures the messy, dynamic beauty of real-world synaptic plasticity.
+
+# Exploring Parameter Effects
+
+Our extended model is like a well-equipped chemistry set for the brain, where **each parameter represents a crucial ingredient** in the recipe of synaptic plasticity. By varying these parameters, we can simulate **how neurons behave under different conditions**, from hyperactive learning states to subdued inhibition. This section focus on how key parameters influence the model's behavior, explores their **biological significance**, and demonstrates how to experiment with them in R to uncover fascinating insights.
+
+#### Sensitivity Analysis  
+
+Sensitivity analysis is a systematic way of tweaking the model's parameters **to observe their impact on synaptic strength**. It's **akin to turning the dials on a stereo system** to find the perfect sound balance, adjusting bass, treble, and volume to craft the desired output. In our case, the knobs control properties like **calcium dynamics**, **synaptic decay rates**, and **baseline strength**. These adjustments not only refine the model but also provide valuable biological insights into how real-life neurons might behave in various scenarios, **from learning and memory** formation to **neurological disorders**.  
+
+Here's an example of how you can experiment with the parameters in R to visualize their effects:  
+
+```{r}
+#| code-fold: true
+
+# Define a range of parameter values
+lambda_LTP_vals <- seq(0.5, 2, by = 0.5)  # Example: Steepness of LTP
+lambda_LTD_vals <- seq(0.5, 2, by = 0.5)  # Example: Steepness of LTD
+
+# Simulate model for different parameters
+results <- expand.grid(
+  time = time, S_baseline = S_baseline, 
+  t_LTP = t_LTP, lambda_LTP = lambda_LTP_vals, A_LTP = A_LTP, tau_LTP = tau_LTP,
+  t_LTD = t_LTD, lambda_LTD = lambda_LTD_vals, A_LTD = A_LTD, tau_LTD = tau_LTD,
+  delta_t = 0
+)
+results$strength <- mapply(extended_synaptic_strength, 
+                           results$time, results$S_baseline,
+                           results$t_LTP, results$lambda_LTP, results$A_LTP, results$tau_LTP,
+                           results$t_LTD, results$lambda_LTD, results$A_LTD, results$tau_LTD,
+                           results$delta_t)
+
+# Plot sensitivity to lambda parameters
+ggplot(results, aes(x = time, y = strength)) +
+  facet_wrap(~ ordered(lambda_LTD, levels = lambda_LTD_vals, 
+                       labels = paste0("LTD Growth Rate = ", lambda_LTD_vals)), nrow = 2) +
+  geom_line(aes(color = ordered(lambda_LTP)), linewidth = 1) +
+  labs(title = "Sensitivity Analysis: Impact of LTP and LTP Rate",
+       x = "Time (arbitrary units)", y = "Synaptic Strength",
+       color = "LTP Decay Rate")
+```  
+
+#### From Model Parameters to Biological Applications
+
+The calcium oscillation amplitude, $A_{\text{LTP}}$ and $A_{\text{LTD}}$, **dictates the maximum strength** of synaptic potentiation and depression. **Imagine these amplitudes as the size of a neuron's emotional response**, whether it leaps for joy (LTP) or sighs deeply in despair (LTD). Increasing $A_{\text{LTP}}$ simulates a brain on overdrive, as in heightened learning states, while lowering it mirrors synaptic inhibition or even neurodegeneration.
+
+The decay constants, $\tau_{\text{LTP}}$ and $\tau_{\text{LTD}}$, add a temporal layer to this story. These parameters determine **how quickly the effects of potentiation and depression fade over time**, similar to how fast a good mood or a bad one dissipates. **Short decay constants** are like fleeting bursts of inspiration, ideal for circuits needing rapid adaptation, such as the visual system. In contrast, **long decay constants** suit processes like memory consolidation in the hippocampus, where stability over time is crucial.  
+
+Growth rates, denoted by $\lambda_{\text{LTP}}$ and $\lambda_{\text{LTD}}$, control **how steeply synaptic strength transitions in response to stimuli**. Think of these as the sensitivity of a neuron's accelerator pedal. **A steep curve** means the synapse reacts instantly to changes, akin to a sprinter's quick start. **Shallow growth rates**, on the other hand, are like a marathon runner pacing themselves, better reflecting gradual changes in long-term neural adaptation.  
+
+Finally, the baseline synaptic strength, $S_{\text{baseline}}$, **sets the initial tone of the model**. This parameter represents the synapse's "default mood" **before any plasticity occurs**. Adjusting $S_{\text{baseline}}$ allows us to model different **starting conditions**, from a highly potentiated synapse involved in an established skill to a depressed one, such as in the aging brain or during neurodegeneration.
+
+#### Further Applications  
+
+Exploring these parameters **is not just a theoretical exercise**; it has practical applications in neuroscience research and beyond. Researchers can use sensitivity analysis **to design experiments** or predict neuronal responses to stimuli. Educators can use these **simulations as teaching tools** to demonstrate the complexity of synaptic plasticity. Clinicians might find such models useful for **exploring the effects of treatments** targeting synaptic mechanisms, providing insights into potential therapies for conditions like Alzheimer's disease or epilepsy.  
+
+Ultimately, parameter exploration transforms our model into a versatile tool for **understanding the dynamic interplay of synaptic mechanisms**. It serves as a gateway to uncovering the mysteries of **learning, memory, and neurological disorders** while offering practical insights into experimental and therapeutic approaches.
+
+```{r}
+#| code-fold: true
+#| fig-cap: "Orange line denotes the mean synaptic strength over time."
+
+# Define a range of parameter values
+n <- 30
+set.seed(1234)
+vals <- data.table(
+  synapse_id = seq_len(n),
+  S_baseline = runif(n, 0.8, 1.2),
+  t_LTP = runif(n, 0, 20),
+  t_LTD = runif(n, 0, 20),
+  lambda_LTP = runif(n, 1.0, 1.5),
+  lambda_LTD = runif(n, 0.5, 1.0),
+  A_LTP = runif(n, 1.0, 1.5),
+  A_LTD = runif(n, 0.5, 1.0),
+  tau_LTP = runif(n, 15, 20),
+  tau_LTD = runif(n, 10, 25),
+  delta_t = runif(n, 0, 5)
+)
+
+vals <- vals[vals[, list(t = time), synapse_id], on = "synapse_id"]
+
+vals[, synapse_strength := extended_synaptic_strength(
+  t, S_baseline, t_LTP, lambda_LTP, A_LTP, tau_LTP, 
+  t_LTD, lambda_LTD, A_LTD, tau_LTD, delta_t
+) + rnorm(length(t), 0, 0.05), synapse_id]
+
+# Plot sensitivity to lambda parameters
+ggplot(vals, aes(x = t, y = synapse_strength)) +
+  geom_line(aes(group = synapse_id), color = "gray85", linewidth = 1/3) +
+  geom_hline(yintercept = 1, col = "gray20", linewidth = 1/2, linetype = 2) +
+  stat_summary(geom = "line", fun = mean, linewidth = 1, color = "orange") +
+  scale_x_continuous(expand = c(0,0,0,0)) +
+  labs(title = "Simulating Many Synapses: Stochastic Processes",
+       x = "Time (arbitrary units)", y = "Synaptic Strength") +
+  annotate("text", x = 17, y = 1.1, label = "LTP", size = 6, color = "darkgreen") +
+  annotate("text", x = 17, y = 0.9, label = "LTD", size = 6, color = "darkred")
+```
+
+# Final Remarks
+
+Embarking on this journey through non-linear modeling of **neuronal plasticity**, we've uncovered the intricate dynamics of **how synaptic strength shifts over time** under the competing forces of LTP and LTD. By leveraging **coupled logistic functions**, we've illuminated the non-linear and time-sensitive nature of synaptic changes, emphasizing the **crucial role of calcium oscillations** as the molecular metronomes orchestrating these processes.  
+
+Throughout this exploration, **several pivotal lessons can be drawn**. Logistic functions proved to be elegant tools for **capturing the threshold-dependent behavior** of synaptic transitions, moving beyond gradual shifts to reveal the tipping points **inherent in plasticity**. Moreover, we've seen how **tweaking parameters** like calcium amplitude or decay rates **can profoundly alter synaptic behavior**, echoing the biological reality where minor molecular adjustments yield vastly different functional outcomes. Finally, the extended model demonstrated its robustness by integrating dynamic **temporal dependencies** and **saturation effects**, offering a nuanced depiction of synaptic adaptation to stimuli.  
+
+This is but the tip of the iceberg. The framework we've developed invites exploration into **countless other physiological processes** where non-linear dynamics reign supreme. Consider **extending these concepts to other forms of plasticity**, such as structural changes in dendrites or the fine-tuning of synaptic homeostasis. Similar models can be applied to **cardiac autonomic modulation**^[A big surprise in this regard is coming up for the next post!!], where the balance of sympathetic and parasympathetic activity **echoes the interplay of LTP and LTD**. Or consider the feedback loops governing hormonal or metabolic regulation, fertile grounds for non-linear interactions.  
+
+For the intrepid explorer of neuronal plasticity, **there's much to be done**. Experiment with the model's parameters, simulate pathological scenarios, or **challenge the boundaries of its assumptions**. With each iteration, you'll not only refine your understanding of synaptic plasticity but also contribute to the broader pursuit of understanding life's complexities **through mathematics and computation**.  
+
+Neuroscience (or science in general) thrives at the nexus of **theory, experimentation, and computation**. Non-linear models are indispensable in **bridging these fields**, revealing the brain's staggering capacity for adaptation and resilience. Whether you're a scientist, student, or curious mind, there's always room to stay inquisitive, tinker with ideas, and **push the boundaries of what we know**.  
+
+So, grab your equations, fire up R, and **let curiosity lead the way**. Biology and mathematics are waiting to converge in ways that can transform how we understand the very essence of life. Stay curious, and **never stop exploring**!
