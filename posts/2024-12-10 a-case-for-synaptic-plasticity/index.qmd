@@ -37,9 +37,9 @@ But **capturing this in a model?** Oh, that's another story. Modeling neuronal p
 
 Let's welcome the **non-linear models**, the superheroes of mathematical modeling. In this post, we'll take a closer look at how these models, specifically **logistic growth equations**, can tame the chaos of neuronal plasticity. We'll demystify the biology, **turn it into manageable math**, and then buckle up to simulate it all in R. Yes, R... the land of syntax errors and endless parentheses, but don't worry, I'll guide you.
 
-By the end of this journey, you'll not only appreciate the elegance of neuronal plasticity but also see how non-linear modeling can turn **brain mysteries into manageable equations**. So whether you're a neuroscience nerd, or someone who just likes the idea of **bossing around neurons via code**, this post has something for you. Let's dive in, and don't forget to pack your sense of humor. You're going to need it! 
-
 [If you missed the [first edition](https://doi.org/10.59350/r62fn-8h720) of this series of non-linear models posts, go see it now!]{.aside}
+
+By the end of this journey, you'll not only appreciate the elegance of neuronal plasticity but also see how non-linear modeling can turn **brain mysteries into manageable equations**. So whether you're a neuroscience nerd, or someone who just likes the idea of **bossing around neurons via code**, this post has something for you. Let's dive in, and don't forget to pack your sense of humor. You're going to need it! 
 
 ![](neurons-firing-2.webp){.column-screen .img-fluid width="100%"}
 
