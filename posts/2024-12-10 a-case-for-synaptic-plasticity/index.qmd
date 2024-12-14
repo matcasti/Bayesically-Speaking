@@ -39,6 +39,8 @@ Let's welcome the **non-linear models**, the superheroes of mathematical modelin
 
 By the end of this journey, you'll not only appreciate the elegance of neuronal plasticity but also see how non-linear modeling can turn **brain mysteries into manageable equations**. So whether you're a neuroscience nerd, or someone who just likes the idea of **bossing around neurons via code**, this post has something for you. Let's dive in, and don't forget to pack your sense of humor. You're going to need it! 
 
+[If you missed the [first edition](https://doi.org/10.59350/r62fn-8h720) of this series of non-linear models posts, go see it now!]
+
 ![](neurons-firing-2.webp){.column-screen .img-fluid width="100%"}
 
 # Understanding Neuronal Plasticity
