@@ -10,7 +10,7 @@ fig-asp: .5
 execute: 
   warning: false
   error: false
-#doi: "10.59350/r62fn-8h720"
+doi: "10.59350/mgpv2-d5e33"
 categories: [non-linear]
 bibliography: ref.bib
 title-block-banner: title-block.jpeg
