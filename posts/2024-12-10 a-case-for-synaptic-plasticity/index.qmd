@@ -301,7 +301,7 @@ synaptic_strength <- function(t, S_baseline, t_LTP, lambda_LTP, delta_LTP,
     Time = t, 
     LTP = ltp,
     LTD = ltd,
-    Strength = strength
+    `LTP + LTD` = strength
   )
 }
 ```
@@ -387,7 +387,7 @@ data_modified <- lapply(delta_LTP, function(x) {
   rbindlist()
 
 # Plot the modified synaptic strength
-ggplot(data_modified, aes(x = Time, y = Strength, col = ordered(delta_ltp))) +
+ggplot(data_modified, aes(x = Time, y = `LTP + LTD`, col = ordered(delta_ltp))) +
   geom_line(size = 1) +
   labs(title = "Modified Synaptic Strength (Stronger LTP)",
        x = "Time (arbitrary units)",
@@ -502,7 +502,7 @@ extended_synaptic_strength <- function(t, S_baseline,
        amplitude_LTD(delta_t, A_LTD, tau_LTD) / (1 + exp(-lambda_LTD * (t - t_LTD)))
 }
 
-delta_t <- 2^c(0:4)  # Example time difference between spikes
+delta_t <- seq(3, 30, length.out = 10)  # Example time difference between spikes
 
 # Simulate the extended model
 S_extended <- lapply(delta_t, function(x) {
@@ -528,7 +528,8 @@ Let's plot the extended model to visualize these added dynamics.
 
 # Plot the extended synaptic strength
 ggplot(S_extended, aes(x = time, y = strength, col = ordered(delta_t))) +
-  geom_line(size = 1) +
+  geom_line(aes(group = delta_t), size = 1) +
+  scale_x_continuous(expand = c(0,0)) +
   labs(title = "Extended Synaptic Strength with Dynamics",
        x = "Time (arbitrary units)",
        y = "Synaptic Strength",
@@ -604,7 +605,7 @@ Ultimately, parameter exploration transforms our model into a versatile tool for
 
 ```{r}
 #| code-fold: true
-#| fig-cap: "Orange line denotes the mean synaptic strength over time."
+#| fig-cap: "Orange line denotes the mean synaptic strength over time. Horizontal dashed line denotes the zero-change value associated with no variations in synaptic strength. LTP, long-term potentiation; LTD, long-term depression."
 
 # Define a range of parameter values
 n <- 30

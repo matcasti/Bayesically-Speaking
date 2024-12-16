@@ -709,9 +709,15 @@ font-style: inherit;">LTP =</span> ltp,</span>
 <span id="cb3-17">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">LTD =</span> ltd,</span>
-<span id="cb3-18">    <span class="at" style="color: #657422;
+<span id="cb3-18">    <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">Strength =</span> strength</span>
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">LTP + LTD</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> strength</span>
 <span id="cb3-19">  )</span>
 <span id="cb3-20">}</span></code></pre></div>
 </details>
@@ -996,7 +1002,13 @@ font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">x =</span> Time, <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">y =</span> Strength, <span class="at" style="color: #657422;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">LTP + LTD</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">col =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1437,19 +1449,17 @@ font-style: inherit;">-</span> t_LTD)))</span>
 <span id="cb8-25"></span>
 <span id="cb8-26">delta_t <span class="ot" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">^</span><span class="fu" style="color: #4758AB;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+font-style: inherit;">30</span>, <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">0</span><span class="sc" style="color: #5E5E5E;
+font-style: inherit;">length.out =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>)  <span class="co" style="color: #5E5E5E;
+font-style: inherit;">10</span>)  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Example time difference between spikes</span></span>
 <span id="cb8-27"></span>
@@ -1518,7 +1528,11 @@ background-color: null;
 font-style: inherit;">+</span></span>
 <span id="cb9-3">  <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+font-style: inherit;">geom_line</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">group =</span> delta_t), <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1527,22 +1541,35 @@ background-color: null;
 font-style: inherit;">+</span></span>
 <span id="cb9-4">  <span class="fu" style="color: #4758AB;
 background-color: null;
+font-style: inherit;">scale_x_continuous</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">expand =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb9-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
 font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Extended Synaptic Strength with Dynamics"</span>,</span>
-<span id="cb9-5">       <span class="at" style="color: #657422;
+<span id="cb9-6">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Time (arbitrary units)"</span>,</span>
-<span id="cb9-6">       <span class="at" style="color: #657422;
+<span id="cb9-7">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Synaptic Strength"</span>,</span>
-<span id="cb9-7">       <span class="at" style="color: #657422;
+<span id="cb9-8">       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">col =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -2106,7 +2133,7 @@ font-style: inherit;">"darkred"</span>)</span></code></pre></div>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
 <p><img src="https://bayesically-speaking.com/posts/2024-12-10 a-case-for-synaptic-plasticity/index_files/figure-html/unnamed-chunk-12-1.svg" class="img-fluid figure-img"></p>
-<figcaption class="margin-caption">Orange line denotes the mean synaptic strength over time.</figcaption>
+<figcaption class="margin-caption">Orange line denotes the mean synaptic strength over time. Horizontal dashed line denotes the zero-change value associated with no variations in synaptic strength. LTP, long-term potentiation; LTD, long-term depression.</figcaption>
 </figure>
 </div>
 </div>
