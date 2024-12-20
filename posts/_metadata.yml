@@ -5,10 +5,8 @@
 execute: 
   freeze: auto
 
-
 # Enable banner style title blocks
 title-block-banner: true
-
 
 cap-location: margin
 reference-location: margin
@@ -16,6 +14,7 @@ citation-location: document
 citations-hover: true
 citation: 
   type: post-weblog
+  author: "Matías Castillo-Aguilar"
 
 google-scholar: true
 

@@ -10,7 +10,1508 @@
 <atom:link href="https://bayesically-speaking.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>The place where statistics, coffee and bayes theorem come toghether</description>
 <generator>quarto-1.5.55</generator>
-<lastBuildDate>Sat, 14 Dec 2024 03:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 23 Dec 2024 03:00:00 GMT</lastBuildDate>
+<item>
+  <title>Modeling Lymphocyte Dynamics: Agent-Based Simulations and Non-Linear Equations</title>
+  <dc:creator>Matías Castillo-Aguilar</dc:creator>
+  <link>https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="introduction" class="level1 page-columns page-full">
+<h1>Introduction</h1>
+<section id="the-immunological-challenge" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="the-immunological-challenge">The Immunological Challenge</h4>
+<p>Let’s face it, the <strong>immune system</strong> is a bit of a drama queen (or king, depending on the situation). It’s constantly patrolling our bodies, <strong>acting as a vigilant security force</strong>, looking for trouble (like invading pathogens, damaged cells, or rogue cancer cells). When it finds something suspicious, it <strong>initiates a complex and tightly regulated immune response</strong> (a carefully orchestrated), multi-cellular reaction of activation, proliferation, differentiation, and effector functions (like killing infected cells). It’s not just a party; <strong>it’s a meticulously planned military operation</strong>. But like any complex system, things can go wrong.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/innate-and-adaptative.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">The principal mechanisms of innate immunity and adaptive immunity. NK, natural killer. Figure from Robbins Basic Pathology, 10th Edition</span></div></div>
+<p><strong>Take cancer immunotherapy</strong>, for example. These therapies, like immune checkpoint blockade, aim to harness and <strong>enhance the immune system’s natural ability to fight cancer</strong>. The basic idea behind checkpoint blockade is to <strong>block inhibitory signals</strong> (immune checkpoints) that tumors exploit <strong>to evade immune destruction</strong> <span class="citation" data-cites="liu2022clinical">(Liu et al. 2022)</span>. These checkpoints are crucial for preventing autoimmunity (the immune system attacking the body’s own tissues), but <strong>tumors hijack them</strong> to create an immunosuppressive microenvironment <span class="citation" data-cites="chang2015metabolic">(Chang et al. 2015)</span>. <strong>By blocking these checkpoints</strong>, the “brakes” on anti-tumor immunity are released, <strong>allowing T cells</strong> (and other immune cells) <strong>to attack the cancer</strong> cells more effectively. Sounds simple in theory, right?</p>
+<div class="page-columns page-full"><p>Well, <strong>not quite</strong>. Predicting who will respond to these therapies and who won’t <strong>is a significant challenge</strong> in the field of immuno-oncology. Why? Because the interactions between <strong>tumor cells and immune cells</strong> (especially lymphocytes, which include T cells and other important players like NK cells) are incredibly <strong>complex</strong> and <strong>context-dependent</strong>. It’s not just about counting the number of T cells present in a tumor (although that’s important); it’s about <strong>understanding their dynamic behavior</strong>: how they traffic to the tumor, how they get <strong>activated</strong> within the tumor microenvironment, <strong>how they interact</strong> with tumor cells (e.g., recognizing tumor-associated antigens), how they interact with other immune cells (both <strong>promoting and suppressing the immune response</strong>), and how they eventually either effectively <strong>eliminate the tumor or become exhausted</strong> (losing their effector functions). It’s a dynamic and multifaceted system, not a static snapshot <span class="citation" data-cites="taefehshokr2022cancer">(Taefehshokr et al. 2022)</span>. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Factors like tumor heterogeneity, the presence of immunosuppressive cells (like myeloid-derived suppressor cells or regulatory T cells), and the tumor’s mutational burden also play critical roles in determining the outcome of immunotherapy.</span></div></div>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/naive-to-t-cell-by-apc.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Differentiation of naive T cells in response to stimuli present at the time of antigen recognition. APC, antigen-presenting cells; T<sub>H</sub>, Helper T cells. Figure from Robbins Basic Pathology, 10th Edition</span></div></div>
+</section>
+<section id="because-straight-lines-are-for-geometry-not-biology" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="because-straight-lines-are-for-geometry-not-biology">Because Straight Lines are for Geometry, Not Biology</h4>
+<p>Traditional methods of studying the immune system, like <strong>taking a single blood sample</strong> and counting cell types (a bit like taking a census of a bustling city at one specific time), are <strong>useful for getting a basic snapshot</strong>. They tell us <em>who</em> is present, but not <em>what</em> they are doing. <strong>Similar to taking a single still photograph of a bustling city</strong>, you might see how many buildings and people are there, but <strong>you’d miss all the action</strong>, the traffic jams, the hustle and bustle of people going about their day, the dynamic flow of life. You’d miss the whole story.</p>
+<div class="page-columns page-full"><p><strong>Biological systems</strong>, especially complex ones like the immune system, <strong>rarely behave in a linear</strong>, predictable fashion. <strong>A small change</strong> in one factor (say, a slight increase in the concentration of a signaling molecule) can have a huge, disproportionate, and often <strong>unexpected effect</strong> on the overall response. <img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/cdc-unsplash.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://unsplash.com/es/@cdc?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">CDC</a> in <a href="https://unsplash.com/es/fotos/juguete-de-plastico-negro-y-amarillo-OZcQIhidMTw?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></span></div></div>
+<div class="page-columns page-full"><p>The first reason is <u><strong>feedback loops</strong></u>. These are like the thermostats of biological systems. A <strong>positive feedback loop amplifies a signal</strong> (like a snowball rolling downhill, getting bigger and bigger), while <strong>a negative feedback loop dampens a signal</strong> (like a thermostat turning off the heating when the desired temperature is reached). These feedback loops create complex, dynamic <strong>behaviors that can’t be captured by simple straight lines</strong>. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">It’s like trying to describe the stock market with a straight line, you’d miss all the booms and busts.</span></div></div>
+<div class="page-columns page-full"><p>Additionally, there’s something called <u><strong>saturation effect</strong></u>. This occur <strong>when a system reaches its maximum capacity</strong>. Imagine a sponge soaking up water, it can only hold so much. Similarly, a biological response might increase with a stimulus <strong>up to a certain point</strong>, after which further increases in the stimulus have little or no additional effect. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">It’s like turning up the volume on your stereo, past a certain point, it just gets louder, not clearer.</span></div></div>
+<div class="page-columns page-full"><p>Similarly, biological systems tends to function based on <u><strong>threshold responses</strong></u>. These are like <strong>all-or-nothing switches</strong>. A response only occurs <strong>after a certain level</strong> of stimulus is reached. In the immune system, this might mean that a certain concentration of antigen is required <strong>to trigger T cell activation</strong>. It’s not a gradual increase in activation; it’s a sudden jump <span class="citation" data-cites="joglekar2021t">(Joglekar and Li 2021)</span>. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Think of a light switch: you can press it lightly, and nothing happens, but once you press it hard enough, the light turns on.</span></div></div>
+<p>Trying to <strong>model these non-linear phenomena</strong> with simple straight lines (like in basic linear regression) is like trying to <strong>describe a roller coaster ride with a ruler</strong>, you’d miss all the exciting ups and downs, the twists and turns. It just doesn’t work. We need <strong>models that can capture these non-linear relationships</strong>, models that can bend and curve to fit complex biological systems. That’s where the <a href="https://en.wikipedia.org/wiki/Hill_equation_(biochemistry)">Hill function</a> and logistic growth equations come into play <span class="citation" data-cites="li2023intercellular">(Li et al. 2023)</span>, they’re our tools for <strong>capturing these essential curves</strong> in our cellular stories.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/national-institute-of-allergy-and-infectious-diseases-unsplash.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from the <a href="https://unsplash.com/es/@niaid?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">National Institute of Allergy and Infectious Diseases</a> in <a href="https://unsplash.com/es/fotos/un-primer-plano-de-una-celula-animal-con-una-sustancia-purpura-IQVsSGGWOKg?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></span></div></div>
+</section>
+<section id="simulating-cellular-mayhem-digital-petri-dishes-and-tiny-cellular-actors" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="simulating-cellular-mayhem-digital-petri-dishes-and-tiny-cellular-actors">Simulating Cellular Mayhem: Digital Petri Dishes and Tiny Cellular Actors</h4>
+<p>This is where agent-based modeling (ABM) swoops in like a superhero. <strong>ABM lets us create a virtual world filled with individual “agents”</strong>, but in our case, these actors are lymphocytes. Each agent gets its own set of rules, like a tiny cellular script to follow, dictating how it behaves and reacts to its environment <span class="citation" data-cites="azarov2019role">(Azarov et al. 2019)</span>.</p>
+<p>ABMs offer a powerful tool for <strong>studying lymphocyte dynamics</strong>, allowing us to explore how factors like clonal expansion, contraction, and differentiation are influenced by <strong>antigen exposure and immune system</strong> regulation <span class="citation" data-cites="an2021challenges">(An et al. 2021)</span>.</p>
+<div class="page-columns page-full"><p>The fun part is that we can then <strong>sit back and watch the cellular drama unfold</strong>, observing how these agents interact with each other and their digital surroundings over time (just like a movie!). It’s something like building a digital petri dish, <strong>a virtual stage where we can run experiments</strong> that would be impossible (given monetary or ethical reasons), or just plain messy to perform in real life. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">imagine trying to track the movement of millions of individual cells in a living organism, not exactly a walk in the park</span></div></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Advantages of Agent-Based Modeling and Inference
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>The real beauty of ABM, in comparison to traditional modeling approaches, lies in its ability to:</p>
+<p><u><strong>Account for heterogeneity</strong></u>. Not all lymphocytes are exact copies of each other. <strong>They come in different flavors</strong>, with different functions, activation states, and responses to stimuli. By simulating virtual cells, <strong>we can represent this cellular diversity</strong>, giving each cell its own unique personality (or at least its own set of parameters).</p>
+<p><u><strong>Simulate stochasticity</strong></u>. Biology is <strong>inherently noisy</strong>. Random events, chance encounters, and <strong>unpredictable fluctuations</strong> can play a significant role in immune responses. <strong>ABM allows us to incorporate this randomness</strong>, making our simulations much more realistic.</p>
+<p><u><strong>Model inter-individual interactions</strong></u>. We can define <strong>rules</strong> (as complicate as we want them to be) that determines <strong>how lymphocytes interact with each other</strong>, with other cell types (like antigen-presenting cells or tumor cells), and with signaling molecules (like cytokines, the cellular equivalent of social media posts). We can <strong>simulate complex communication networks</strong>, feedback loops, and other intricate interactions that drive immune responses.</p>
+</div>
+</div>
+</div>
+<p>And what’s absolutely essential for making these interactions realistic to the one of biological systems? You guessed it: <strong>non-linear equations</strong>. They allow us to define those <strong>complex biological processes</strong> with far <strong>greater accuracy than simple linear</strong> relationships ever could. It’s like using a finely tuned paintbrush to capture the subtle shades of a sunset, rather than just using a single, broad stroke of color.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/thisisengineering-unsplash.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://unsplash.com/es/@thisisengineering?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">ThisisEngineering</a> in <a href="https://unsplash.com/es/fotos/mujer-con-camisa-negra-de-manga-larga-GzDrm7SYQ0g?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></span></div></div>
+</section>
+<section id="r-as-a-tool-for-immunological-simulation" class="level4">
+<h4 class="anchored" data-anchor-id="r-as-a-tool-for-immunological-simulation">R as a Tool for Immunological Simulation</h4>
+<p>R, the beloved <strong>language of statisticians</strong>, data scientists, and now immunologists (at least for this blog post!), is the perfect <strong>tool for building these ABM simulations</strong>. It’s powerful, flexible, and comes with a treasure of packages specifically designed for <strong>statistical computing</strong>, <strong>simulation</strong>, and <strong>data visualization</strong>. Plus, it’s open-source, which means it’s free (always a welcome bonus), especially if you’re on a student budget or just like free stuff. With <strong>powerful visualization packages</strong> like <code>ggplot2</code>, we can create stunningly beautiful and informative visualizations of our simulation results, transforming <strong>raw data into compelling stories</strong> that are easy to understand. It’s like turning a jumbled mess of numbers into a captivating infographic.</p>
+<p>In this post, we’ll swim in oceans of <strong>lymphocyte dynamics</strong> by building a simplified ABM simulation in R. We’ll harness the power of non-linear equations to model key processes like <strong>lymphocyte activation</strong>, <strong>proliferation</strong>, and <strong>apoptosis</strong>. We’ll start with simple, easy-to-digest examples and gradually add more complexity, showing you <strong>step-by-step how to implement these models</strong> in R and, crucially, how to interpret the results. By the end of this post, you’ll have a solid understanding of how ABM, combined with the magic of non-linear equations, <strong>can provide valuable insights</strong> into the inner workings of the immune system. Think of it as a <strong>crash course in digital immunology</strong>, minus the lab coats, the pipettes, and the actual petri dishes (but with plenty of code, insightful explanations, and, of course, some cool plots!).</p>
+</section>
+</section>
+<section id="from-code-to-cellular-chaos" class="level1 page-columns page-full">
+<h1>From Code to Cellular Chaos</h1>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/national-cancer-institute-unsplash.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from the <a href="https://unsplash.com/es/@nci?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">National Cancer Institute</a> in <a href="https://unsplash.com/es/fotos/pintura-abstracta-en-blanco-y-negro-wUg8xhJ3aBs?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></span></div></div>
+<p>Now that <strong>we’ve established why we need to go beyond simple linear models</strong> to understand the immune system’s intricate dance, <strong>let’s get our hands dirty with some code</strong> and build our own lymphocyte simulation in R. Don’t worry if you’re not an immunologist; <strong>we’ll keep the biology simple</strong> and focus on the modeling aspects.</p>
+<section id="setting-the-stage-for-cellular-action" class="level4">
+<h4 class="anchored" data-anchor-id="setting-the-stage-for-cellular-action">Setting the Stage for Cellular Action</h4>
+<p>Our model will focus on a <strong>simplified scenario involving T lymphocytes</strong> (a type of white blood cell crucial for adaptive immunity). We’ll consider two main types of T cells:</p>
+<ul>
+<li><strong>Naive T cells:</strong> These are the rookies of the immune system, waiting for their marching orders. They haven’t encountered their specific target (an antigen) yet.</li>
+<li><strong>Activated T cells:</strong> These are the seasoned warriors, ready to fight after being activated by encountering their specific antigen.</li>
+</ul>
+<p>We’ll also include a representation of the antigen, which is <strong>any substance that can trigger an immune response</strong> (like a piece of a virus or a bacterial protein). We won’t explicitly model other cell types (like antigen-presenting cells) in <strong>this simplified version</strong>, but we’ll account for their role in the activation process.</p>
+</section>
+<section id="the-rules-of-engagement-from-intuition-to-equations" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="the-rules-of-engagement-from-intuition-to-equations">The Rules of Engagement: From Intuition to Equations</h4>
+<p>Here’s where the magic of non-linearity comes in. We’ll use a few key equations to dictate the behavior of our T cell agents.</p>
+<p>The <strong>activation of a naive T cell</strong> upon encountering an antigen <strong>isn’t a simple binary event</strong>; it’s not just “on” or “off,” like a light switch. Instead, <strong>it’s a graded response</strong>, much like a dimmer switch. The more antigen a T cell encounters, the higher the chance it gets activated <span class="citation" data-cites="joglekar2021t">(Joglekar and Li 2021)</span>. But <strong>this increase in activation probability isn’t perfectly linear</strong>. There’s often a threshold effect: at low antigen concentrations, not much happens, but above a certain concentration, the activation probability shoots up dramatically. This “switch-like” behavior is what equations used in biochemistry like the <a href="https://en.wikipedia.org/wiki/Hill_equation_(biochemistry)">Hill function</a> elegantly captures.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/naive-to-efector.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Checkpoints that regulate T cell response from their naive state to their final differentiated state. This shows how distinct mechanisms, including quiescence/ignorance, anergy, exhaustion/senescence, and various forms of cell death, act at T cell development and activation. Figure from <a href="https://www.nature.com/articles/s41577-020-00454-2">Nature Reviews Immunology 21, 257–267 (2021)</a></span></div></div>
+<section id="activation-function-the-on-switch" class="level5">
+<h5 class="anchored" data-anchor-id="activation-function-the-on-switch">Activation Function: The “On” Switch</h5>
+<p>Let’s build up the intuition behind this function. Imagine a <strong>T cell receptor</strong> (TCR) on the surface of a T cell. For simplicity, let’s consider that the <strong>interaction of the TCR with the antigen is a complex process</strong> that can involve multiple steps and interactions <span class="citation" data-cites="dushek2011antigen">(Dushek et al. 2011)</span>. While we might imagine that <img src="https://latex.codecogs.com/png.latex?n"> antigen molecules <strong>are required to bind for full activation</strong>, the Hill equation doesn’t directly represent this exact number of binding sites. Instead, it <strong>describes the overall cooperativity</strong> of the binding process <span class="citation" data-cites="stefan2013cooperative">(Stefan and Le Novère 2013)</span>.</p>
+<p>Now, let’s think about the <strong>probability of activation as a function of antigen concentration</strong>. If the antigen concentration is low, the probability of any productive interaction between the antigen and TCR is low, and therefore, the probability of activation is also low. <strong>As the antigen concentration increases, the probability of productive interactions also increases</strong>. This increase is often non-linear, with a steeper rise at certain concentrations <span class="citation" data-cites="dushek2011antigen">(Dushek et al. 2011)</span>. This non-linearity is captured by the concept of <em>cooperativity</em>: the <strong>binding of one antigen molecule can influence the likelihood of subsequent binding events</strong> or downstream signaling events, leading to a more pronounced response.</p>
+<p>This intuition leads us to the Hill function:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5CPr(%5Ctext%7BActivation%7D)%20=%20%5Cfrac%7B%5Ctext%7B%5BAntigen%5D%7D%5En%7D%7BK%5En%20+%20%5Ctext%7B%5BAntigen%5D%7D%5En%7D%0A"></p>
+<p>Let’s break down this equation piece by piece, connecting it to our intuitive understanding:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5CPr(%5Ctext%7BActivation%7D)"> is the <strong>probability that a naive T cell becomes activated</strong>. It ranges from 0 (no activation) to 1 (certain activation).</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Ctext%7B%5BAntigen%5D%7D"> represents <strong>the concentration of the antigen</strong>. The more antigen present, the higher the chance of binding and activation.</p>
+<p><img src="https://latex.codecogs.com/png.latex?n"> is the <strong>Hill coefficient</strong>. It is a phenomenological parameter that describes the <em>steepness</em> or <em>cooperativity</em> of the response. A higher <img src="https://latex.codecogs.com/png.latex?n"> indicates a steeper curve and a more switch-like response. It reflects <strong>how much the binding of one antigen influences the binding of subsequent antigens</strong> or the downstream signaling events.</p>
+<p><img src="https://latex.codecogs.com/png.latex?K"> is the <strong>dissociation constant</strong>. It represents <strong>the antigen concentration at which the probability of activation is 50%</strong>. It’s a measure of the affinity between the antigen and the TCR. A smaller <img src="https://latex.codecogs.com/png.latex?K"> means a higher affinity (stronger binding), meaning that less antigen is needed to achieve 50% activation. You can think of <img src="https://latex.codecogs.com/png.latex?K"> as the <strong>“difficulty” of binding</strong>, a smaller <img src="https://latex.codecogs.com/png.latex?K"> means it’s easier to bind.</p>
+</section>
+</section>
+<section id="how-does-this-equation-capture-the-switch-like-behavior" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="how-does-this-equation-capture-the-switch-like-behavior">How Does this Equation Capture the Switch-Like Behavior?</h2>
+<p>Okay but, how does this equation capture the switch-like behavior? Let’s see how:</p>
+<ul>
+<li>At <strong>very low antigen concentrations</strong> (<img src="https://latex.codecogs.com/png.latex?%5Ctext%7B%5BAntigen%5D%7D%20%3C%3C%20K">), the term <img src="https://latex.codecogs.com/png.latex?%5Ctext%7B%5BAntigen%5D%7D%5En"> is much smaller than <img src="https://latex.codecogs.com/png.latex?K%5En">, so the <strong>probability of activation is close to zero</strong>.</li>
+<li>At <strong>very high antigen concentrations</strong> (<img src="https://latex.codecogs.com/png.latex?%5Ctext%7B%5BAntigen%5D%7D%20%3E%3E%20K">), the term <img src="https://latex.codecogs.com/png.latex?%5Ctext%7B%5BAntigen%5D%7D%5En"> dominates, and <strong>the probability of activation approaches 1</strong>.</li>
+</ul>
+<p>The transition between these two extremes is sharper when <img src="https://latex.codecogs.com/png.latex?n"> is larger. This steep transition is what we refer to as the “switch-like” behavior.</p>
+<p>It’s crucial to understand that <img src="https://latex.codecogs.com/png.latex?n"> is an <em>effective</em> or <em>apparent</em> <strong>cooperativity coefficient</strong>. It describes the overall <strong>cooperativity of the binding process</strong>, which can be influenced by multiple factors beyond just the number of binding sites. It can reflect complex downstream signaling events or allosteric effects.</p>
+<p>Here’s the R function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">activation_probability <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(antigen, K, n) {</span>
+<span id="cb1-2">  (antigen<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span>n) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (K<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span>n <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> antigen<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span>n)</span>
+<span id="cb1-3">}</span></code></pre></div>
+</div>
+<p>This R function is a <strong>direct translation of the Hill equation</strong>. It takes the antigen concentration (<code>antigen</code>), the dissociation constant (<code>K</code>), and the Hill coefficient (<code>n</code>) as inputs and <strong>returns the calculated activation probability</strong>. It’s our little digital “activation calculator.”</p>
+<p>And a quick visualization to show the effect of the Hill coefficient:</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">antigen_conc <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.001</span>)</span>
+<span id="cb2-2"></span>
+<span id="cb2-3">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"0.2"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"0.5"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, </span>
+<span id="cb2-4">         <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"1.0"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2.0"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2.0</span>, </span>
+<span id="cb2-5">         <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"4.0"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4.0</span>), <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb2-6">           <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.table</span>(</span>
+<span id="cb2-7">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Pr =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">activation_probability</span>(antigen_conc, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">K =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> x),</span>
+<span id="cb2-8">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Antigen =</span> antigen_conc</span>
+<span id="cb2-9">           )</span>
+<span id="cb2-10">         }) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbindlist</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">idcol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hill coefficient"</span>)</span>
+<span id="cb2-11"></span>
+<span id="cb2-12"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(Antigen, Pr)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Hill coefficient</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Antigen Concentration"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Probability of Activation"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hill Coefficient"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Effect of Hill Coefficient on Activation Probability"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_color_ordinal</span>()</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption"><strong>Hill coefficient (<code>n</code>) on T cell activation</strong>. When <code>n = 1</code>, the response is nearly linear. However, as n increases (<code>n = 2</code>, <code>n = 4</code>), the activation curve becomes increasingly steep, demonstrating enhanced cooperativity and a more pronounced threshold effect. This highlights how small changes in antigen concentration can trigger large changes in activation probability when cooperativity is high. It’s like comparing a gentle slope to a cliff, a small step can make a big difference when you’re near the edge of the cliff (high <code>n</code>).</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="proliferation-the-population-explosion" class="level5 page-columns page-full">
+<h5 class="anchored" data-anchor-id="proliferation-the-population-explosion">Proliferation: The Population Explosion</h5>
+<p>Once a T cell is activated, <strong>it’s time for action</strong> (and lots of it). This action comes <strong>in the form of proliferation</strong>, where a single activated T cell divides and creates many identical copies of itself, building an army to fight the infection <span class="citation" data-cites="kumar2012robbins">(Kumar, Abbas, and Aster 2012)</span>. <strong>If there were no limits, this growth would be exponential</strong> (like compound interest in a bank account), but with cells instead of money. Imagine starting with one cell, and it doubles every hour. After just a day, you’d have millions!</p>
+<p>But, of course, <strong>in the real world</strong> (and even in our digital one), such <strong>unrestrained growth is impossible</strong>. There are limited resources: space, nutrients, signaling molecules, all the things a T cell needs to survive and multiply. Eventually, the <strong>growth must slow down and plateau</strong>. This is where the logistic growth equation comes in, providing a much more realistic model of population dynamics.</p>
+<p>Let’s start with the continuous form of the logistic growth equation:</p>
+<div class="page-columns page-full"><p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20N%7D%7B%5Cpartial%20t%7D%20=%20rN%20%5Cleft(1-%20%5Cfrac%7BN%7D%7BK%7D%5Cright)%0A"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">This equation has previously been used to model T cell dynamics in both mouse and human models <span class="citation" data-cites="morris2019tissue">(Morris, Farber, and Yates 2019)</span>. Additionally, it’s commonly used to model cell growth in general in discrete-time approximations <span class="citation" data-cites="jin2018extended">(Jin, McCue, and Simpson 2018)</span>.</span></div></div>
+<p>Let’s break down this equation and connect it to our intuitive understanding of population growth:</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20N%7D%7B%5Cpartial%20t%7D">: This term represents the <strong>rate of change in the number of T cells</strong> (<img src="https://latex.codecogs.com/png.latex?N">) over time (<img src="https://latex.codecogs.com/png.latex?t">). It’s how quickly the population is growing or shrinking. Think of it as the “speedometer” of our population.</li>
+<li><img src="https://latex.codecogs.com/png.latex?r">: This is the <strong>intrinsic growth rate</strong>, sometimes called the per capita growth rate. It represents how quickly the population <em>would</em> grow if there were no limitations. It’s the “ideal” growth rate, like the speed limit on a highway.</li>
+<li><img src="https://latex.codecogs.com/png.latex?N">: This represents the <strong>current number of T cells</strong>. It’s the current “position” of our population.</li>
+<li><img src="https://latex.codecogs.com/png.latex?K">: This is the <strong>carrying capacity</strong>. It represents the maximum number of T cells that the environment can sustain. It’s the “maximum occupancy” of our battlefield, there’s only so much room for T cells to operate.</li>
+</ul>
+<p>Now, let’s see how this equation captures the idea of limited growth.</p>
+<ul>
+<li><u><strong>At low population densities (N &lt;&lt; K)</strong></u>: When the number of T cells (<img src="https://latex.codecogs.com/png.latex?N">) is much smaller than the carrying capacity (<img src="https://latex.codecogs.com/png.latex?K">), the term <img src="https://latex.codecogs.com/png.latex?(1%20-%20%5Cfrac%7BN%7D%7BK%7D)"> is close to 1. The equation then simplifies to <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20N%7D%7B%5Cpartial%20t%7D%20=%20rN">, <strong>which is the equation for exponential growth</strong>. This makes sense: when there are plenty of resources and space, the population grows rapidly, like those initial rabbits in a wide open field.</li>
+<li><u><strong>At high population densities (N ≈ K)</strong></u>: As the number of T cells (<img src="https://latex.codecogs.com/png.latex?N">) approaches the carrying capacity (<img src="https://latex.codecogs.com/png.latex?K">), the term <img src="https://latex.codecogs.com/png.latex?(1%20-%20%5Cfrac%7BN%7D%7BK%7D)"> approaches 0. This causes the rate of change <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20N%7D%7B%5Cpartial%20t%7D"> to also approach 0, meaning the <strong>population growth slows down and eventually stops</strong>. This also makes sense, given that as the battlefield becomes crowded, resources become scarce, and the T cell population can’t grow much more.</li>
+</ul>
+<p>Since <strong>our simulation is discrete-time</strong> (we update the population at specific intervals, not continuously), we use a discrete-time approximation of the logistic growth equation:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AN(t+1)%20=%20N(t)%20+%20r%20*%20N(t)%20*%20%5Cleft(1%20-%20%5Cfrac%7BN(t)%7D%7BK%7D%20%5Cright)%0A"></p>
+<p>This equation tells us <strong>how to calculate the number of T cells at the <em>next</em> time step</strong> (<img src="https://latex.codecogs.com/png.latex?N(t+1)">) based on the current number of T cells (<img src="https://latex.codecogs.com/png.latex?N(t)">), the growth rate (<img src="https://latex.codecogs.com/png.latex?r">), and the carrying capacity (<img src="https://latex.codecogs.com/png.latex?K">). It’s <strong>like taking snapshots of the population at regular intervals</strong> and updating the numbers based on the growth equation.</p>
+<p>Here’s the R function that implements this discrete-time approximation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">proliferation <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(N, r, K) {</span>
+<span id="cb3-2">  N <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> r <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> N <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> N <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> K)</span>
+<span id="cb3-3">}</span></code></pre></div>
+</div>
+<p>This R function takes <code>N</code>, <code>r</code>, and <code>K</code> as inputs and <strong>returns the updated number of T cells</strong>. It’s our digital “population updater,” simulating the growth and eventual stabilization of the T cell army.</p>
+<p>And here’s a visualization of the proliferation behavior of our function implementation:</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Function to simulate cell proliferation</span></span>
+<span id="cb4-2">proliferating_cells <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(n_steps, n_cells, r, k) {</span>
+<span id="cb4-3">  cells <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n_steps)</span>
+<span id="cb4-4">  cells[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>L] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> n_cells</span>
+<span id="cb4-5">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> (t <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>n_steps) {</span>
+<span id="cb4-6">    cells[t] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">proliferation</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">N =</span> cells[t<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">-1</span>], <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">r =</span> r, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">K =</span> k)</span>
+<span id="cb4-7">  }</span>
+<span id="cb4-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.table</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Time =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq_len</span>(n_steps), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Cells =</span> cells)</span>
+<span id="cb4-9">}</span>
+<span id="cb4-10"></span>
+<span id="cb4-11"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Testing different Rate values</span></span>
+<span id="cb4-12">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">X =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>), <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb4-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">proliferating_cells</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, x, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">200</span>)</span>
+<span id="cb4-14">}) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbindlist</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">idcol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Rate"</span>)</span>
+<span id="cb4-15"></span>
+<span id="cb4-16"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Pretty labels for plotting</span></span>
+<span id="cb4-17">df[, Rate <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="er" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ordered</span>(Rate, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">levels =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">labels =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>))]</span>
+<span id="cb4-18"></span>
+<span id="cb4-19"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## ggplot2 plot</span></span>
+<span id="cb4-20"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(Time, Cells, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> Rate)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-21">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_hline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yintercept =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">200</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gray50"</span>, </span>
+<span id="cb4-22">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linetype =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-23">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-24">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time Steps"</span>,</span>
+<span id="cb4-25">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of Cells"</span>, </span>
+<span id="cb4-26">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Simulation of Cell Proliferation over Time"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/index_files/figure-html/unnamed-chunk-5-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption"><strong>Dynamics of T cell proliferation using the logistic growth model</strong>. Simulations with varying growth rates (r) show that faster proliferation leads to a more rapid initial increase in cell numbers. However, the carrying capacity (K = 200) acts as a limiting factor, causing all populations to eventually reach a plateau, highlighting the constraint of resources on cell growth. It’s like a race between different rabbit populations, the faster breeders get to the maximum population size quicker, but they all eventually hit the limit of their field.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="apoptosis-constant-probability-the-programmed-exit" class="level5 page-columns page-full">
+<h5 class="anchored" data-anchor-id="apoptosis-constant-probability-the-programmed-exit">Apoptosis (Constant Probability): The Programmed Exit</h5>
+<p>Even the most valiant <strong>soldiers can’t fight forever</strong>. T cells, <strong>like all living cells, have a finite lifespan</strong>. They eventually undergo apoptosis, a process of <strong>programmed cell death</strong>. It’s like a built-in self-destruct mechanism that ensures cells don’t become a burden or pose a risk to the organism. In our model, <strong>we’ll represent apoptosis with a constant probability</strong>. This means that at each time step, every activated T cell has the same chance of undergoing apoptosis, regardless of how long it’s been activated or what it’s been doing.</p>
+<p>Let’s represent this with a simple equation:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5CPr(%5Ctext%7Bapoptosis%7D)%20=%20p_%7B%5Ctext%7Bapoptosis%7D%7D%0A"></p>
+<p>This equation is pretty straightforward:</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5CPr(%5Ctext%7Bapoptosis%7D)">: This represents the <strong>probability that a single activated T cell will undergo apoptosis during a given time step</strong>. It’s a number between 0 (no chance of apoptosis) and 1 (certain apoptosis).</li>
+<li><img src="https://latex.codecogs.com/png.latex?p_%7B%5Ctext%7Bapoptosis%7D%7D">: This is the <strong>constant probability of apoptosis</strong>. It’s a parameter of our model that we can set to represent different rates of cell death.</li>
+</ul>
+<p>This constant probability <strong>model assumes that apoptosis is a random event that occurs independently for each cell</strong> (which is a simplication of real-life biological systems). It’s like each cell flipping a weighted coin at every time step. If the coin lands on “heads” (with a probability of <img src="https://latex.codecogs.com/png.latex?p_%7B%5Ctext%7Bapoptosis%7D%7D">), the cell undergoes apoptosis.</p>
+<p>Now, let’s translate this into R code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">apoptosis <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(N, p_apoptosis) {</span>
+<span id="cb5-2">  n_apoptosis <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbinom</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, N, p_apoptosis) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Number of cells undergoing apoptosis</span></span>
+<span id="cb5-3">  N <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> n_apoptosis</span>
+<span id="cb5-4">}</span></code></pre></div>
+</div>
+<p>This function <strong>simulates apoptosis</strong>. It takes two arguments: <code>N</code> (the current number of T cells) and <code>p_apoptosis</code> (the probability of apoptosis). It uses <code>rbinom(1, N, p_apoptosis)</code> to generate a random number of cells that undergo apoptosis. <code>rbinom()</code> simulates a binomial distribution, which is perfect for modeling the number of “successes” (apoptosis events) in a given number of “trials” (cells). <strong>It’s like rolling a bunch of dice, where each die has a probability <code>p_apoptosis</code> of landing on “apoptosis”</strong>. The function then returns the remaining number of cells after apoptosis.</p>
+<p>And here’s a visualization simulating the effect of different <code>p_apoptosis</code> values on the total number of cells over time:</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Function to simulate cell dead</span></span>
+<span id="cb6-2">apoptotic_cells <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(n_steps, n_cells, p) {</span>
+<span id="cb6-3">  cells <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n_steps)</span>
+<span id="cb6-4">  cells[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>L] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> n_cells</span>
+<span id="cb6-5">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> (t <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>n_steps) {</span>
+<span id="cb6-6">    cells[t] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">apoptosis</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">N =</span> cells[t<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">-1</span>], <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">p_apoptosis =</span> p)</span>
+<span id="cb6-7">  }</span>
+<span id="cb6-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.table</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Time =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq_len</span>(n_steps), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Cells =</span> cells)</span>
+<span id="cb6-9">}</span>
+<span id="cb6-10"></span>
+<span id="cb6-11"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Testing different Rate values</span></span>
+<span id="cb6-12">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">X =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>), <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb6-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">apoptotic_cells</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>, x)</span>
+<span id="cb6-14">}) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbindlist</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">idcol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Probability"</span>)</span>
+<span id="cb6-15"></span>
+<span id="cb6-16"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Pretty labels for plotting</span></span>
+<span id="cb6-17">df[, Probability <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="er" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ordered</span>(Probability, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">levels =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">labels =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>))]</span>
+<span id="cb6-18"></span>
+<span id="cb6-19"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## ggplot2 plot</span></span>
+<span id="cb6-20"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(Time, Cells, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> Probability)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb6-21">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_hline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yintercept =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gray50"</span>, </span>
+<span id="cb6-22">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linetype =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb6-23">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb6-24">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time Steps"</span>,</span>
+<span id="cb6-25">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of Cells"</span>, </span>
+<span id="cb6-26">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Simulation of Cell Apoptosis over Time"</span>,</span>
+<span id="cb6-27">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(P[Apoptosis]))</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/index_files/figure-html/unnamed-chunk-7-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption"><strong>Effect of apoptosis probability on cell population size over time</strong>. Simulations show that increasing the probability of apoptosis (<img src="https://latex.codecogs.com/png.latex?p_%7B%20%20%20%20ext%7Bapoptosis%7D%7D">) results in a more rapid decrease in the number of cells, illustrating the direct relationship between apoptosis rate and population decline. It’s like watching a sandcastle being washed away by the tide, the stronger the tide (higher <code>p_apoptosis</code>), the faster the sandcastle disappears.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="setting-up-the-simulation" class="level4">
+<h4 class="anchored" data-anchor-id="setting-up-the-simulation">Setting Up the Simulation</h4>
+<p>Before we launch our digital immune response, <strong>we need to set the stage</strong>. This means <strong>defining the initial conditions and parameters for our simulation</strong>. Think of it as setting up a virtual battlefield where our T cells will fight their digital battles.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## T Cell population</span></span>
+<span id="cb7-2">n_steps <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>         <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Number of time steps</span></span>
+<span id="cb7-3">n_naive <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>         <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initial number of naive T cells</span></span>
+<span id="cb7-4"></span>
+<span id="cb7-5"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## T Cell activation function</span></span>
+<span id="cb7-6">antigen_level <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Antigen concentration</span></span>
+<span id="cb7-7">K_activation <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Dissociation constant for activation</span></span>
+<span id="cb7-8">n_hill <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>            <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Hill coefficient for activation</span></span></code></pre></div>
+</div>
+<p>Here’s what we’re setting up:</p>
+<ul>
+<li><code>n_steps</code>: This is the <strong>number of time steps our simulation will run for</strong>. Think of it as the duration of the battle. We’ve chosen 100 time steps, but you can adjust this to simulate longer or shorter periods.</li>
+<li><code>n_naive</code>: This is the <strong>initial number of naive T cells we start with</strong>. These are our fresh recruits, eager to join the fight. We’re starting with 100 naive T cells.</li>
+<li><code>antigen_level</code>: This is the <strong>concentration of the antigen</strong>, the enemy our T cells are fighting against. It’s like the strength of the enemy army. We’ve set it to 0.2, but you can change this to simulate different infection scenarios.</li>
+<li><code>K_activation</code>: This is the <strong>dissociation constant for activation</strong>, a parameter of the Hill function. Remember, this determines how strongly the antigen binds to the T cell receptor.</li>
+<li><code>n_hill</code>: This is the <strong>Hill coefficient</strong>, which controls the steepness of the activation curve. A higher n_hill means a more switch-like response.</li>
+</ul>
+<p>These parameters are like the initial settings of our simulation, <strong>determining the starting conditions</strong> of our virtual immune response.</p>
+</section>
+<section id="simulating-activation-and-early-response-lighting-the-fire" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="simulating-activation-and-early-response-lighting-the-fire">Simulating Activation and Early Response: Lighting the Fire</h4>
+<p>Now that we have our equations and R functions ready, <strong>let’s simulate the initial activation of naive T cells in response to antigen</strong>. This section will focus on the early stages of the immune response, where naive T cells are first encountering the antigen and transitioning into their activated state. <strong>It’s like the first spark that ignites the immune fire</strong>, turning our rookie T cells into seasoned warriors.</p>
+<p>To simulate the activation and early response of T cells, we will implement the following function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Simulation function</span></span>
+<span id="cb8-2">sim_t_activation <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(n_steps, n_naive, antigen_level, K_activation, n_hill) {</span>
+<span id="cb8-3">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize data structures</span></span>
+<span id="cb8-4">  naive_t_cells <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n_steps)</span>
+<span id="cb8-5">  activated_t_cells <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n_steps)</span>
+<span id="cb8-6">  </span>
+<span id="cb8-7">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initial number of naive T cells</span></span>
+<span id="cb8-8">  naive_t_cells[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>L] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> n_naive</span>
+<span id="cb8-9">  </span>
+<span id="cb8-10">  <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Probability of activation</span></span>
+<span id="cb8-11">  prob <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">activation_probability</span>(antigen_level, K_activation, n_hill)</span>
+<span id="cb8-12">  </span>
+<span id="cb8-13">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Loop of activation cycle</span></span>
+<span id="cb8-14">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> (t <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>n_steps) {</span>
+<span id="cb8-15">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Probabilistic Activation of T cells</span></span>
+<span id="cb8-16">    n_activated <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb8-17">    n_activated <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runif</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> naive_t_cells[t<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">-1</span>]) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> prob)</span>
+<span id="cb8-18">    </span>
+<span id="cb8-19">    <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Update population of T cells</span></span>
+<span id="cb8-20">    naive_t_cells[t] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> naive_t_cells[t<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">-1</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> n_activated</span>
+<span id="cb8-21">    activated_t_cells[t] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> activated_t_cells[t<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">-1</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> n_activated</span>
+<span id="cb8-22">  }</span>
+<span id="cb8-23">  </span>
+<span id="cb8-24">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Preparing the data from the simulation</span></span>
+<span id="cb8-25">  df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.table</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Time =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq_len</span>(n_steps), </span>
+<span id="cb8-26">                   <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Naive =</span> naive_t_cells, </span>
+<span id="cb8-27">                   <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Activated =</span> activated_t_cells)</span>
+<span id="cb8-28">  </span>
+<span id="cb8-29">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># In long format</span></span>
+<span id="cb8-30">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">melt</span>(df, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">id.vars =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time"</span>)</span>
+<span id="cb8-31">}</span></code></pre></div>
+</div>
+<p>Let’s break down what’s happening inside this function:</p>
+<ol type="1">
+<li><p><u><strong>Initializing Data Structures</strong></u>: <code>naive_t_cells &lt;- numeric(n_steps)</code> and <code>activated_t_cells &lt;- numeric(n_steps)</code> <strong>create empty vectors to store the number of naive and activated T cells</strong> at each time step. It’s like setting up empty scoreboards to track the progress of the battle.</p></li>
+<li><p><u><strong>Setting Initial Conditions</strong></u>: <code>naive_t_cells[1L] &lt;- n_naive</code> <strong>sets the initial number of naive T cells at the beginning of the simulation</strong> (time step 1). This is where we deploy our initial batch of rookie T cells onto the battlefield.</p></li>
+<li><p><u><strong>Calculating Activation Probability</strong></u>: <code>prob &lt;- activation_probability(antigen_level, K_activation, n_hill)</code> <strong>calculates the probability of activation</strong> using our previously defined Hill function. This is like assessing the likelihood of our T cells encountering and recognizing the enemy.</p></li>
+<li><p><u><strong>The Activation Loop (The Battle Begins!)</strong></u>: The <code>for (t in 2:n_steps)</code> loop <strong>simulates the passage of time</strong>, with each iteration representing a time step. Inside this loop, we have:</p>
+<ul>
+<li><u><strong>Probabilistic Activation</strong></u>: <code>n_activated &lt;- sum(runif(n = naive_t_cells[t-1]) &lt; prob)</code> is <strong>where the magic of stochastic activation happens</strong>. For each naive T cell at the previous time step, we generate a random number between 0 and 1 using <code>runif()</code>. If this random number is less than the calculated activation probability (<code>prob</code>), the T cell is considered activated. It’s like each T cell flipping a weighted coin – the higher the probability, the more likely they are to “win” and become activated. The <code>sum()</code> function counts how many T cells were activated in this time step.</li>
+<li><u><strong>Updating Cell Populations</strong></u>: <code>naive_t_cells[t] &lt;- naive_t_cells[t-1] - n_activated</code> and <code>activated_t_cells[t] &lt;- activated_t_cells[t-1] + n_activated</code> <strong>update the number of naive and activated T cells</strong>. The number of naive T cells decreases as they become activated, and the number of activated T cells increases accordingly. It’s like tracking the casualties and new recruits on both sides of the battle.</li>
+</ul></li>
+<li><p><u><strong>Preparing Data for Plotting</strong></u>: The code then prepares the simulation results into a data frame suitable for plotting using <code>data.table</code> and <code>melt</code>.</p></li>
+</ol>
+<p>Now, let’s visualize the results:</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sim_t_activation</span>(n_steps, n_naive, antigen_level, K_activation, n_hill)</span>
+<span id="cb9-2"></span>
+<span id="cb9-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> Time, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> value, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> variable)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb9-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb9-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Early T Cell Activation Response"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time Steps"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of Cells"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Cell Type"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/index_files/figure-html/unnamed-chunk-10-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption"><strong>Early stages of T cell activation in response to antigen</strong>. The simulation demonstrates a decline in the naive T cell population coupled with a corresponding rise in the activated T cell population, reflecting the transition from naive to activated state. It’s like turning up the heat on the battlefield, the stronger the enemy (higher antigen level), the quicker our T cells get mobilized.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="simulating-proliferation-and-population-dynamics-the-army-grows" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="simulating-proliferation-and-population-dynamics-the-army-grows">Simulating Proliferation and Population Dynamics: The Army Grows</h4>
+<p>Now that we have some activated T cells itching for action, let’s simulate their proliferation, <strong>the process where they multiply like, well, like very enthusiastic cells</strong>. We’ll extend our simulation and incorporate the logistic growth equation to keep things realistic (no infinite armies here!).</p>
+<p>First, let’s define some parameters that control the proliferation dynamics:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## T Cell Proliferation and Apoptosis</span></span>
+<span id="cb10-2">r_proliferation <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Proliferation rate</span></span>
+<span id="cb10-3">K_carrying <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">150</span>      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Carrying capacity</span></span></code></pre></div>
+</div>
+<ul>
+<li><code>r_proliferation</code>: This is the <strong>proliferation rate</strong>, which determines how quickly the activated T cell population grows. It’s like the “birth rate” of our T cell army. A higher r_proliferation means faster growth.</li>
+<li><code>K_carrying</code>: This is the <strong>carrying capacity</strong>, which represents the maximum number of activated T cells that the environment can support. It’s like the size of the battlefield, there’s only so much space and resources available.</li>
+</ul>
+<p>Let’s visualize the results:</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sim_t_activation</span>(n_steps, n_naive, antigen_level, K_activation, n_hill, r_proliferation, K_carrying)</span>
+<span id="cb11-2"></span>
+<span id="cb11-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> Time, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> value, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> variable)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb11-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb11-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"T Cell Activation and Proliferation"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time Steps"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of Cells"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Cell Type"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption"><strong>Combined processes of T cell activation and proliferation</strong>. Following initial activation driven by antigen (as seen by the decrease in naive T cells and increase in activated T cells), the activated population undergoes logistic growth. This is characterized by an initial phase of rapid, near-exponential expansion, which then slows down as the population approaches the carrying capacity (<code>K = 150</code>), demonstrating resource limitation. It’s like a population of rabbits in a field, they multiply quickly at first, but eventually, they run out of space and resources, and the population stabilizes.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="combining-processes-a-full-simulation" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="combining-processes-a-full-simulation">Combining Processes: A Full Simulation</h4>
+<p>Now, the moment we’ve all been waiting for! <strong>Let’s combine all the processes we’ve discussed</strong> (activation, proliferation, and apoptosis) into a single, more complete simulation. <strong>This will give us a more realistic picture</strong> of how T cell populations behave during an immune response.</p>
+<p>We’ll also <strong>make a couple of tweaks</strong>: we’ll set the apoptosis probability to 10% at each time step and increase our initial number of naive T cells to 300 and a carrying capacity of 500, <strong>because a bigger army is always more fun to simulate</strong>.</p>
+<p>And the final visualization:</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Parameters</span></span>
+<span id="cb12-2">p_apoptosis <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Probability of apoptosis</span></span>
+<span id="cb12-3">n_naive <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">300</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Number of initial naive T cells</span></span>
+<span id="cb12-4">K_carrying <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Carrying capacity</span></span>
+<span id="cb12-5">r_proliferation <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Proliferation rate</span></span>
+<span id="cb12-6"></span>
+<span id="cb12-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Simulation loop with activation, proliferation, and apoptosis</span></span>
+<span id="cb12-8">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sim_t_activation</span>(n_steps, n_naive, antigen_level, K_activation, n_hill, r_proliferation, K_carrying, p_apoptosis)</span>
+<span id="cb12-9"></span>
+<span id="cb12-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plot the full simulation</span></span>
+<span id="cb12-11"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> Time, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> value, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> variable)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Full T Cell Dynamics: Activation, Proliferation, and Apoptosis"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time Steps"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of Cells"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Cell Type"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption"><strong>Integration of all key T cell processes: activation, proliferation, and apoptosis</strong>. Following antigen-driven activation, activated T cells proliferate, reaching a peak population size. Subsequently, apoptosis leads to a decline in the activated T cell population, demonstrating the dynamic balance between expansion and contraction of the immune response. It’s like watching a battle unfold, there’s an initial surge of troops, but eventually, attrition takes its toll, and the battle either reaches a stalemate or one side prevails.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-happens-if-we-tweak-the-knobs" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="what-happens-if-we-tweak-the-knobs">What Happens if We Tweak the Knobs?</h4>
+<p>A crucial step in any modeling study is sensitivity analysis. <strong>It’s like playing with the knobs and dials of your model to see how it responds</strong>. We want to understand how changes in our input parameters (like the Hill coefficient or the carrying capacity) affect the outputs of our simulation (like the number of activated T cells). This helps us <strong>identify which parameters have the biggest influence on the model’s behavior</strong>, which knobs are the most important to turn if we want to change the outcome.</p>
+<p>For instance, we can show a quick example of sensitivity analysis by <strong>varying the Hill coefficient</strong> (<img src="https://latex.codecogs.com/png.latex?n">), which, as we know, controls how switch-like the activation is:</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Sensitivity analysis for Hill coefficient</span></span>
+<span id="cb13-2">n_hill <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"n = 1"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"n = 2"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"n = 3"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"n = 4"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>)</span>
+<span id="cb13-3">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(n_hill, <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb13-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sim_t_activation</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n_steps =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n_naive =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">300</span>, </span>
+<span id="cb13-5">                   <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">antigen_level =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">K_activation =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n_hill =</span> x, </span>
+<span id="cb13-6">                   <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">r_proliferation =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">K_carrying =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">p_apoptosis =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.10</span>)</span>
+<span id="cb13-7">}) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbindlist</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">idcol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"n_hill"</span>)</span>
+<span id="cb13-8"></span>
+<span id="cb13-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> Time, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> value, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> variable)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb13-10">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ordered</span>(n_hill)), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb13-11">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Sensitivity Analysis for Hill Coefficient"</span>, </span>
+<span id="cb13-12">         <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time Steps"</span>, </span>
+<span id="cb13-13">         <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of Activated Cells"</span>, </span>
+<span id="cb13-14">         <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Carrying Capacity"</span>, </span>
+<span id="cb13-15">         <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hill Coefficient"</span>,</span>
+<span id="cb13-16">         <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"With [Antigen] = 10, and K = 25"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb13-17">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.caption =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>))</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/index_files/figure-html/unnamed-chunk-16-1.svg" class="img-fluid figure-img"></p>
+<figcaption class="margin-caption"><strong>Impact of the Hill coefficient on the dynamics of T cell activation and recruitment</strong>. By varying n from 1 to 4, we observe a transition from a gradual, almost linear response (<code>n=1</code>) to a highly switch-like response (<code>n=4</code>).</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Here’s a closer look at what’s going on behind the scenes of this code.</p>
+<p>The resulting plot is where we see the fruits of our labor. It shows how the dynamics of the activated T cell population and <strong>the recruitment of naive T cells change depending on the Hill coefficient</strong>. Tipically, higher values of <img src="https://latex.codecogs.com/png.latex?n"> lead to a more rapid and pronounced increase in activated T cells. However, this is only true when <img src="https://latex.codecogs.com/png.latex?%5Ctext%7B%5BAntigen%5D%7D"> are above the <img src="https://latex.codecogs.com/png.latex?K"> threshold.</p>
+<p><strong>In this case this relationship is inverted</strong> (recall the plot of the hill function we saw earlier), which might seem counterintuitive at first, but remember that the Hill coefficient affects the <em>steepness</em> of the activation curve. A <strong>higher Hill coefficient</strong> is like a very sharp switch, a small increase in antigen concentration leads to a big jump in activation after the <img src="https://latex.codecogs.com/png.latex?K"> threshold is surpassed. Conversely, a <strong><em>lower</em> Hill coefficient</strong> is like a more gradual dimmer switch.</p>
+<p>This <strong>sensitivity analysis</strong> is incredibly valuable because it helps us understand just how important are the parameters in the equation <strong>controlling how T cells get activated</strong>. It shows that this parameter can significantly impact the overall immune response. By <strong>playing with these parameters</strong>, we can get a much better feel for <strong>how the immune system works</strong> and how it might react to different challenges, it’s like fine-tuning an instrument to get the perfect sound.</p>
+</section>
+</section>
+</section>
+<section id="so-what-did-our-digital-cells-actually-do" class="level1 page-columns page-full">
+<h1>So, What Did Our Digital Cells Actually Do?</h1>
+<p>Now that we’ve <strong>unleashed our digital immune system</strong> and watched our simulated lymphocytes playing out in the digital petri dish, <strong>let’s take a step back and figure out what it all means</strong>. Did we just waste a bunch of CPU cycles, or did we actually learn something?</p>
+<section id="biological-interpretation-and-relevance-decoding-the-digital-chatter" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="biological-interpretation-and-relevance-decoding-the-digital-chatter">Biological Interpretation and Relevance: Decoding the Digital Chatter</h4>
+<p>Our simplified model, while admittedly a bit of a caricature of the real thing, <strong>manages to capture some fundamental aspects of how lymphocytes behave</strong>.</p>
+<p>The <em>Hill function</em> for activation, that fancy equation with the exponents, perfectly <strong>illustrates the importance of cooperative binding</strong> and threshold responses in kicking off an immune response <span class="citation" data-cites="dushek2011antigen stefan2013cooperative">(Dushek et al. 2011; Stefan and Le Novère 2013)</span>. It’s like a party, one person arriving might not start a dance floor, <strong>but once a few more join in, suddenly everyone’s grooving</strong>. That’s cooperativity!</p>
+<p>The <em>logistic growth equation</em>, our population-limiting equation, <strong>shows how limited resources</strong> (like space, food, and Wi-Fi in the body) <strong>put a limit on lymphocyte proliferation</strong>, preventing them from turning into an unstoppable, resource-devouring horde <span class="citation" data-cites="morris2019tissue jin2018extended">(Morris, Farber, and Yates 2019; Jin, McCue, and Simpson 2018)</span>. The addition of stochasticity (randomness), that sprinkle of randomness we added, is a reminder that <strong>biological systems are inherently noisy</strong>. Even with identical starting conditions, the outcome of a real immune response can vary, it’s like two identical twins might react differently to the same flu virus.</p>
+<p>For example, let’s consider what happens <strong>when we change the antigen level</strong>. In our simulation, a <strong>higher antigen concentration</strong> (more enemies on the battlefield) leads to a <strong>faster and stronger activation of T cells</strong>. This, in turn, drives a larger proliferative response (up to the carrying capacity, the maximum number of T cells the body can support). This makes perfect sense biologically: <strong>a larger invasion requires a larger counterattack</strong>. It’s like sending in more troops when facing a bigger enemy army. Similarly, the Hill coefficient (<img src="https://latex.codecogs.com/png.latex?n">) plays a crucial role. <strong>A higher Hill coefficient implies a more sensitive response to changes in antigen concentration</strong>. It’s like having a hair-trigger alarm, a tiny change in antigen concentration sets off a massive response from the T cells.</p>
+<p>Now, let’s bring this back to our initial motivation: <strong>cancer immunotherapy</strong>. Our model suggests that the <strong>effectiveness of checkpoint blockade therapies</strong> (which unleash the immune system against cancer cells) <strong>might depend</strong> not only on the number of T cells hanging around in the tumor but also <strong>on factors like the local antigen concentration</strong> (how recognizable the cancer cells are) and the sensitivity of T cells to that antigen (represented by our Hill coefficient). So, <strong>it’s not just about having enough soldiers</strong>; it’s also about making sure they can see and react to the enemy properly.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/hero-t-cell.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from Richard C. Smith in <a href="https://cen.acs.org/articles/92/i40/Immune-System-Fights-Back.html">CE&amp;N</a></span></div></div>
+</section>
+<section id="where-our-digital-cells-fall-short" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="where-our-digital-cells-fall-short">Where Our Digital Cells Fall Short</h4>
+<p>It’s crucial to acknowledge the <strong>limitations of our simplified model</strong>. We’ve made some necessary simplifications to make it manageable for this post (<strong>and to prevent my computer from melting down</strong>). Think of it as drawing a cartoon of a person, it captures the basic idea, but it’s not a photorealistic portrait.</p>
+<div class="page-columns page-full"><p><u><strong>Simplified cell types</strong></u>. We’ve only considered two types of T cells (naive and activated), which is a gross oversimplification. <strong>The real immune system has a whole alphabet soup of immune cells</strong> (B cells, dendritic cells, regulatory T cells, and many more), <strong>each with its own specialized role</strong>. Incorporating more cell types would allow us to model more complex interactions and immune responses, like teamwork between different parts of the immune system. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">It’s like modeling a sports team with only two types of players, you’re missing a lot of the strategic complexity.</span></div></div>
+<div class="page-columns page-full"><p><u><strong>No spatial dynamics</strong></u>. Our model <strong>doesn’t account for the spatial organization of the immune system</strong>. In reality, immune cells move around the body, interacting in specific locations like lymph nodes or tissues. Modeling the movement of cells within tissues would add another layer of realism. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Similar to simulating a battle without considering the terrain, where the fight happens matters!</span></div></div>
+<div class="page-columns page-full"><p><u><strong>Simplified interactions</strong></u>. We’ve only modeled a few key processes (activation, proliferation, apoptosis). In reality, <strong>there are countless interactions between immune cells</strong>, including cytokine signaling (chemical messages between cells) and direct cell-cell contact. Modeling cytokine networks and other signaling molecules would allow us to simulate more complex feedback loops and interactions. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">It’s like trying to recreate a conversation with only three words, you’re missing a lot of detail.</span></div></div>
+<div class="page-columns page-full"><p><u><strong>Constant parameters</strong></u>. We’ve assumed that parameters like the growth rate and apoptosis probability are constant over time. In reality, <strong>these parameters can change depending on various factors in the cell’s environment</strong>. Modeling these parameters as dependent on the cell environment would allow us to simulate more realistic biological scenarios. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Similar assuming that a car’s speed is always constant, regardless of whether it’s going uphill or downhill.</span></div></div>
+<p><strong>These simplifications are necessary for a blog post</strong> (and to avoid a complete descent into computational madness), but they mean our model <strong>doesn’t capture the full complexity of the real immune system</strong>. More complex models, incorporating these missing elements, could be used to address a wider range of immunological questions, from predicting vaccine efficacy to designing personalized immunotherapies.</p>
+</section>
+<section id="from-pixels-to-patients" class="level4">
+<h4 class="anchored" data-anchor-id="from-pixels-to-patients">From Pixels to Patients</h4>
+<p>In this post, we’ve taken a wild tour around the topic of <strong>agent-based modeling and non-linear equations in R</strong>, showing how they can be used to simulate the dynamic world of <strong>lymphocyte populations</strong>. We’ve built a simplified model that captures key processes like activation, proliferation, and apoptosis, and we’ve seen <strong>how these processes interact</strong> to shape the overall immune response.</p>
+<p>While <strong>our model is a simplified representation of reality</strong> (a digital doodle compared to a biological masterpiece), it provides a valuable framework for <strong>understanding the fundamental principles of lymphocyte dynamics</strong>. It demonstrates the power of computational modeling in immunology, offering <strong>a way to explore complex biological systems</strong> in a way that would be difficult or impossible with traditional experimental methods alone. By building these digital models, we can gain insights that <strong>could eventually lead to more effective treatments</strong> and interventions for a wide range of diseases, bringing us closer to a future where digital cells translate into real-world impact for patients.</p>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-an2021challenges" class="csl-entry">
+An, Li, Volker Grimm, Abigail Sullivan, BL Turner Ii, Nicolas Malleson, Alison Heppenstall, Christian Vincenot, et al. 2021. <span>“Challenges, Tasks, and Opportunities in Modeling Agent-Based Complex Systems.”</span> <em>Ecological Modelling</em> 457: 109685.
+</div>
+<div id="ref-azarov2019role" class="csl-entry">
+Azarov, Ivan, Kirill Peskov, Gabriel Helmlinger, and Yuri Kosinsky. 2019. <span>“Role of t Cell-to-Dendritic Cell Chemoattraction in t Cell Priming Initiation in the Lymph Node: An Agent-Based Modeling Study.”</span> <em>Frontiers in Immunology</em> 10: 1289.
+</div>
+<div id="ref-chang2015metabolic" class="csl-entry">
+Chang, Chih-Hao, Jing Qiu, David O’Sullivan, Michael D Buck, Takuro Noguchi, Jonathan D Curtis, Qiongyu Chen, et al. 2015. <span>“Metabolic Competition in the Tumor Microenvironment Is a Driver of Cancer Progression.”</span> <em>Cell</em> 162 (6): 1229–41.
+</div>
+<div id="ref-dushek2011antigen" class="csl-entry">
+Dushek, Omer, Milos Aleksic, Richard J Wheeler, Hao Zhang, Shaun-Paul Cordoba, Yan-Chun Peng, Ji-Li Chen, et al. 2011. <span>“Antigen Potency and Maximal Efficacy Reveal a Mechanism of Efficient t Cell Activation.”</span> <em>Science Signaling</em> 4 (176): ra39–39.
+</div>
+<div id="ref-jin2018extended" class="csl-entry">
+Jin, Wang, Scott W McCue, and Matthew J Simpson. 2018. <span>“Extended Logistic Growth Model for Heterogeneous Populations.”</span> <em>Journal of Theoretical Biology</em> 445: 51–61.
+</div>
+<div id="ref-joglekar2021t" class="csl-entry">
+Joglekar, Alok V, and Guideng Li. 2021. <span>“T Cell Antigen Discovery.”</span> <em>Nature Methods</em> 18 (8): 873–80.
+</div>
+<div id="ref-kumar2012robbins" class="csl-entry">
+Kumar, Vinay, Abul K Abbas, and Jon C Aster. 2012. <em>Robbins Basic Pathology e-Book</em>. Elsevier Health Sciences.
+</div>
+<div id="ref-li2023intercellular" class="csl-entry">
+Li, Long, Jing Ji, Fan Song, and Jinglei Hu. 2023. <span>“Intercellular Receptor-Ligand Binding: Effect of Protein-Membrane Interaction.”</span> <em>Journal of Molecular Biology</em> 435 (1): 167787.
+</div>
+<div id="ref-liu2022clinical" class="csl-entry">
+Liu, Chenglong, Mengxuan Yang, Daizhou Zhang, Ming Chen, and Di Zhu. 2022. <span>“Clinical Cancer Immunotherapy: Current Progress and Prospects.”</span> <em>Frontiers in Immunology</em> 13: 961805.
+</div>
+<div id="ref-morris2019tissue" class="csl-entry">
+Morris, Sinead E, Donna L Farber, and Andrew J Yates. 2019. <span>“Tissue-Resident Memory t Cells in Mice and Humans: Towards a Quantitative Ecology.”</span> <em>The Journal of Immunology</em> 203 (10): 2561–69.
+</div>
+<div id="ref-stefan2013cooperative" class="csl-entry">
+Stefan, Melanie I, and Nicolas Le Novère. 2013. <span>“Cooperative Binding.”</span> <em>PLoS Computational Biology</em> 9 (6): e1003106.
+</div>
+<div id="ref-taefehshokr2022cancer" class="csl-entry">
+Taefehshokr, Sina, Aram Parhizkar, Shima Hayati, Morteza Mousapour, Amin Mahmoudpour, Liliane Eleid, Dara Rahmanpour, Sahand Fattahi, Hadi Shabani, and Nima Taefehshokr. 2022. <span>“Cancer Immunotherapy: Challenges and Limitations.”</span> <em>Pathology-Research and Practice</em> 229: 153723.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{castillo-aguilar2024,
+  author = {Castillo-Aguilar, Matías},
+  title = {Modeling {Lymphocyte} {Dynamics:} {Agent-Based} {Simulations}
+    and {Non-Linear} {Equations}},
+  date = {2024-12-23},
+  url = {https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-castillo-aguilar2024" class="csl-entry quarto-appendix-citeas">
+Castillo-Aguilar, Matías. 2024. <span>“Modeling Lymphocyte Dynamics:
+Agent-Based Simulations and Non-Linear Equations.”</span> December 23,
+2024. <a href="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/">https://bayesically-speaking.com/posts/2025-01-05
+modeling-lymphocyte-dynamics/</a>.
+</div></div></section></div> ]]></description>
+  <category>non-linear</category>
+  <category>agent-based-simulation</category>
+  <category>simulation</category>
+  <category>cell-dynamics</category>
+  <guid>https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/</guid>
+  <pubDate>Mon, 23 Dec 2024 03:00:00 GMT</pubDate>
+  <media:content url="https://bayesically-speaking.com/posts/2025-01-05 modeling-lymphocyte-dynamics/body_1.jpeg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Non-linear models: A Case for Synaptic Plasticity</title>
   <dc:creator>Matías Castillo-Aguilar</dc:creator>
