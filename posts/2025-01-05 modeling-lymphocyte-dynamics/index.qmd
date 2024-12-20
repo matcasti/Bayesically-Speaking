@@ -202,7 +202,7 @@ But, of course, **in the real world** (and even in our digital one), such **unre
 Let's start with the continuous form of the logistic growth equation:
 
 $$
-\frac{\partial N}{\partial t} = rN \left(1- \frac{N}{K}\right)
+\frac{dN}{dt} = rN \left(1- \frac{N}{K}\right)
 $$
 [This equation has previously been used to model T cell dynamics in both mouse and human models [@morris2019tissue]. Additionally, it's commonly used to model cell growth in general in discrete-time approximations [@jin2018extended].]{.aside}
 
