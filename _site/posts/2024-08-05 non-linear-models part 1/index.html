@@ -540,7 +540,7 @@ phi_Intercept     0.2150963 1.44471628 -2.84981889  2.6512578</code></pre>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         lm      nlme      brms
-1 0.4417804 0.1080546 0.1076412</code></pre>
+1 0.4417804 0.1080546 0.1075152</code></pre>
 </div>
 </div>
 <p>Here, we can see that <strong>both the frequentist and Bayesian non-linear models outperformed the simple linear model</strong> by a significant margin. The lower RMSE values indicate a better overall fit. Interestingly, the Bayesian model edged out the frequentist model by a tiny margin, with a difference of just 0.000402 mcg/ml in RMSE (<span class="math inline">\(\text{RMSE}(M_{nlme}) - \text{RMSE}(M_{brms})\)</span>). Given that the standard deviation of the plasma levels is 0.63 mcg/ml, this difference is practically negligible and unlikely to be meaningful in a real-world context.</p>
