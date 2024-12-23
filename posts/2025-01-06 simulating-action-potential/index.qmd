@@ -2,9 +2,10 @@
 title: "Decoding the Neuron's Spark: Building Intuition for Action Potential Dynamics"
 description: |
   Action potentials are the language of neurons. In this post we build a simplified model to explain how these electrical signals are generated. We'll explore the role of ion channels and build an intuitive understanding of neuronal firing.
-date: "2024-01-06"
+date: "2025-01-06"
 # doi: "10.59350/mgpv2-d5e33"
 draft: true
+draft-mode: unlinked
 execute: 
   warning: false
   error: false
@@ -19,10 +20,6 @@ image: body_1.jpeg
 editor_options: 
   chunk_output_type: console
 ---
-
-<!-- <div class="column-screen" style="background-color:orange; position:sticky; top:0; text-align:center; vertical-align:middle; line-height: 50px; height: 50px; width: 100vw;"> -->
-<!-- [**This is a Draft**]{style="color:white;"} -->
-<!-- </div> -->
 
 ```{r}
 #| include: false
@@ -40,6 +37,9 @@ This network relies on specialized cells called neurons, which are basically you
 
 Now, you might be thinking, "Electrical signals? Sounds complicated." And you'd be right. But fear not! In this post, we're going to break down the magic behind action potentials using a simplified mathematical model. Think of it as a cheat sheet for understanding how these tiny electrical storms work. We'll start with the basics and gradually add complexity, like adding extra gossip to the town crier's message, until we have a decent understanding of the dynamics at play. No PhD in neuroscience required (though a craving for pizza is always helpful). So, buckle up, because we're about to drive into the electrifying world of neuronal communication!
 
+![](action-potential-neuron.png){.img-fluid width="100%"}
+[Photo from [Encyclopaedia Britannica](https://www.britannica.com/science/action-potential)]{.aside}
+
 # The Neuron as a Simple Circuit: A First Approximation
 
 Let's imagine our neuron not as a bustling town crier, but as a tiny, slightly bored house. It's got walls (the cell membrane), an inside (intracellular fluid), and an outside (extracellular fluid). These fluids are salty solutions, full of charged particles called ions like sodium, potassium, and chloride (the electrolyte gang you see advertised in sports drinks). Now, because these fluids have different concentrations of these ions, there's a difference in electrical charge between the inside and the outside of the house. This difference in charge is what we call the *membrane potential*, measured in millivolts (mV). Think of it like a tiny battery inside the neuron, just waiting to be used.
@@ -47,6 +47,9 @@ Let's imagine our neuron not as a bustling town crier, but as a tiny, slightly b
 Normally, this "battery" sits at a resting voltage of around -70 mV. Why negative? It's just a convention: we define the outside of the cell as zero, and the inside is negatively charged relative to it. So, our little neuron house is just chilling, with a slight negative charge inside (like a grumpy teenager refusing to get out of bed).
 
 Now, our neuron's walls (the membrane) aren't completely airtight. They have tiny holes, called *leak channels*, which allow some ions to slowly trickle in and out. It's like having a slightly leaky faucet, not a major flood, but a constant drip. These leaks are crucial because they maintain that resting membrane potential.
+
+![](leakage-channels.jpg){.img-fluid width="100%"}
+[Photo from [Neuroscience: Canadian 1st Edition](https://ecampusontario.pressbooks.pub/neurosciencecdn/chapter/anatomy-physiology-the-nervous-system-and-nervous-tissue/)]{.aside}
 
 Another important property of the membrane is its ability to store electrical charge, much like a capacitor in an electronic circuit. This is called *capacitance*. Imagine the membrane as two conductive plates (the inside and outside of the cell) separated by an insulator (the membrane itself). When there's a difference in charge across the membrane (our membrane potential), it stores some of that charge. It's like a tiny electrical reservoir, ready to release its charge when needed.
 
@@ -59,6 +62,9 @@ So, to summarize our lazy neuron house:
 #### Expanding our Intuition Using Math: Waking Up the Sleeping Neuron
 
 Right now, our neuron is basically a zombie. It's just sitting there, leaking a bit of charge and generally being a bit of a slacker. No exciting messages, no action potentials, it's like a town crier who's decided to take an eternal nap. But fear not! Things are about to get much more interesting. We're about to introduce the real heroes of the story: voltage-gated ion channels.
+
+![](voltage-dependent-channels.jpeg){.img-fluid width="100%"}
+[Photo from [Neuroscience: Canadian 1st Edition](https://ecampusontario.pressbooks.pub/neurosciencecdn/chapter/anatomy-physiology-the-nervous-system-and-nervous-tissue/)]{.aside}
 
 Now, let's get a little mathematical here (don't worry, we'll keep it fun!). We need a function to describe how the membrane potential ($V$) changes over time ($t$) due to all that pesky leakage. 
 
@@ -129,6 +135,9 @@ First, let's give it a starting point. We can add a multiplicative factor (let's
 
 Next, let's give it a target value. We can add a linear factor (let's call it $a$) to shift the entire curve up or down. This is like setting a new "ground level" for our function. 
 
+![](exponential-function-cartoon.jpeg){.img-fluid width="100%"}
+[In fact, she did use it at the end. Photo from Frank Mariani in [Cartoonist for Hire](https://www.cartoonistforhire.com/frank-mariani-book-illustration/)]{.aside}
+
 With these adjustments, our function now looks like this:
 
 $$
@@ -153,6 +162,9 @@ Now, this equation starts to make sense. It tells us how the membrane potential 
 - $g_L$: This is the "leak conductance," a measure of how easily ions can leak through the membrane. Think of it as how wide the leaky faucet is open. A higher $g_L$ means ions leak faster, and the membrane potential changes more quickly.
 - $e^{-g_L \cdot t}$: This is the exponential decay term, the engine that drives the change. It ensures that the membrane potential gradually approaches $E_L$ over time, like a car slowly coming to a stop.
 
+![](confused-math.gif){.img-fluid width="100%"}
+[**Average Bayesically-Speaking reader** going through the content I write in a typical blog post after I say "We'll start with the basics". Photo from [Giphy](https://giphy.com/gifs/producthunt-zach-galifianakis-algorithm-3o6Yg4GUVgIUg3bf7W)]{.aside}
+
 Now, let's get a little more mathematical. If we want to express how the membrane potential changes over time, we need to find the "rate of change" of the membrane potential. In math terms, this is called the derivative. 
 
 If we take the derivative of our previous equation (don't worry, you don't need to know the calculus!), we get something like this:
@@ -169,7 +181,7 @@ Let's break this down:
 - $g_L$: This is our old friend, the leak conductance. A higher $g_L$ means the membrane is "leaky," and the membrane potential will change more rapidly.
 - $(V_0 - E_L)$: This term represents the "driving force" for the leak current. The bigger the difference between the current potential and the leak reversal potential, the stronger the "urge" for the membrane potential to return to equilibrium. It's like a ball rolling down a steep hill, the steeper the hill, the faster it rolls.
 
-If we were to plot the solution to this equation, we would see an exponential decay curve. It's like watching a ball rolling down a hill, it starts fast but gradually slows down as it approaches the bottom.
+If we were to plot the solution to this equation (and we will), we would see an exponential decay curve. It's like watching a ball rolling down a hill, it starts fast but gradually slows down as it approaches the bottom.
 
 ```{r}
 #| code-fold: true
@@ -214,6 +226,9 @@ Okay, let's add some simplified equations to represent the voltage-gated channel
 
 # Adding Voltage-Gated Channels: The Key to Excitation
 
+![](recording-animation.gif){.img-fluid width="100%"}
+[Photo from [Human Bio Media](https://www.humanbiomedia.org/action-potential-media/)]{.aside}
+
 Okay, let's get down to the nitty-gritty. How does this whole "voltage" thing actually work? Well, picture this: the change in voltage over time (basically how fast the voltage is shifting), is all about the flow of ions. You've got ions lazily leaking through the membrane (let's call that the "lazy ion flow"), and then you've got the more exciting players: sodium, potassium, and even some other ions that like to join the party. 
 
 So, if we want to get fancy, we could say that the change in voltage over time, which we can write as $\frac{dV}{dt}$ for all you math whizzes out there, is basically a sum of all these ion flows. We've got the lazy ion flow ($I_L$), the sodium party crashers ($I_{Na}$), the potassium crew ($I_K$), and any other surprise guests ($I_n$). 
@@ -229,6 +244,9 @@ So, now we've got this "leaky current" ($I_L$), which we can basically describe 
 Remember our boring old passive membrane? It just kind of slumped back to its resting potential, like a deflated balloon. Well, our active neurons are a whole different story. They've got these amazing channels that open and close depending on the voltage, making the whole system much more exciting. 
 
 These channels, especially the sodium ($Na^+$) and potassium ($K^+$) channels, are the real stars of the show. They're the ones that cause those dramatic swings in voltage during an action potential.
+
+![](sodium-channel-open-state.png){.img-fluid width="100%"}
+[Sodium channel in an open state, illustrating its activation and inactivation gates. Photo from [Human Bio Media](https://www.humanbiomedia.org/action-potential-media/)]{.aside}
 
 Sodium channels are like little gates. They have an "activation gate" (let's call it gate $m$) that swings open around -55mV. This is like the starting pistol for the race! Sodium ions flood into the cell, and the voltage skyrockets. But here's the catch: these channels also have an "inactivation gate" (let's call it gate $h$) that slams shut around +30mV. It's like the emergency brakes! This prevents the cell from exploding with too much sodium. And don't worry, the inactivation gate eventually reopens when the cell calms down and returns to its resting potential (around -70mV). 
 
@@ -246,6 +264,9 @@ Where:
 - $E_{Na}$: Sodium reversal potential.
 
 In contrast, potassium channels are a bit simpler. They only have one gate (let's call it gate $n$), which acts like a slow-opening door. This gate starts to swing open around +30mV, allowing potassium ions to flood out of the cell. This outflow of positive charge helps bring the voltage back down to resting potential (a phase we call "repolarization"). But here's the twist: this gate is a bit slow to close. It doesn't fully shut until the voltage dips below -80mV, which is even more negative than the resting potential. This creates a slight undershoot before the cell finally settles back down. 
+
+![](potassium-channel-open-state.png){.img-fluid width="100%"}
+[Potassium channel in an open state, with its only voltage-dependent gate. Photo from [Human Bio Media](https://www.humanbiomedia.org/action-potential-media/)]{.aside}
 
 Just like we did with the sodium channels, we can express the potassium current ($I_K$) as the following: 
 
@@ -282,6 +303,9 @@ With these additions, our model finally starts to show some exciting behavior! I
 
 But then, the sodium inactivation gate slams shut (h = 0), and the potassium channels finally open their doors (n = 1). Potassium ions rush out of the cell, bringing the voltage back down to normal, that's the "repolarization" phase. 
 
+![](ion-channels.png){.img-fluid width="100%"}
+[Voltage-gated channels for sodium (Na^+^) and potassium (K^+^). ECF, extracellular fluid; ICF, intracellular fluid. Photo from [Human Bio Media](https://www.humanbiomedia.org/action-potential-media/)]{.aside}
+
 Now, let's put this model into action! We'll use something called the Euler method, which is basically a fancy way of numerically solving our equation. This will allow us to see how the membrane potential changes over time in response to a stimulus. It's like running a simulation to see how our "neuron" behaves in the real world. 
 
 ::: {.callout-note collapse=false}
@@ -302,6 +326,9 @@ Okay but, why it matters today? Well, for many reasons like:
 Alright, let's get this show on the road! Now that we have our simplified mathematical model of the neuron, it's time to bring it to life. We'll use R, a powerful programming language, to simulate our model and watch how the membrane potential changes over time. 
 
 We'll use a technique called the Euler method, which is basically like taking tiny little steps to solve our equation. It's a bit like trying to reach a destination by taking a series of small hops instead of jumping straight there. 
+
+![](wojak-meme.png){.img-fluid width="100%"}
+[Average Bayesically-Speaking reader when is asked about their knowledge on voltage-gated channels. Photo from [Wojak-Studio](https://wojak-studio.com)]{.aside}
 
 #### Setting the Stage: Defining the Parameters
 
@@ -557,6 +584,9 @@ plot_sensitivity <- function(results, param_name) {
 
 This function creates a line plot using `ggplot2`, where the x-axis represents time, the y-axis represents the membrane potential, and different colors represent different values of the varied parameter. The `factor()` function is used to treat the `ParameterValue` as a categorical variable, ensuring that each value gets a distinct color in the plot.
 
+![](math-confused-girl.jpeg){.img-fluid width="100%"}
+[Your face after I told you that we're going to see the basics and it turned out not so basic after all. Photo from [Pinteres](https://cl.pinterest.com/pin/800022321283732215/)]{.aside}
+
 #### Setting the Stage for Simulations
 
 Before we dive into the nitty-gritty of sensitivity analysis, we need to set the stage for our simulations. 
@@ -621,6 +651,9 @@ But hey, our little "dumbed-down" neuron serves a purpose. It's like, the "Cliff
 Now, let's talk about drugs. Oh boy, drugs. You know, those pesky little molecules that interfere with neuronal signaling? Well, guess what? They love to target these ion channels. Lidocaine? Blocks sodium channels, basically shutting down the neuron. Fun times! Potassium channel blockers? Well, let's just say they can make neurons go wild. Our model? It can predict these effects, to a certain extent. Of course, it's not exactly a perfect predictor of pharmacological outcomes. But hey, it's a start.
 
 And finally, let's talk about the big picture. Communication. You know, how your brain actually *does* stuff? Well, it all starts with these action potentials. They're like, the brain's version of Morse code. But instead of dots and dashes, it's a symphony of electrical impulses, traveling along axons and triggering the release of neurotransmitters. And our little model? It gives us a glimpse into this magical world of neuronal chatter. 
+
+![](multipolar-neurons.jpg){.img-fluid width="100%"}
+[Motor Neurons (Multipolar) with many Processes (mostly Dendrites). Photo from [Neurology Advisor](https://www.neurologyadvisor.com/news/spinal-cord-gray-matter-atrophy-post-polio-syndrome-functional-decline/)]{.aside}
 
 # Hasta la Vista Baby
 
