@@ -4,6 +4,10 @@ description: |
   Following the footsteps of the previous post, here we delve ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.
 date: "2024-05-15"
 doi: "10.59350/fa26y-xa178"
+fig-format: svg
+fig-asp: 0.6666667
+fig-width: 10
+fig-responsive: true
 categories: [mcmc]
 bibliography: ref.bib
 title-block-banner: title-block.png
@@ -177,10 +181,6 @@ for (i in 1:num_steps) {
 </aside>
 
 ```{r}
-#| fig-format: svg
-#| fig-align: center
-#| fig-width: 10
-#| fig-cap-location: margin
 #| code-fold: true
 
 harmonic_data <- data.table(`Position (q)` = q_values, `Momentum (p)` = p_values)
@@ -202,10 +202,6 @@ Now, in a perfect world, there'd be **no energy lost over time**. But hey, we li
 
 
 ```{r}
-#| fig-format: svg
-#| fig-align: center
-#| fig-width: 10
-#| fig-cap-location: margin
 #| code-fold: true
 
 hamiltonian <- harmonic_data[, list(`Total energy` = U(`Position (q)`) + K(`Momentum (p)`, m),
@@ -574,12 +570,9 @@ Alright, folks, let's wrap this up with a peek at how our little algorithm fared
 ### Samples of Intercept and Slope
 
 ```{r}
-#| fig-format: svg
-#| fig-width: 10
 #| fig-height: 10
-#| fig-align: center
 #| code-fold: true
-#| 
+
 colnames(params_samples) <- c("Intercept", "Slope")
 posterior <- as.data.table(params_samples)
 posterior[, sample := seq_len(.N)]
@@ -607,10 +600,8 @@ In this plot, we're tracking the **evolution of the intercept and slope paramete
 ### Data with True and Estimated Regression Line
 
 ```{r}
-#| fig-format: svg
 #| fig-width: 10
 #| fig-height: 10
-#| fig-align: center
 #| code-fold: true
 
 ids <- posterior[,sample(sample, size = 200)]
@@ -631,10 +622,8 @@ This plot gives us a bird's-eye view of our data, overlaid with both the **true 
 ### Posterior Samples of Intercept and Slope
 
 ```{r}
-#| fig-format: svg
 #| fig-width: 10
 #| fig-height: 10
-#| fig-align: center
 #| code-fold: true
 
 ggplot(posterior, aes(Slope, Intercept)) +

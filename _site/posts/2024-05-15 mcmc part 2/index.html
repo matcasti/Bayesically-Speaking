@@ -428,10 +428,10 @@ H(q, p) = K(p) + U(q)
 <li>Oh, and that <strong>leapfrog integration</strong>? It’s like stepping through time, updating the momentum, then the position, and back again, but don’t worry about it, we’ll see it shortly.</li>
 </ul>
 </aside>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2" data-cap-location="margin"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>harmonic_data <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span> <span class="ot">=</span> q_values, <span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span> <span class="ot">=</span> p_values)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>harmonic_data <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span> <span class="ot">=</span> q_values, <span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span> <span class="ot">=</span> p_values)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(harmonic_data, <span class="fu">aes</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span>)) <span class="sc">+</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">linewidth =</span> .<span class="dv">7</span>) <span class="sc">+</span></span>
@@ -442,9 +442,9 @@ H(q, p) = K(p) + U(q)
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -454,10 +454,10 @@ Check out this funky <strong>phase space</strong> trajectory <strong>of a simple
 </aside>
 <p>Now, take a look at that graphic. See how the <strong>position</strong> (<span class="math inline">\(q\)</span>) is all about <strong>where the oscillator’s</strong> hanging out, and <strong>momentum</strong> (<span class="math inline">\(p\)</span>)? Well, that’s just <strong>how fast the weight’s swinging</strong>. Put them together, and you’ve got what we call the <em>phase space</em>. Basically, it’s like peeking into the dance floor of these mechanical systems through the lenses of Hamiltonian dynamics.</p>
 <p>Now, in a perfect world, there’d be <strong>no energy lost over time</strong>. But hey, we like to keep it real, so we added a little something called <strong>damping effect</strong> (think of it <strong>like energy leaking out of the system over time</strong>). In the real world, that makes sense, but <strong>in our statistical playground, we want to keep that energy</strong> locked in tight. After all, losing energy means we’re losing precious info about our target distribution, and nobody wants that.</p>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3" data-cap-location="margin"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>hamiltonian <span class="ot">&lt;-</span> harmonic_data[, <span class="fu">list</span>(<span class="st">`</span><span class="at">Total energy</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">U</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span>) <span class="sc">+</span> <span class="fu">K</span>(<span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span>, m),</span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>hamiltonian <span class="ot">&lt;-</span> harmonic_data[, <span class="fu">list</span>(<span class="st">`</span><span class="at">Total energy</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">U</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span>) <span class="sc">+</span> <span class="fu">K</span>(<span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span>, m),</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">`</span><span class="at">Kinetic energy</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">K</span>(<span class="st">`</span><span class="at">Momentum (p)</span><span class="st">`</span>, m), </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">`</span><span class="at">Potential energy</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">U</span>(<span class="st">`</span><span class="at">Position (q)</span><span class="st">`</span>))]</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>hamiltonian <span class="ot">&lt;-</span> <span class="fu">melt</span>(hamiltonian, <span class="at">measure.vars =</span> <span class="fu">c</span>(<span class="st">"Total energy"</span>, <span class="st">"Kinetic energy"</span>, <span class="st">"Potential energy"</span>)) </span>
@@ -472,9 +472,9 @@ Check out this funky <strong>phase space</strong> trajectory <strong>of a simple
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -795,7 +795,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <p>Alright, folks, let’s wrap this up with a peek at how our little algorithm fared in estimating the true intercept and slope of our linear model.</p>
 <section id="samples-of-intercept-and-slope" class="level3">
 <h3 class="anchored" data-anchor-id="samples-of-intercept-and-slope">Samples of Intercept and Slope</h3>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(params_samples) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Slope"</span>)</span>
@@ -820,9 +820,9 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -831,7 +831,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 </section>
 <section id="data-with-true-and-estimated-regression-line" class="level3">
 <h3 class="anchored" data-anchor-id="data-with-true-and-estimated-regression-line">Data with True and Estimated Regression Line</h3>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> posterior[,<span class="fu">sample</span>(sample, <span class="at">size =</span> <span class="dv">200</span>)]</span>
@@ -847,9 +847,9 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-14-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.svg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -858,7 +858,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 </section>
 <section id="posterior-samples-of-intercept-and-slope" class="level3">
 <h3 class="anchored" data-anchor-id="posterior-samples-of-intercept-and-slope">Posterior Samples of Intercept and Slope</h3>
-<div class="cell" data-layout-align="center">
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(posterior, <span class="fu">aes</span>(Slope, Intercept)) <span class="sc">+</span></span>
@@ -871,9 +871,9 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>

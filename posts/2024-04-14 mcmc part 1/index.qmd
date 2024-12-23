@@ -4,6 +4,10 @@ description: |
   In this post we will delve into the main idea behind Markov Chain Monte Carlo (MCMC for short) and why it is useful within the bayesian inference framework.
 date: "2024-04-25"
 doi: "10.59350/mxfyk-6av39"
+fig-format: svg
+fig-asp: 0.6666667
+fig-width: 10
+fig-responsive: true
 categories: [intro, mcmc]
 bibliography: ref.bib
 title-block-banner: title-block.png
@@ -122,10 +126,6 @@ Now, fast forward a year. If we keep an eye on the weather every day, we'll noti
 
 ```{r}
 #| code-fold: true
-#| fig-format: svg
-#| fig-align: center
-#| fig-width: 10
-#| fig-cap-location: margin
 #| fig-cap: "Cumulative mean proportion of sunny/rainy days across 365 days. Right pass the 100 days, the proportion of rainy/sunny days tends to display a stable trend when we averaged the previous days. This is known as stationary distribution."
 
 simulate_weather <- function(total_time) {
@@ -191,10 +191,6 @@ In the following figure, we overlay the calculated sample mean, from each simula
 
 ```{r}
 #| code-fold: true
-#| fig-format: svg
-#| fig-align: center
-#| fig-width: 10
-#| fig-cap-location: margin
 #| fig-cap: "Sampling distribution of 10 individuals per sample overlayed to the population distribution. Each sample is drawn from a normal distribution of mean of 80 and standard deviation of 5, representing the population distribution of weight."
 
 mean_weights <- matrix(data = rnorm(10 * 1000, 80, 5), nrow = 10, ncol = 1000) |> 
@@ -264,10 +260,6 @@ However, please consider that you can't use some family distribution to describe
 
 ```{r}
 #| code-fold: true
-#| fig-format: svg
-#| fig-align: center
-#| fig-width: 10
-#| fig-cap-location: margin
 #| fig-cap: "This is a Gamma distribution with shape of 2 and scale of 1. We will try to estimate it."
 
 # Target distribution that we in practice would derive from
@@ -343,10 +335,6 @@ Finally, let's explore how well our algorithm converge to the target distributio
 ```{r}
 #| code-fold: true
 #| message: false
-#| fig-format: svg
-#| fig-align: center
-#| fig-width: 10
-#| fig-cap-location: margin
 #| fig-cap: "Traceplot of convergence of MCMC for 1000 steps. With increasing steps we see an increasing resemblance to the target distribution."
 
 mcmc <- data.frame(
@@ -382,10 +370,6 @@ $\begin{aligned}
 ```{r}
 #| code-fold: true
 #| message: false
-#| fig-format: svg
-#| fig-align: center
-#| fig-width: 10
-#| fig-cap-location: margin
 #| fig-cap: "Cumulative mean of the posterior distributions across steps, compared to the empirical mean of the target distribution. Here the dark red line represents the empirical location parameter and the dashed line the one estimated using MCMC."
 
 ggplot(mcmc, aes(x = step, y = cumsum(value)/step)) +

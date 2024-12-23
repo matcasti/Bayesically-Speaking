@@ -4,9 +4,9 @@ description: |
   In this second edition we'll be discussing the role of long term potentiation and depression, a form of neuroplasticity, and their dynamics using non-linear models. Here, we'll dig deep into the statistical intricacies of the overlapping dynamics of synaptic neuroplasticity.
 date: "2024-12-14"
 fig-format: svg
-fig-width: 12
+fig-asp: 0.6666667
+fig-width: 10
 fig-responsive: true
-fig-asp: .5
 execute: 
   warning: false
   error: false

@@ -4,9 +4,9 @@ description: |
   Here we dive in the process of making a non-linear model to predict the decay of plasma levels of an anti-inflammatory drug, and compare frequentist and bayesian methods.
 date: "2024-08-20"
 fig-format: svg
-fig-width: 12
+fig-asp: 0.6666667
+fig-width: 10
 fig-responsive: true
-fig-asp: .5
 doi: "10.59350/r62fn-8h720"
 categories: [non-linear]
 bibliography: ref.bib
