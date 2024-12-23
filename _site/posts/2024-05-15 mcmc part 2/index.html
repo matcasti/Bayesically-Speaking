@@ -279,15 +279,15 @@ window.Quarto = {
 <section id="introduction" class="level1 page-columns page-full">
 <h1>Introduction</h1>
 <p>Hey there, fellow science enthusiasts and stats geeks! Welcome back to the wild world of Markov Chain Monte Carlo (MCMC) algorithms. This is <strong>part two</strong> of my series on the <strong>powerhouse behind Bayesian Inference</strong>. If you missed the first post, no worries! Just hop on over <a href="https://doi.org/10.59350/mxfyk-6av39">here</a> and catch up before we dive deeper into the MCMC madness. Today, we’re exploring the notorious <strong>Hamiltonian Monte Carlo (HMC)</strong>, a special kind of MCMC algorithm that taps into the dynamics of <strong>Hamiltonian mechanics</strong>.</p>
-<section id="stats-meets-physics" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="stats-meets-physics">Stats Meets Physics?</h2>
+<section id="stats-meets-physics" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="stats-meets-physics">Stats Meets Physics?</h4>
 <p>Hold up, did you say Hamiltonian mechanics? What in the world do mechanics and physics have to do with Bayesian stats? I get it, it sounds like a mashup of your wildest nightmares. But trust me, this algorithm sometimes feels <strong>like running a physics simulation in a statistical playground</strong>. Remember our chat from the <a href="https://doi.org/10.59350/mxfyk-6av39">last post</a>? In Bayesian stats, <strong>we’re all about estimating the shape of a parameter space</strong>, aka the posterior distribution.</p>
 <aside>
 Fun fact: There’s this whole field called <strong>statistical mechanics</strong> where scientists mix stats and physics to solve cool problems, mostly related to <strong>thermodynamics and quantum mechanics</strong>.
 </aside>
 </section>
-<section id="a-particle-rolling-through-stats-land" class="level2">
-<h2 class="anchored" data-anchor-id="a-particle-rolling-through-stats-land">A Particle Rolling Through Stats Land</h2>
+<section id="a-particle-rolling-through-stats-land" class="level4">
+<h4 class="anchored" data-anchor-id="a-particle-rolling-through-stats-land">A Particle Rolling Through Stats Land</h4>
 <p>Picture this: You drop a tiny particle down a cliff, and it rolls naturally along the landscape’s curves and slopes. Easy, right? <strong>Now, swap out the real-world terrain for a funky high-dimensional probability function</strong>. That same little particle? It’s cruising through this wild statistical landscape like a boss, all thanks to the rules of <strong>Hamiltonian mechanics</strong>.</p>
 <div style="text-align: center;">
 <iframe width="100%" height="500" src="mcmc-demo-master/app.html" title="MCMC">
@@ -332,8 +332,8 @@ H(q, p) = K(p) + U(q)
 \frac{{dp}}{{dt}} &amp;= -\frac{{\partial H}}{{\partial q}}
 \end{align}
 \]</span></p>
-<section id="wrapping-our-heads-around-the-math" class="level2">
-<h2 class="anchored" data-anchor-id="wrapping-our-heads-around-the-math">Wrapping Our Heads Around the Math</h2>
+<section id="wrapping-our-heads-around-the-math" class="level4">
+<h4 class="anchored" data-anchor-id="wrapping-our-heads-around-the-math">Wrapping Our Heads Around the Math</h4>
 <p>Okay, I know <strong>Hamiltonian dynamics</strong> can be a real <strong>brain-buster</strong>, trust me, it took me a hot minute to wrap my head around it. But hey, I’ve got an analogy that might just make it click. Let’s revisit <strong>our swing scenario</strong>: remember our picture of a kid on a swing, right? <strong>The swing’s angle</strong> from the vertical (<span class="math inline">\(q\)</span>) tells us <strong>where the kid is</strong>, and momentum (<span class="math inline">\(p\)</span>) is <strong>how fast</strong> the swing’s moving.</p>
 <p>Now, let’s break down those equations:</p>
 <p><span class="math display">\[
@@ -354,8 +354,9 @@ H(q, p) = K(p) + U(q)
 <p>All the while, the Hamiltonian (<span class="math inline">\(H\)</span>) is keeping tabs <strong>on the swing’s total energy</strong>, whether it’s zooming at the bottom (high kinetic energy <span class="math inline">\(K(p)\)</span>, as a function of momentum <span class="math inline">\(p\)</span>) or pausing at the top (high potential energy <span class="math inline">\(U(q)\)</span>, as a function of position <span class="math inline">\(q\)</span>).</p>
 <p>This <strong>dance between kinetic and potential energy</strong> is what we care within <strong>Hamiltonian mechanics</strong>, and also what we mean when we refer to the <em>phase space</em>, which it’s nothing more than <strong>the relationship between position and momentum</strong>.</p>
 </section>
-<section id="visualizing-hamiltons-equations" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="visualizing-hamiltons-equations">Visualizing Hamilton’s Equations</h2>
+</section>
+<section id="visualizing-hamiltons-equations" class="level1 page-columns page-full">
+<h1>Visualizing Hamilton’s Equations</h1>
 <p>Okay, I know we’re diving into some <strong>physics territory</strong> here <strong>in a stats blog</strong>, but trust me, understanding these concepts <strong>is key to unlocking what HMC’s all about</strong>. So, let’s take a little side trip and get a feel for Hamilton’s equations with a different example. <strong>Check out the gif below</strong>, see that weight on a string? It’s doing this cool back-and-forth dance thanks to the tug-of-war between the string pulling up and gravity pulling down.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
@@ -484,12 +485,11 @@ Check out this energy rollercoaster! This graph’s showing us how the <strong>t
 </aside>
 <p>So, what’s the big takeaway here? Well, whether it’s a <strong>ball rolling down a hill</strong> or a sampler hunting for <strong>model coefficients</strong>, this framework’s got us covered. In Bayesian land, think of <strong>our model’s parameters as position coordinates</strong> <span class="math inline">\(q\)</span> in some space, and <span class="math inline">\(p\)</span> is the momentum helping us navigate the twists and turns of this parameter space. And with Hamiltonian dynamics leading the way, we’re guaranteed to find our path through this statistical dimension, one step at a time.</p>
 </section>
-</section>
 <section id="building-our-own-hamiltonian-monte-carlo" class="level1 page-columns page-full">
 <h1>Building our own Hamiltonian Monte Carlo</h1>
 <p>Now that we got some intuition about Hamiltonian mechanics, it’s time we build our own HMC sampler. To accomplish this, imagine that we’re diving into some data to figure out <strong>how an independent variable</strong> (<span class="math inline">\(x\)</span>) <strong>and a dependent variable</strong> (<span class="math inline">\(y\)</span>) are related. We’re talking about <strong>linear regression</strong> (you know, trying to draw a line through those scattered data points to make sense of it all). But hey, <strong>this is Bayesian territory</strong>, so we’re not just throwing any ol’ line on that plot. No, sir! We’re exploring the parameter space of those regression coefficients (that’s the slope and intercept). Then, when the data rolls in, we’re smashing together that likelihood and those priors <strong>using Bayes’ theorem</strong> to cook up a posterior distribution (<strong>a fancy way of saying</strong> our updated beliefs <strong>about those coefficients</strong> after we’ve seen the data).</p>
-<section id="cooking-up-some-data" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="cooking-up-some-data">Cooking Up Some Data</h2>
+<section id="cooking-up-some-data" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="cooking-up-some-data">Cooking Up Some Data</h4>
 <p>But before we dive into the statistical kitchen, <strong>let’s whip up some synthetic data</strong>. Picture this: we’re mimicking a real-world scenario where relationships between variables are as murky as a foggy morning. So, we’re gonna <strong>conjure up a batch of data</strong> with a simple linear relationship, jazzed up with a sprinkle of noise. Oh, and <strong>let’s keep it small</strong> (just 20 subjects), ’cause, hey, <strong>science “loves” a manageable sample size</strong>.</p>
 <aside>
 Emphasis on double quotes on “loves”.
@@ -524,8 +524,8 @@ y_i &amp;\sim \mathcal{N}(\mu_i, \sigma^2) \\
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, mu_i, sigma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="choosing-a-target-distribution" class="level2">
-<h2 class="anchored" data-anchor-id="choosing-a-target-distribution">Choosing a Target Distribution</h2>
+<section id="choosing-a-target-distribution" class="level4">
+<h4 class="anchored" data-anchor-id="choosing-a-target-distribution">Choosing a Target Distribution</h4>
 <p>Alright, now that we’ve got our hands on some data, it’s time to dive into the <strong>nitty-gritty of Bayesian stuff</strong>. First up, we’re gonna need our trusty <strong>log likelihood function</strong> for our <strong>linear model</strong>. This function’s like the Sherlock Holmes of statistics, it figures out <strong>the probability of seeing our data</strong> given a specific set of parameters (you know, the intercept and slope we’re trying to estimate).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the log likelihood function for linear regression</span></span>
@@ -570,12 +570,13 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="building-the-hmc-sampler" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="building-the-hmc-sampler">Building the HMC sampler</h2>
-<p>Alright, now that we have everything ready, let’s dig into the guts of HMC and how we put it to work. Remember how HMC <strong>takes inspiration from the momentum and potential energy</strong> dance in physics? Well, in practice, it’s like having a GPS for our parameter space, guiding us to new spots that are more likely than others.</p>
+<section id="building-the-hmc-sampler" class="level4">
+<h4 class="anchored" data-anchor-id="building-the-hmc-sampler">Building the HMC sampler</h4>
+<p>Alright, now that we have everything ready, let’vs dig into the guts of HMC and how we put it to work. Remember how HMC <strong>takes inspiration from the momentum and potential energy</strong> dance in physics? Well, in practice, it’s like having a GPS for our parameter space, guiding us to new spots that are more likely than others.</p>
 <p>But here’s the thing: <strong>our parameter space isn’t some smooth highway</strong> we can cruise along endlessly. Nope, it’s more like a rugged terrain full of twists and turns. So, how do we navigate this space? Enter the <strong>leapfrog integration method</strong>, the backbone of HMC.</p>
-<section id="leapfrog-integration" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="leapfrog-integration">Leapfrog Integration</h3>
+</section>
+<section id="leapfrog-integration" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="leapfrog-integration">Leapfrog Integration</h4>
 <p>So, <strong>leapfrog integration</strong> is basically this cool math trick we use in HMC <strong>to play out how a system moves over time</strong> using discrete steps, <strong>so we don’t have to compute every single</strong> value along the way. This integration method also is advantageous by not allowing energy leaks out of the system (remember the Hamiltonian?) which is super important if you don’t want to get stuck in this statistical dimension mid exploration.</p>
 <p>Here’s how it works in HMC-lingo: we use leapfrog integration <strong>to move around the parameter space in discrete steps</strong> (rather than sliding through a continuum), and <strong>grabbing samples from the posterior distribution</strong>. The whole process goes like this:</p>
 <ol type="1">
@@ -593,8 +594,8 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 </div>
 <p>We prefer leapfrogging over simpler methods like Euler’s method because it <strong>keeps errors low</strong>, both locally and globally. This stability is key, especially when we’re dealing with big, complicated systems. Plus, <strong>it’s a champ at handling high-dimensional spaces</strong>, where keeping energy in check is a must for the algorithm to converge.</p>
 </section>
-<section id="tuning-those-hamiltonian-gears" class="level3">
-<h3 class="anchored" data-anchor-id="tuning-those-hamiltonian-gears">Tuning Those Hamiltonian Gears</h3>
+<section id="tuning-those-hamiltonian-gears" class="level4">
+<h4 class="anchored" data-anchor-id="tuning-those-hamiltonian-gears">Tuning Those Hamiltonian Gears</h4>
 <p>Now, to get our HMC sampler purring like a kitten, we’ve got to <strong>fine-tune a few gears</strong>. Think of these as the knobs and dials on your favorite sound system – adjust them just right, and you’ll be <strong>grooving to the perfect beat</strong>.</p>
 <p>First up, we’ve got the <strong>number of samples</strong>. This determines how many times our sampler will take a peek at the parameter space before calling it a day.</p>
 <p>Next, we’ve got the <strong>step size</strong> (<span class="math inline">\(\epsilon\)</span>). Imagine this as the stride length for our leapfrog integrator. Too short, and we’ll be tiptoeing; too long, and we’ll be taking giant leaps – neither of which gets us where we want to go. It’s all about finding that sweet spot.</p>
@@ -612,8 +613,8 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>params_samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> num_samples, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="starting-the-sampler" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="starting-the-sampler">Starting the Sampler</h3>
+<section id="starting-the-sampler" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="starting-the-sampler">Starting the Sampler</h4>
 <p>Alright, let’s fire up this Hamiltonian engine and get this party started. Here’s the game plan:</p>
 <ol type="1">
 <li><strong>Create a Loop:</strong> We’ll set up a loop to simulate our little particle moving around the parameter space.</li>
@@ -637,8 +638,8 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 Here, I’m using the concept of a particle moving through a probability space. But remember, in reality, we’re talking about the parameter space, where each coefficient in a model parameter or any other parameter that we can represent in this way then becomes a coordinate, therefore, a position <span class="math inline">\(q\)</span> in this statistical space.
 </aside>
 </section>
-<section id="simulating-the-particles-motion" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="simulating-the-particles-motion">Simulating the Particle’s Motion</h3>
+<section id="simulating-the-particles-motion" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="simulating-the-particles-motion">Simulating the Particle’s Motion</h4>
 <p>Now that our imaginary particle is all geared up with an <strong>initial momentum and position</strong>, it’s time to let it loose and see where it goes in this <strong>parameter playground</strong>. We know we’re using Hamiltonian mechanics, but to make it computationally feasible, we’re bringing in our trusty leapfrog integrator. We’ve already seen that this bad boy <strong>discretizes the motion of our particle</strong>, making it manageable to track its journey without breaking our computers.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
@@ -710,8 +711,8 @@ Here, we update momentum <span class="math inline">\(p\)</span> by the other hal
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    momentum_current <span class="ot">&lt;-</span> momentum_current <span class="sc">-</span> epsilon <span class="sc">*</span> grad <span class="sc">*</span> <span class="fl">0.5</span></span>
 <span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="sample-evaluation-and-acceptance" class="level3">
-<h3 class="anchored" data-anchor-id="sample-evaluation-and-acceptance">Sample Evaluation and Acceptance</h3>
+<section id="sample-evaluation-and-acceptance" class="level4">
+<h4 class="anchored" data-anchor-id="sample-evaluation-and-acceptance">Sample Evaluation and Acceptance</h4>
 <p>After our particle has taken its fair share of steps through the parameter space, it’s decision time – <strong>should we accept or reject its proposed new position?</strong> We can’t just blindly accept every move it makes; we’ve got to be smart about it.</p>
 <p>That’s where the <strong>Metropolis acceptance criteria</strong> come into play. This handy rule determines whether a proposed new position <strong>is a good fit or not</strong>. The idea is to weigh the probability of the new position against the probability of the current one. <strong>If the new spot looks promising, we’ll move there with a certain probability</strong>, ensuring that our samples accurately reflect the shape of the distribution we’re exploring. But if it’s not a better fit, we’ll stick with where we are.</p>
 <p>The <strong>formula</strong> for this acceptance probability (<span class="math inline">\(A(q', q)\)</span>) when transitioning from the current position (<span class="math inline">\(q\)</span>) to a proposed position (<span class="math inline">\(q'\)</span>) is straightforward:</p>
@@ -739,8 +740,8 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  init_slope <span class="ot">&lt;-</span> params_proposed[<span class="dv">2</span>]</span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="mixing-all-toghether" class="level3">
-<h3 class="anchored" data-anchor-id="mixing-all-toghether">Mixing All Toghether</h3>
+<section id="mixing-all-toghether" class="level4">
+<h4 class="anchored" data-anchor-id="mixing-all-toghether">Mixing All Toghether</h4>
 <p>Now that we’ve broken down each piece of our HMC puzzle, it’s time <strong>to put them all together</strong> and see how the full algorithm works.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_samples) {</span>
@@ -789,12 +790,11 @@ A(q',q) &amp;= min(1,exp(\alpha))
 </div>
 </section>
 </section>
-</section>
 <section id="visualizing-the-final-result" class="level1">
 <h1>Visualizing the Final Result</h1>
 <p>Alright, folks, let’s wrap this up with a peek at how our little algorithm fared in estimating the true intercept and slope of our linear model.</p>
-<section id="samples-of-intercept-and-slope" class="level3">
-<h3 class="anchored" data-anchor-id="samples-of-intercept-and-slope">Samples of Intercept and Slope</h3>
+<section id="samples-of-intercept-and-slope" class="level4">
+<h4 class="anchored" data-anchor-id="samples-of-intercept-and-slope">Samples of Intercept and Slope</h4>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -829,8 +829,8 @@ A(q',q) &amp;= min(1,exp(\alpha))
 </div>
 <p>In this plot, we’re tracking the <strong>evolution of the intercept and slope parameters over the course of our sampling process</strong>. Each line represents a different sample from the posterior distribution, showing how these parameters fluctuate over time. The dashed lines mark the <strong>true values</strong> of the <strong>intercept</strong> and <strong>slope</strong> that we used to generate the data. Ideally, we’d like to see the samples converging around these true values, <strong>indicating that our sampler is accurately capturing the underlying structure</strong> of the data.</p>
 </section>
-<section id="data-with-true-and-estimated-regression-line" class="level3">
-<h3 class="anchored" data-anchor-id="data-with-true-and-estimated-regression-line">Data with True and Estimated Regression Line</h3>
+<section id="data-with-true-and-estimated-regression-line" class="level4">
+<h4 class="anchored" data-anchor-id="data-with-true-and-estimated-regression-line">Data with True and Estimated Regression Line</h4>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -856,8 +856,8 @@ A(q',q) &amp;= min(1,exp(\alpha))
 </div>
 <p>This plot gives us a bird’s-eye view of our data, overlaid with both the <strong>true regression line</strong> (in white) and the <strong>estimated regression lines</strong> from our HMC sampler (in blue). The true regression line represents the ground truth relationship between our independent and dependent variables, while <strong>the estimated regression lines are sampled from the accepted values</strong> of the intercept and slope parameters sampled from the posterior distribution. By comparing these two, we can assess <strong>how well our model has captured the underlying trend</strong> in the data.</p>
 </section>
-<section id="posterior-samples-of-intercept-and-slope" class="level3">
-<h3 class="anchored" data-anchor-id="posterior-samples-of-intercept-and-slope">Posterior Samples of Intercept and Slope</h3>
+<section id="posterior-samples-of-intercept-and-slope" class="level4">
+<h4 class="anchored" data-anchor-id="posterior-samples-of-intercept-and-slope">Posterior Samples of Intercept and Slope</h4>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -887,13 +887,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <section id="bridging-physics-and-stats" class="level4">
 <h4 class="anchored" data-anchor-id="bridging-physics-and-stats">Bridging Physics and Stats</h4>
 <p>What makes HMC so darn fascinating is how it <strong>borrows tools from physics to tackle complex problems in statistics</strong>. It’s like watching two old pals team up to solve a mystery, each bringing their own unique skills to the table. With HMC, we’re not just crunching numbers; we’re <strong>tapping into the underlying principles that govern the physical world</strong>. I mean, seriously, it gives me goosebumps just thinking about it.</p>
-</section>
-<section id="riding-the-simulation-wave" class="level4">
-<h4 class="anchored" data-anchor-id="riding-the-simulation-wave">Riding the Simulation Wave</h4>
 <p>But it’s not just HMC that’s shaking up the stats scene. Nope, the whole world of science is pivoting towards <strong>simulation-based statistics</strong> and <strong>Bayesian methods</strong> faster than you can say “p-value.” Why? Because in today’s data-rich landscape, traditional methods just can’t keep up. We need tools like HMC <strong>to navigate the choppy waters of high-dimensional data</strong>, to tease out the subtle patterns hiding in the noise.</p>
-</section>
-<section id="unraveling-the-mystery" class="level4">
-<h4 class="anchored" data-anchor-id="unraveling-the-mystery">Unraveling the Mystery</h4>
 <p>Now, here’s the kicker: <strong>understanding how HMC works isn’t just some academic exercise</strong>. Oh no, it’s the key to unlocking the true power of Bayesian inference. Sure, <strong>you can run your models without ever peeking under the hood</strong>, but where’s the fun in that? Knowing how HMC works gives you this intuitive grasp of what your model is up to, what might be tripping it up, and how to <strong>steer it back on course</strong> when things go sideways.</p>
 <p>So, here’s to HMC, one of the <strong>big algorithms of modern statistics</strong>, blurring the lines between physics and stats, and paving the way for a brave new world of <strong>simulation-based inference</strong>. Cheers to the leapfrogging pioneers of Bayesian stats, charting new territories and uncovering hidden truths, <em>sliding one simulated step at a time</em>.</p>
 
