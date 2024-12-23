@@ -10,7 +10,7 @@ fig-responsive: true
 execute: 
   warning: false
   error: false
-# doi: "10.59350/mgpv2-d5e33"
+doi: "10.59350/aqa1r-e2v59"
 categories: [non-linear, simulation, biology]
 bibliography: ref.bib
 title-block-banner: title-block.jpeg
