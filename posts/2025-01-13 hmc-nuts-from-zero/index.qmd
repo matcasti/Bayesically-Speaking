@@ -43,11 +43,13 @@ theme_set(new = theme_classic(base_size = 20))
 
 # Introduction
 
-Remember MCMC? Good times. We wandered through probability space like tourists with outdated maps, occasionally stumbling upon the good parts of the posterior. Then came Hamiltonian Monte Carlo (HMC), which, let's be honest, felt like finally getting a GPS. We could *actually* explore the posterior, using gradients to guide our journey. It was efficient! It was elegant! It was… still kind of a pain in the neck.
+Remember MCMC from our series on these algorithms? Good times. We wandered through probability space like tourists with outdated maps, occasionally stumbling upon the good parts of the posterior. Then came Hamiltonian Monte Carlo (HMC), which, let's be honest, felt like finally getting a GPS. We could *actually* explore the posterior, using gradients to guide our journey. It was efficient! It was elegant! It was… still kind of a pain in the neck.
+[Check our [first post](https://doi.org/10.59350/mxfyk-6av39) on MCMC principles and use cases before diving into this post, if you haven't done it already.]{.aside}
 
 #### Why Your HMC Was Probably Just Running in Circles
 
-See, HMC, for all its brilliance, has this one little quirk: it needs to be told how far to travel in each step. It's like having a GPS that only understands instructions in increments of "exactly 5 kilometers." Want to go 4.8 km? Too bad. Want to go 5.2 km? Tough luck. This "step size" parameter is crucial. Too small, and you’re just shuffling around like a confused shopper in a supermarket, making painfully slow progress. Too large, and you're overshooting your target, bouncing around like a pinball, and generally wasting everyone's time (especially your computer’s).
+See, HMC, for all its brilliance, has this one little quirk: it needs to be told how far to travel in each step. It's like having a GPS that only understands instructions in increments of "exactly 5 kilometers". Want to go 4.8 km? Too bad. Want to go 5.2 km? Tough luck. This "step size" parameter is crucial. Too small, and you’re just shuffling around like a confused shopper in a supermarket, making painfully slow progress. Too large, and you're overshooting your target, bouncing around like a pinball, and generally wasting everyone's time (especially your computer’s).
+[Check our [second post](https://doi.org/10.59350/mxfyk-6av39) on MCMC, more specifically on HMC, to get a better intuition of what this algorithm is doing.]{.aside}
 
 This manual tuning of the step size is about as fun as watching paint dry. You fiddle with it, run your sampler, check the results, fiddle some more, run it again… It's an iterative process that makes you question your life choices. You start to wonder if there’s a better way. A way to tell the sampler, "Hey, just go where you need to go, okay?"
 
@@ -70,7 +72,7 @@ To make this concrete, let's consider a simple bivariate Gaussian distribution w
 $$
 \begin{aligned}
 x &\sim \mathcal{N}(0, 1) \\
-y &\sim \mathcal{N}(x^3, 0.1)
+y &\sim \mathcal{N}(x^2, 0.1)
 \end{aligned}
 $$
 
@@ -79,7 +81,7 @@ This creates a posterior where $y$ is dependent on $x^2$, resulting in the chara
 ```{r}
 #| code-fold: true
 
-xy_seq <- seq(-6, 6, .05)
+xy_seq <- seq(-3, 3, .01)
 df <- expand.grid(x = xy_seq, y = xy_seq)
 df$z <- with(df, {
   x_square <- (x^2)
@@ -88,13 +90,14 @@ df$z <- with(df, {
 })
 
 ggplot(df, aes(x, -y, z = z)) +
-  geom_contour_filled(bins = 20, na.rm = TRUE, show.legend = FALSE) +
-  scale_y_continuous(limits = c(-6,1), expand = c(0,0), 
+  geom_raster(aes(fill = z), show.legend = FALSE) +
+  geom_contour(bins = 8, show.legend = FALSE, alpha = .1, col = "#206080") +
+  scale_y_continuous(limits = c(-3,2), expand = c(0,0), 
                      oob = scales::squish_infinite) +
-  scale_x_continuous(limits = c(-3,3), expand = c(0,0), 
+  scale_x_continuous(limits = c(-2,2), expand = c(0,0), 
                      oob = scales::squish_infinite) +
-  labs(title = "Banana-Shaped Distribution") +
-  scale_fill_viridis_d(option = "A")
+  scale_fill_gradient(low = "white", high = "#B7CCDC") +
+  theme_void()
 ```
 
 As you can see, this posterior is far from a simple, spherical Gaussian. Trying to efficiently sample from this distribution with a fixed step size is like trying to fit a square peg in a round hole (or, in this case, a banana-shaped hole). 
@@ -615,8 +618,8 @@ plot_df <- melt(plot_df, id.vars = "iter")
 ggplot(plot_df, aes(iter, value, col = variable)) +
   annotate(geom = "ribbon", alpha = 1/5,
            x = c(0, 2000), ymin = -Inf, ymax = Inf) +
-  annotate(geom = "text", x = 1950, y = -3.75, label = "\"Burn-in\" Period", hjust = 1,
-           size = 3.5) +
+  annotate(geom = "text", x = 1950, y = -4, 
+           label = "\"Burn-in\" Period", hjust = 1) +
   geom_line(linewidth = 1/2) +
   geom_hline(yintercept = c(-1,1), linetype = 2) +
   labs(color = "Parameter", y = expression(theta), x = "Iterations",
@@ -666,7 +669,7 @@ coda::mcmc(samples, start = 2000 + 1) |>
   coda::effectiveSize()
 ```
 
-##### $\hat{R}$
+##### Gelman and Rubin's Convergence Diagnostic ($\hat{R}$)
 
 The $\hat{R}$ statistic (pronounced "R-hat") is a convergence diagnostic that compares the variance within multiple chains to the variance between chains. If the chains have converged to the same distribution, the within-chain variance should be similar to the between-chain variance, and $\hat{R}$ should be close to 1. Values of $\hat{R}$ much greater than 1 (e.g., above 1.1) indicate that the chains have not converged.
 
