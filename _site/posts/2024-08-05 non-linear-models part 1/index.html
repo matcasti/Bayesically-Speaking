@@ -77,6 +77,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -163,7 +166,7 @@ window.Quarto = {
 <meta name="citation_reference" content="citation_title=Philosophy and the practice of bayesian statistics;,citation_author=Andrew Gelman;,citation_author=Cosma Rohilla Shalizi;,citation_publication_date=2013;,citation_cover_date=2013;,citation_year=2013;,citation_issue=1;,citation_volume=66;,citation_journal_title=British Journal of Mathematical and Statistical Psychology;,citation_publisher=Wiley Online Library;">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -219,7 +222,7 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Non-linear models: Pharmacokinetics and Indomethacin</h1>
@@ -230,6 +233,8 @@ window.Quarto = {
       </div>
                           <div class="quarto-categories">
                 <div class="quarto-category">non-linear</div>
+                <div class="quarto-category">educational</div>
+                <div class="quarto-category">inference</div>
               </div>
                   </div>
   </div>
@@ -265,8 +270,27 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#a-drug-example" id="toc-a-drug-example" class="nav-link" data-scroll-target="#a-drug-example">A drug example</a>
+  <ul class="collapse">
+  <li><a href="#designing-a-solution" id="toc-designing-a-solution" class="nav-link" data-scroll-target="#designing-a-solution">Designing a solution</a></li>
+  <li><a href="#nlme-approach" id="toc-nlme-approach" class="nav-link" data-scroll-target="#nlme-approach"><code>nlme</code> approach</a></li>
+  <li><a href="#brms-approach" id="toc-brms-approach" class="nav-link" data-scroll-target="#brms-approach"><code>brms</code> approach</a></li>
+  <li><a href="#comparing-models" id="toc-comparing-models" class="nav-link" data-scroll-target="#comparing-models">Comparing models</a></li>
+  </ul></li>
+  <li><a href="#final-remarks" id="toc-final-remarks" class="nav-link" data-scroll-target="#final-remarks">Final Remarks</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -294,7 +318,7 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-2-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -351,7 +375,7 @@ F-statistic: 65.23 on 1 and 64 DF,  p-value: 2.361e-11</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-4-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="index_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -416,7 +440,7 @@ lambda -1.77509197 -1.6140483 -1.4530047</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-6-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-6-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="index_files/figure-html/unnamed-chunk-6-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -493,7 +517,7 @@ phi_Intercept     0.2150963 1.44471628 -2.84981889  2.6512578</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-8-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-8-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="index_files/figure-html/unnamed-chunk-8-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -504,7 +528,7 @@ phi_Intercept     0.2150963 1.44471628 -2.84981889  2.6512578</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-9-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-9-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="index_files/figure-html/unnamed-chunk-9-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -522,7 +546,7 @@ phi_Intercept     0.2150963 1.44471628 -2.84981889  2.6512578</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-10-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-10-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="index_files/figure-html/unnamed-chunk-10-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -540,7 +564,7 @@ phi_Intercept     0.2150963 1.44471628 -2.84981889  2.6512578</code></pre>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         lm      nlme      brms
-1 0.4417804 0.1080546 0.1076852</code></pre>
+1 0.4417804 0.1080546 0.1077897</code></pre>
 </div>
 </div>
 <p>Here, we can see that <strong>both the frequentist and Bayesian non-linear models outperformed the simple linear model</strong> by a significant margin. The lower RMSE values indicate a better overall fit. Interestingly, the Bayesian model edged out the frequentist model by a tiny margin, with a difference of just 0.000402 mcg/ml in RMSE (<span class="math inline">\(\text{RMSE}(M_{nlme}) - \text{RMSE}(M_{brms})\)</span>). Given that the standard deviation of the plasma levels is 0.63 mcg/ml, this difference is practically negligible and unlikely to be meaningful in a real-world context.</p>
@@ -993,6 +1017,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","loop":false,"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

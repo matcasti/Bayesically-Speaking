@@ -3,20 +3,19 @@ title: "Non-linear models: A Case for Synaptic Plasticity"
 description: |
   In this second edition we'll be discussing the role of long term potentiation and depression, a form of neuroplasticity, and their dynamics using non-linear models. Here, we'll dig deep into the statistical intricacies of the overlapping dynamics of synaptic neuroplasticity.
 date: "2024-12-14"
-fig-format: svg
-fig-asp: 0.6666667
-fig-width: 10
-fig-responsive: true
+
 execute: 
   warning: false
   error: false
+
 doi: "10.59350/mgpv2-d5e33"
-categories: [non-linear]
+
+categories: [non-linear, educational, neuroscience]
+
 bibliography: ref.bib
+
 title-block-banner: title-block.jpeg
 image: body_1.jpeg
-# resources: 
-#   - null
 ---
 
 ```{r}

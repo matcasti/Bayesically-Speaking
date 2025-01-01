@@ -1,14 +1,12 @@
 ---
 title: "Markov Chain Monte What?"
 description: |
-  In this post we will delve into the main idea behind Markov Chain Monte Carlo (MCMC for short) and why it is useful within the bayesian inference framework.
+  In this post we will submerge into the main idea behind Markov Chain Monte Carlo (MCMC for short) and why it is useful within the bayesian inference framework.
 date: "2024-04-25"
+
 doi: "10.59350/mxfyk-6av39"
-fig-format: svg
-fig-asp: 0.6666667
-fig-width: 10
-fig-responsive: true
-categories: [intro, mcmc]
+
+categories: [mcmc, algorithms, educational]
 bibliography: ref.bib
 title-block-banner: title-block.png
 image: body_1.jpg
@@ -469,13 +467,13 @@ Beyond all the technical jargon, successful Bayesian inference is part gut feeli
 
 But hey, nothing worth doing is ever a walk in the park, right? MCMC might be the hero of the Bayesian world, but **it's not without its challenges**. Scaling up to big data? It's like trying to squeeze into those skinny jeans from high school (uncomfortable and a bit awkward). And exploring those complex parameter spaces? **It's like navigating a maze blindfolded**.
 
-But fear not! There's always a light at the end of the tunnel. Recent innovations in Bayesian inference, like **variational inference** (we'll tackle this cousin of MCMC in the next posts) and **probabilistic programming languages** (like Stan), are like shiny beacons, guiding us to new horizons.
+But fear not! There's always a light at the end of the tunnel. Recent innovations in Bayesian inference, like **variational inference** (we'll tackle this cousin of MCMC in a future post) and **probabilistic programming languages**, are like shiny beacons, guiding us to new horizons.
 
 These days, some probabilistic programming languages, **like Stan**, use a souped-up version of the Hamiltonian Monte Carlo algorithm with **hyperparameters tuned on the fly**. These tools are like magic wands that turn your ideas into reality, just specify your model, and let the parameter space exploration happen **in the background**, no sweat.
 
 #### Wrapping It Up
 
-As we wrap up our journey into the world of MCMC, let's take a moment to appreciate the wild ride we've been on. MCMC might not wear a cape, but it's the unsung hero behind so much of what we do in **Bayesian data analysis**. It's the tool that lets us dive headfirst into the **murky waters of uncertainty** and come out the other side with **clarity and insight**.
+As we wrap up our journey into the world of MCMC, let's take a moment to appreciate the wild ride we've been on. MCMC might not wear a cape, but it's the hero behind so much of what we do in **Bayesian data analysis**. It's the tool that lets us dive headfirst into the **murky waters of uncertainty** and come out the other side with **clarity and insight**.
 
-In the next installment of our MCMC series, we'll dive into the infamous **Hamiltonian Monte Carlo** and unravel the statistical wizardry behind this and other similar algorithms. Until then, happy sampling!
+In the next episode of our MCMC series, we'll dive into the infamous **Hamiltonian Monte Carlo** and explore the statistical wizardry behind this and other similar algorithms. Until then, happy sampling!
 

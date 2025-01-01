@@ -97,6 +97,9 @@ div.csl-indent {
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -191,7 +194,7 @@ window.Quarto = {
 <meta name="citation_reference" content="citation_title=Synaptic plasticity and mental health: Methods, challenges and opportunities;,citation_author=Lawrence G Appelbaum;,citation_author=Mohammad Ali Shenasa;,citation_author=Louise Stolz;,citation_author=Zafiris Daskalakis;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=1;,citation_volume=48;,citation_journal_title=Neuropsychopharmacology;,citation_publisher=Springer International Publishing Cham;">
 </head>
 
-<body class="nav-fixed">
+<body class="floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -247,7 +250,7 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Non-linear models: A Case for Synaptic Plasticity</h1>
@@ -258,6 +261,8 @@ window.Quarto = {
       </div>
                           <div class="quarto-categories">
                 <div class="quarto-category">non-linear</div>
+                <div class="quarto-category">educational</div>
+                <div class="quarto-category">neuroscience</div>
               </div>
                   </div>
   </div>
@@ -293,9 +298,25 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#understanding-neuronal-plasticity" id="toc-understanding-neuronal-plasticity" class="nav-link" data-scroll-target="#understanding-neuronal-plasticity">Understanding Neuronal Plasticity</a></li>
+  <li><a href="#the-challenge-of-modeling-neuronal-plasticity" id="toc-the-challenge-of-modeling-neuronal-plasticity" class="nav-link" data-scroll-target="#the-challenge-of-modeling-neuronal-plasticity">The Challenge of Modeling Neuronal Plasticity</a></li>
+  <li><a href="#introducing-the-non-linear-model" id="toc-introducing-the-non-linear-model" class="nav-link" data-scroll-target="#introducing-the-non-linear-model">Introducing the Non-Linear Model</a></li>
+  <li><a href="#simulating-synaptic-plasticity-in-r" id="toc-simulating-synaptic-plasticity-in-r" class="nav-link" data-scroll-target="#simulating-synaptic-plasticity-in-r">Simulating Synaptic Plasticity in R</a></li>
+  <li><a href="#extending-the-model-to-include-ltp-and-ltd-dynamics" id="toc-extending-the-model-to-include-ltp-and-ltd-dynamics" class="nav-link" data-scroll-target="#extending-the-model-to-include-ltp-and-ltd-dynamics">Extending the Model to Include LTP and LTD Dynamics</a></li>
+  <li><a href="#exploring-parameter-effects" id="toc-exploring-parameter-effects" class="nav-link" data-scroll-target="#exploring-parameter-effects">Exploring Parameter Effects</a></li>
+  <li><a href="#final-remarks" id="toc-final-remarks" class="nav-link" data-scroll-target="#final-remarks">Final Remarks</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
@@ -311,7 +332,7 @@ window.Quarto = {
 <p>But <strong>capturing this in a model?</strong> Oh, that’s another story. Modeling neuronal plasticity is like <strong>trying to explain a teenager’s mood swings</strong> (messy, non-linear, and full of unexpected spikes). The process involves sharp changes in synaptic strength, calcium signaling thresholds that act like overly jealous gatekeepers, and dynamics so complex <strong>they make rocket science look like child’s play</strong>. Traditional models just shrug and wave the white flag.</p>
 <p>Let’s welcome the <strong>non-linear models</strong>, the superheroes of mathematical modeling. In this post, we’ll take a closer look at how these models, specifically <strong>logistic growth equations</strong>, can tame the chaos of neuronal plasticity. We’ll demystify the biology, <strong>turn it into manageable math</strong>, and then buckle up to simulate it all in R. Yes, R… the land of syntax errors and endless parentheses, but don’t worry, I’ll guide you.</p>
 <p>By the end of this journey, you’ll not only appreciate the elegance of neuronal plasticity but also see how non-linear modeling can turn <strong>brain mysteries into manageable equations</strong>. So whether you’re a neuroscience nerd, or someone who just likes the idea of <strong>bossing around neurons via code</strong>, this post has something for you. Let’s dive in, and don’t forget to pack your sense of humor. You’re going to need it!</p>
-<p class="page-columns page-full"><img src="neurons-firing-2.webp" class="img-fluid column-screen" style="width:100.0%"></p>
+<p class="page-columns page-full"><a href="neurons-firing-2.webp" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-1"><img src="neurons-firing-2.webp" class="column-screen img-fluid" style="width:100.0%"></a></p>
 </section>
 <section id="understanding-neuronal-plasticity" class="level1 page-columns page-full">
 <h1>Understanding Neuronal Plasticity</h1>
@@ -374,7 +395,7 @@ window.Quarto = {
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-2-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Here, the relationship between calcium levels and the change in synaptic strength is simplified to illustrate the relationship between calcium dynamics and synaptic plasticity."><img src="index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img" alt="Here, the relationship between calcium levels and the change in synaptic strength is simplified to illustrate the relationship between calcium dynamics and synaptic plasticity."></a></p>
 <figcaption class="margin-caption">Here, the relationship between calcium levels and the change in synaptic strength is simplified to illustrate the relationship between calcium dynamics and synaptic plasticity.</figcaption>
 </figure>
 </div>
@@ -441,7 +462,7 @@ f(x) = \frac{1}{1 + e^{-x}}
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-3-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -647,7 +668,7 @@ LTP and LTD at the Same Time?
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-6-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-6-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="index_files/figure-html/unnamed-chunk-6-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -700,7 +721,7 @@ What do the units of synaptic strength means?
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-7-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-7-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="index_files/figure-html/unnamed-chunk-7-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -763,7 +784,7 @@ What do the units of synaptic strength means?
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-8-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-8-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="index_files/figure-html/unnamed-chunk-8-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -852,7 +873,7 @@ Addressing Saturation Effects
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-10-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-10-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="index_files/figure-html/unnamed-chunk-10-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -908,7 +929,7 @@ Addressing Saturation Effects
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-11-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-11-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="index_files/figure-html/unnamed-chunk-11-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -966,7 +987,7 @@ Addressing Saturation Effects
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-12-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-12-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Orange line denotes the mean synaptic strength over time. Horizontal dashed line denotes the zero-change value associated with no variations in synaptic strength. LTP, long-term potentiation; LTD, long-term depression."><img src="index_files/figure-html/unnamed-chunk-12-1.svg" class="img-fluid figure-img" alt="Orange line denotes the mean synaptic strength over time. Horizontal dashed line denotes the zero-change value associated with no variations in synaptic strength. LTP, long-term potentiation; LTD, long-term depression."></a></p>
 <figcaption class="margin-caption">Orange line denotes the mean synaptic strength over time. Horizontal dashed line denotes the zero-change value associated with no variations in synaptic strength. LTP, long-term potentiation; LTD, long-term depression.</figcaption>
 </figure>
 </div>
@@ -1439,6 +1460,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","loop":false,"descPosition":"bottom","closeEffect":"zoom","openEffect":"zoom"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

@@ -97,6 +97,9 @@ div.csl-indent {
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -183,7 +186,7 @@ window.Quarto = {
 <meta name="citation_reference" content="citation_title=Philosophy and the practice of bayesian statistics;,citation_author=Andrew Gelman;,citation_author=Cosma Rohilla Shalizi;,citation_publication_date=2013;,citation_cover_date=2013;,citation_year=2013;,citation_issue=1;,citation_volume=66;,citation_journal_title=British Journal of Mathematical and Statistical Psychology;,citation_publisher=Wiley Online Library;">
 </head>
 
-<body class="nav-fixed">
+<body class="floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -239,7 +242,7 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Welcome to Bayesically Speaking</h1>
@@ -285,9 +288,20 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#hello-stranger" id="toc-hello-stranger" class="nav-link active" data-scroll-target="#hello-stranger">Hello stranger</a></li>
+  <li><a href="#practical-implications" id="toc-practical-implications" class="nav-link" data-scroll-target="#practical-implications">Practical implications</a></li>
+  <li><a href="#from-past-to-future" id="toc-from-past-to-future" class="nav-link" data-scroll-target="#from-past-to-future">From past to future</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
@@ -298,14 +312,14 @@ window.Quarto = {
 
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="hello_world.jpeg" class="rounded img-fluid figure-img"></p>
+<p><a href="hello_world.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Photo from Jon Tyson at Unsplash."><img src="hello_world.jpeg" class="rounded img-fluid figure-img" alt="Photo from Jon Tyson at Unsplash."></a></p>
 <figcaption class="margin-caption">Photo from <a href="https://unsplash.com/@jontyson?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Jon Tyson</a> at <a href="https://unsplash.com/es/fotos/tangfe8KQdw?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>.</figcaption>
 </figure>
 </div>
 <section id="hello-stranger" class="level1 page-columns page-full">
 <h1>Hello stranger</h1>
-<p>First of all, welcome to the first post of “Bayesically Speaking” (which, in case you haven’t noticed, is a word play between “Basically Speaking” and the (hopefully) well-known Bayes’ theorem), and although the web is offline at the time of writing this article, I find myself following the advice of all those people who encouraged me to trust my instinct and dare to do what I have always wanted: to be able to transmit the thrill of using science as a tool to know and understand the reality that surrounds us and that we perceive in a limited way through our senses.</p>
-<p>For years, my interests have revolved around understanding the world through the lens of statistics, particularly as a tool to better understand and quantify the relationships between the moving parts that make up many health outcomes. Another aspect that I find fascinating is how certain variables can go unnoticed when viewed separately, but when viewed together can have radically different behaviors.</p>
+<p>Alright folks, welcome to ‘Bayesically Speaking’! Yes, I know, I’m a word nerd. Sue me. But seriously, I’ve been wanting to share my love for all things Bayesian for ages. It’s like, the internet is down right now, so I figured, ‘What the heck, let’s just do it!’ You know how everyone tells you to ‘follow your dreams’? Well, this is my dream: to spread the gospel of Bayes to the masses (or at least to anyone who’s still reading).</p>
+<p>For years, I’ve been obsessed with stats, especially how they can help us unravel the mysteries of health. It’s like, you have these puzzle pieces, and you’re trying to figure out how they fit together. But sometimes, you look at one piece in isolation, and it seems pretty boring. But then you put two pieces together, and BOOM! Suddenly, you see a hidden pattern, a secret message! That’s the magic of statistics for me.</p>
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
@@ -325,13 +339,12 @@ window.Quarto = {
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="cn">NULL</span>)) <span class="sc">+</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time exposure"</span>, <span class="at">y =</span> <span class="fu">expression</span>(Delta<span class="sc">*</span><span class="st">"TNF-"</span><span class="sc">*</span>alpha)) <span class="sc">+</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-2-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="In this example, the whole sample correlation is about -0.71 (meaning a negative relationship), but the within group correlation is 0.7 (the exact opposite effect). This phenomenom is better known as Simpson’s Paradox."><img src="index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img" alt="In this example, the whole sample correlation is about -0.71 (meaning a negative relationship), but the within group correlation is 0.7 (the exact opposite effect). This phenomenom is better known as Simpson’s Paradox."></a></p>
 <figcaption class="margin-caption">In this example, the whole sample correlation is about -0.71 (meaning a negative relationship), but the within group correlation is 0.7 (the exact opposite effect). This phenomenom is better known as Simpson’s Paradox.</figcaption>
 </figure>
 </div>
@@ -339,32 +352,28 @@ window.Quarto = {
 </div>
 <section id="the-statistics-toolbox" class="level4 page-columns page-full">
 <h4 class="anchored" data-anchor-id="the-statistics-toolbox">The statistics toolbox</h4>
-<p>Within the statistics toolbox, we have commonly used tests like t-tests, ANOVA, correlations, and regression. These methods have their advantages, as they are relatively easy to use and understand. However, like any other tool, they also have their limitations. For instance, they struggle with scenarios involving variables with asymmetric distributions, non-linear relationships, unbalanced groups, heterogeneous variance, extreme values, or repeated measurements with loss of follow-up.</p>
-<p>To address these limitations, non-parametric alternatives have been developed. These approaches offer flexibility but make it challenging to extrapolate inferences to new data due to the lack of distributional parameters. Other models, such as neural networks or random forest models, provide assistance when analyzing data with special properties. However, they often sacrifice simplicity and interpretability for increased flexibility and are commonly referred to as “black box” models.</p>
+<p>Now, let’s talk about the classic stats toolbox. You know, the t-tests, ANOVAs, and regressions (the old reliables). They’re like those trusty old hammers, simple, easy to use, and they get the job done most of the time. But let’s be honest, they’re not exactly Swiss Army knives. They start to struggle when things get messy. Asymmetrical data? Forget about it. Non-linear relationships? Good luck! And don’t even get me started on unbalanced groups or those pesky outliers.</p>
+<p>Enter the non-parametric heroes! These guys are more flexible, like those fancy adjustable wrenches. But they can be a bit… mysterious. It’s hard to predict how they’ll behave in new situations, which can be a bit nerve-wracking.</p>
+<p>Then there are the ‘black box’ models (neural networks, random forests, and their cousins). These are like those super-powered AI robots. They can handle any data you throw at them, no matter how messy. But sometimes, you have no idea what’s going on inside. It’s like magic, but not in a good way. You just hope it doesn’t turn against you.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="body_1.jpeg" class="rounded img-fluid figure-img"></p>
+<p><a href="body_1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Just between us, I only put this picture because it looked cool. Photo from Dan Cristian Pădureț at Unsplash."><img src="body_1.jpeg" class="rounded img-fluid figure-img" alt="Just between us, I only put this picture because it looked cool. Photo from Dan Cristian Pădureț at Unsplash."></a></p>
 <figcaption class="margin-caption">Just between us, I only put this picture because it looked cool. Photo from <a href="https://unsplash.com/pt-br/@dancristianpaduret?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Dan Cristian Pădureț</a> at <a href="https://unsplash.com/es/fotos/h3kuhYUCE9A?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>.</figcaption>
 </figure>
 </div>
-<p>Despite the availability of these alternative methods, there is still a pressing need to incorporate previous knowledge and align with the way human understanding is constructed. As humans, our perception of the world is shaped by experiences and prior beliefs. This is where Bayesian statistics come into play.</p>
-<p>Bayesian statistics offer several advantages over classical statistics (also known as “frequentist”). Firstly, they provide a coherent framework for incorporating prior information into our analysis, enabling us to update our beliefs systematically. Additionally, Bayesian statistics allow us to quantify uncertainty through probability distributions, offering a more intuitive and interpretable way to express our findings and the degree of certainty.</p>
+<p>So, we have these fancy new tools, but something’s missing. We need to bring our own brains into the equation! After all, we don’t just blindly stare at data. We bring our own experiences, our own biases (hey, we’re human!), and our own gut feelings to the table.</p>
+<p>That’s where Bayes comes in, the master of incorporating ‘prior knowledge.’ It’s like saying, ‘Hey, I know a little something about this already, so let’s not start from scratch.’ And instead of just giving us a dry ‘yes’ or ‘no’ answer, Bayes gives us a whole range of possibilities, complete with confidence levels. It’s like, ‘I’m 90% sure this is true, but there’s still a 10% chance I’m completely wrong.’ Much more honest, wouldn’t you say?</p>
+<p>Alright, let’s play a little mind game. Imagine you’re convinced this coin is rigged. You’ve flipped it 15 times and seen heads a whopping 10 times! You’re thinking, “This thing is clearly biased towards heads.” You calculate your odds: 10 heads out of 15 flips, that’s a 66% chance of heads! You feel pretty confident, right?</p>
+<p>Now, for the twist. You decide to put this coin to the test yourself. You flip it 15 times, and guess what? You get 13 tails! Only 2 measly heads. Talk about a reality check! Suddenly, your confidence is shaken. Based on your own experiment, the odds of getting heads plummet to a measly 13%.</p>
+<p>So, what do you do? Throw your hands up in the air and declare your initial belief wrong? Not so fast! We need to find a way to reconcile these conflicting results. This is where Bayesian thinking comes to the rescue.</p>
 </section>
-</section>
-<section id="the-toss-of-a-coin" class="level1 page-columns page-full">
-<h1>The toss of a coin</h1>
-<p>Let’s consider the following example: Imagine we have a belief that when tossing a coin, there is a higher probability of it landing on heads. Our prior knowledge stems from a previous experiment where, out of 15 coin tosses, 10 resulted in heads. This implies a calculated probability of <span class="math inline">\(\frac{10}{15} \approx 0.66\)</span> based on the previous data.</p>
-<p>With this information we decide to explore further, we conduct our own experiment. To our astonishment, out of 15 tosses, we observe un unexpected outcome: 13 tails and only 2 heads! This result suggests that the probability of getting heads based solely on our new data is a mere <span class="math inline">\(\frac{2}{15} \approx 0.13\)</span>. However, it would be unwise to dismiss the prior evidence in light of these conflicting results. Incorporating these findings into our body of knowledge becomes even more crucial as we strive to gain a deeper understanding of the combined effect.</p>
-<section id="computing-the-posterior" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="computing-the-posterior">Computing the posterior</h4>
-<p>To estimate the posterior probability of getting heads after tossing a coin, we can use the Bayesian framework. Let’s denote the probability of getting heads in a coin toss as <span class="math inline">\(P(H)\)</span>.</p>
-<p>According to the information provided, we have the prior probability of <span class="math inline">\(P(H)\)</span> estimated from an independent experiment as 10 heads out of 15 tosses. This can be written as a Beta distribution:</p>
-
-<div class="no-row-height column-margin column-container"><div class="margin-aside">
-<p>This symbol “<span class="math inline">\(\sim\)</span>” means <em>distributed as</em></p>
-</div></div><p><span class="math display">\[
+<section id="lets-get-bayesian" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="lets-get-bayesian">Let’s Get Bayesian</h4>
+<p>To figure out the true odds of getting heads, we need to use a bit of Bayesian magic. We’ll call the probability of getting heads “P(H)”.</p>
+<p>Now, remember our initial belief? The one based on those first 15 flips? We can represent that belief using something called a Beta distribution.</p>
+<div class="page-columns page-full"><p><span class="math display">\[
 P(H) \sim Beta(10, 5)
-\]</span></p>
+\]</span> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">This symbol “<span class="math inline">\(\sim\)</span>” means <em>distributed as</em></span></div></div>
 <p>Here, the Beta distribution parameters are (10, 5) since we had 10 heads and 5 tails in the prior experiment.</p>
 <p>Now, a new experiment with the same 15 tosses gives us 2 heads. To update our prior belief, we can use this information to calculate the posterior probability which can be expressed as follow:</p>
 
@@ -377,20 +386,21 @@ P(H | Data) \propto P(Data | H) \times P(H)
 <p><span class="math display">\[
 Posterior \propto Likelihood \times Prior
 \]</span></p>
-<p>To calculate the posterior probability, we need to normalize the product of the likelihood and prior, which involves integrating over all possible values of H. However, in this case, we can use a shortcut because the prior distribution is conjugate to the binomial distribution, so the posterior distribution will also follow a Beta distribution:</p>
+<p>To find our updated belief about the probability of heads (the “posterior probability”), we need to combine our prior belief with the new evidence. This involves some fancy math – we multiply the likelihood (the probability of getting our observed results) by our prior belief.</p>
+<p>Now, there’s a little trick here. Since our prior belief follows a Beta distribution, and our data fits a binomial distribution, the math works out beautifully. The posterior distribution will also be a Beta distribution! This makes our lives much easier.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-About normalization
+A Quick Note on Normalization
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>The product of both the prior and the likelihood maintains the same shape as the final posterior probability distribution, indicated by the “proportional to” (<span class="math inline">\(\propto\)</span>) in the previous equation. However, this raw product does not sum up to 1, making it an improper probability density function. To rectify this, the raw product needs to be normalized using integration or simulation in most cases.</p>
+<p>When we multiply our prior and likelihood, we get a distribution that looks like the final answer, but it’s not quite right. It’s like having a delicious cake batter, but forgetting to bake it! It needs to be “normalized” to make sure it adds up to 1. Usually, this involves some complex math, but luckily, we don’t need to worry about that in this case.</p>
 </div>
 </div>
 </div>
@@ -410,7 +420,9 @@ About conjugacy
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>When we choose a Beta distribution as our prior belief and gather new data from a coin toss, an intriguing property emerges: the posterior distribution also follows a Beta distribution. This property, known as conjugacy, offers a valuable advantage by simplifying calculations. It acts as a mathematical shortcut that saves time and effort, making the analysis more efficient and streamlined.</p>
+<p>This is where things get really interesting. Remember how I mentioned that the posterior distribution is also a Beta distribution? That’s not a coincidence! It’s a special property called “conjugacy”.</p>
+<p>Think of it like this: Imagine you have a set of building blocks. Your prior belief is one type of block, and the new data you collect is another type. When you combine them, you get a block of the exact same type!</p>
+<p>This <em>conjugacy</em> property is a huge time-saver. Instead of doing a bunch of complicated calculations, we can use a much more simple formula to find our updated belief. It’s like having a shortcut through a maze, much faster and easier!</p>
 </div>
 </div>
 </div>
@@ -444,7 +456,7 @@ P(H | Data) &amp;= (12 - 1) / (12 + 18 - 2) \\
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Then we integrate using base function `integrate`</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  const <span class="ot">=</span> <span class="fu">integrate</span>(<span class="at">f =</span> p_fun, </span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                    <span class="at">lower =</span> <span class="dv">0</span>L,  <span class="at">upper =</span> <span class="dv">1</span>L, </span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subdivisions =</span> <span class="fl">1e3</span>L,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subdivisions =</span> <span class="fl">1e4</span>L,</span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rel.tol =</span> .Machine<span class="sc">$</span>double.eps)<span class="sc">$</span>value</span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">p_fun</span>(x) <span class="sc">/</span> const</span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>}</span>
@@ -467,24 +479,23 @@ P(H | Data) &amp;= (12 - 1) / (12 + 18 - 2) \\
 <span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_percent</span>(), </span>
 <span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">+</span></span>
 <span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">6.5</span>)) <span class="sc">+</span></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  see<span class="sc">::</span><span class="fu">theme_modern</span>() <span class="sc">+</span></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.spacing.x =</span> <span class="fu">unit</span>(<span class="dv">3</span>, <span class="st">"mm"</span>)) <span class="sc">+</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  <span class="do">#### Arrows</span></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_curve</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">81</span>, <span class="at">y =</span> <span class="fl">4.1</span>, <span class="at">xend =</span> .<span class="dv">69232</span>, <span class="at">yend =</span> <span class="fl">3.425</span>), <span class="at">curvature =</span> .<span class="dv">4</span>,</span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="st">"cm"</span>), <span class="at">angle =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">9</span>, <span class="at">y =</span> <span class="fl">4.1</span>, <span class="at">label =</span> <span class="st">"Beta(10,5)"</span>)) <span class="sc">+</span></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_curve</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">2</span>, <span class="at">y =</span> <span class="fl">5.9</span>, <span class="at">xend =</span> .<span class="dv">07693</span>, <span class="at">yend =</span> <span class="fl">5.45</span>), <span class="at">curvature =</span> .<span class="dv">4</span>,</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="st">"cm"</span>), <span class="at">angle =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">29</span>, <span class="at">y =</span> <span class="fl">5.85</span>, <span class="at">label =</span> <span class="st">"Beta(2,13)"</span>)) <span class="sc">+</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_curve</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">5</span>, <span class="at">y =</span> <span class="dv">5</span>, <span class="at">xend =</span> .<span class="dv">3847</span>, <span class="at">yend =</span> <span class="fl">4.4</span>), <span class="at">curvature =</span> .<span class="dv">4</span>,</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="st">"cm"</span>), <span class="at">angle =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">55</span>, <span class="at">y =</span> <span class="dv">5</span>, <span class="at">label =</span> <span class="st">"≈ 39%"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.spacing.x =</span> <span class="fu">unit</span>(<span class="dv">3</span>, <span class="st">"mm"</span>)) <span class="sc">+</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="do">#### Arrows</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_curve</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">81</span>, <span class="at">y =</span> <span class="fl">4.1</span>, <span class="at">xend =</span> .<span class="dv">69232</span>, <span class="at">yend =</span> <span class="fl">3.425</span>), <span class="at">curvature =</span> .<span class="dv">4</span>,</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="st">"cm"</span>), <span class="at">angle =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">9</span>, <span class="at">y =</span> <span class="fl">4.1</span>, <span class="at">label =</span> <span class="st">"Beta(10,5)"</span>)) <span class="sc">+</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_curve</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">2</span>, <span class="at">y =</span> <span class="fl">5.9</span>, <span class="at">xend =</span> .<span class="dv">07693</span>, <span class="at">yend =</span> <span class="fl">5.45</span>), <span class="at">curvature =</span> .<span class="dv">4</span>,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="st">"cm"</span>), <span class="at">angle =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">29</span>, <span class="at">y =</span> <span class="fl">5.85</span>, <span class="at">label =</span> <span class="st">"Beta(2,13)"</span>)) <span class="sc">+</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_curve</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">5</span>, <span class="at">y =</span> <span class="dv">5</span>, <span class="at">xend =</span> .<span class="dv">3847</span>, <span class="at">yend =</span> <span class="fl">4.4</span>), <span class="at">curvature =</span> .<span class="dv">4</span>,</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="st">"cm"</span>), <span class="at">angle =</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">55</span>, <span class="at">y =</span> <span class="dv">5</span>, <span class="at">label =</span> <span class="st">"≈ 39%"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-3-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Graphical representation of the posterior probability as the combination of both the data and the prior evidence"><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img" alt="Graphical representation of the posterior probability as the combination of both the data and the prior evidence"></a></p>
 <figcaption class="margin-caption">Graphical representation of the posterior probability as the combination of both the data and the prior evidence</figcaption>
 </figure>
 </div>
@@ -494,23 +505,22 @@ P(H | Data) &amp;= (12 - 1) / (12 + 18 - 2) \\
 </section>
 <section id="practical-implications" class="level1 page-columns page-full">
 <h1>Practical implications</h1>
-<p>This example truly showcases the power of Bayesian statistics, where our prior beliefs are transformed by new evidence, allowing us to gain deeper insights into the world. Despite the unexpected twists and turns, Bayesian inference empowers us to blend prior knowledge with fresh data, creating a rich tapestry of understanding. By embracing the spirit of Bayesian principles, we open doors to the exciting potential of statistics and embark on a captivating journey to unravel the complexities of our reality.</p>
-<p>What’s even more fascinating is how closely the Bayesian inference process aligns with our natural way of learning and growing. Just like we integrate prior knowledge, weigh new evidence, and embrace uncertainty in our daily lives, Bayesian inference beautifully mirrors our innate cognitive processes. It’s a dynamic dance of assimilating information, refining our understanding, and embracing the inherent uncertainties of life. This remarkable synergy between Bayesian inference and our innate curiosity has been a driving force behind the rise and success of Bayesian statistics in both theory and practice.</p>
-<p>As <span class="citation" data-cites="gelman2013philosophy">Gelman and Shalizi (<a href="#ref-gelman2013philosophy" role="doc-biblioref">2013</a>)</span> eloquently states, “A substantial school in the philosophy of science identifies Bayesian inference with inductive inference and even rationality as such, and seems to be strengthened by the rise and practical success of Bayesian statistics.”</p>
-<p>However, it’s important to acknowledge that while advanced statistical tools offer incredible possibilities, they also come with their own set of limitations. To make the most of these tools, we need to understand their boundaries and make informed choices about their applications.</p>
+<p>This example is a prime example of how Bayes works its magic. Imagine your beliefs as a stubborn old dog, set in its ways. Then comes along some shiny new data, like a juicy steak. Bayes, the wise dog whisperer, gently nudges the old dog towards the steak, showing it that the world is bigger than its initial assumptions. Pretty cool, huh?</p>
+<p>And get this, Bayes isn’t just some fancy math trick. It’s basically how our brains are wired! We’re all walking, talking Bayesian machines, constantly updating our internal models based on new experiences. Remember that time you thought your friend was a total grump? But then they surprised you with a hilarious joke? BAM! Your brain, the Bayesian overlord, adjusted your opinion.</p>
+<div class="page-columns page-full"><p>As that fancypants statistician, <span class="citation" data-cites="gelman2013philosophy">Gelman and Shalizi (<a href="#ref-gelman2013philosophy" role="doc-biblioref">2013</a>)</span>, once said (probably while sipping a fine whiskey), “Bayesians think they’ve discovered the secret to life, the universe, and everything”. Okay, maybe that’s a slight exaggeration, but you get the idea. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Actually, he said “A substantial school in the philosophy of science identifies Bayesian inference with inductive inference and even rationality as such, and seems to be strengthened by the rise and practical success of Bayesian statistics”, but hey! It’s close enough.</span></div></div>
+<p>But let’s not get carried away. These powerful tools are like those fancy kitchen gadgets you see on TV infomercials. They promise to revolutionize your life, but sometimes they just end up collecting dust in the cupboard. We need to know when to use them and when to stick to simpler methods. Otherwise, we might end up overcomplicating things and driving ourselves crazy</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="body_2.jpeg" class="rounded img-float img-fluid figure-img"></p>
+<p><a href="body_2.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Photo from NASA at Unsplash."><img src="body_2.jpeg" class="rounded img-float img-fluid figure-img" alt="Photo from NASA at Unsplash."></a></p>
 <figcaption class="margin-caption">Photo from <a href="https://unsplash.com/de/@nasa?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">NASA</a> at <a href="https://unsplash.com/es/fotos/Q1p7bh3SHj8?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>.</figcaption>
 </figure>
 </div>
 </section>
 <section id="from-past-to-future" class="level1">
 <h1>From past to future</h1>
-<p>Imagine a time not too long ago when Bayesian statistics were not as prevalent as they are today. The computational challenges posed significant hurdles, limiting our ability to fully embrace their potential. But thanks to the rapid advancement of computing power and simulation techniques, the statistical landscape has undergone a revolution. We now find ourselves in an exciting era where complex Bayesian analysis is accessible to all. It’s like having a superpower in the palm of our hands—an empowering time where our statistical prowess can thrive and conquer new frontiers.</p>
-<p>As passionate self-learners on this thrilling statistical journey, even without a formal statistician’s hat, we can’t help but feel an overwhelming excitement to share the vast potential of these tools for unraveling real-world phenomena. Delving into the world of statistics, especially through the lens of Bayesian inference, opens up a universe of captivating possibilities. By melding prior knowledge with fresh evidence and embracing the enigmatic realm of uncertainty, we can uncover profound insights into health, well-being, and the wondrous phenomena that shape our lives.</p>
-<p>So, fellow adventurers, let’s ignite our curiosity, embrace our thirst for knowledge, and embark on this exhilarating voyage together. With statistics as our compass, we will navigate the complexities of our reality, expanding our understanding and seizing the extraordinary opportunities that await us.</p>
-<p>Get ready to experience a world that’s more vivid, more nuanced, and more inspiring than ever before. Together, let’s dive into the captivating realm of statistics, fueled by enthusiasm and a passion for discovery.</p>
+<p>Remember the Dark Ages? I mean, not THAT Dark Ages, but the time before Bayesian stats were cool? Back then, those poor Bayesians were stuck with slide rules and abacuses, trying to wrangle those complex models. Talk about a statistical struggle! But fear not, my friends, for the computer gods have smiled upon us! Now, we mere mortals can unleash the power of Bayes with a few clicks. It’s like having a magic wand that whispers the secrets of the universe.</p>
+<p>We, the self-proclaimed ‘Statisticians-in-Training’ (or maybe ‘Statisticians-in-Training-While-Sipping-Coffee’), are on a mission to spread the good word. Imagine, folks, the possibilities! We can finally tell our friends, ‘Oh, you think correlation equals causation? Please, let me introduce you to my Bayesian overlord!’ We can predict the next winning lottery number (well, maybe not, but we can at least pretend). And we can finally understand why our cat keeps knocking over that vase, it’s not just mischievous, it’s statistically significant!</p>
+<p>So, grab your favorite caffeinated beverage and let’s dive headfirst into this statistical wonderland. We might not conquer the world (yet), but we’ll definitely have a lot of fun trying. And hey, who knows, maybe we’ll even discover the secret to a perfectly brewed cup of coffee using Bayesian inference. Now that’s a worthy pursuit, wouldn’t you say?</p>
 
 
 
@@ -955,6 +965,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"loop":false,"selector":".lightbox","descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

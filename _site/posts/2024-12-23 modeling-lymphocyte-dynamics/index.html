@@ -97,6 +97,9 @@ div.csl-indent {
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -195,7 +198,7 @@ window.Quarto = {
 <meta name="citation_reference" content="citation_title=Extended logistic growth model for heterogeneous populations;,citation_author=Wang Jin;,citation_author=Scott W McCue;,citation_author=Matthew J Simpson;,citation_publication_date=2018;,citation_cover_date=2018;,citation_year=2018;,citation_volume=445;,citation_journal_title=Journal of Theoretical Biology;,citation_publisher=Elsevier;">
 </head>
 
-<body class="nav-fixed">
+<body class="floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -251,7 +254,7 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Modeling Lymphocyte Dynamics: Agent-Based Simulations and Non-Linear Equations</h1>
@@ -264,6 +267,7 @@ window.Quarto = {
                 <div class="quarto-category">non-linear</div>
                 <div class="quarto-category">simulation</div>
                 <div class="quarto-category">biology</div>
+                <div class="quarto-category">educational</div>
               </div>
                   </div>
   </div>
@@ -299,9 +303,23 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#simulating-cellular-mayhem" id="toc-simulating-cellular-mayhem" class="nav-link" data-scroll-target="#simulating-cellular-mayhem">Simulating Cellular Mayhem</a></li>
+  <li><a href="#from-code-to-cellular-chaos" id="toc-from-code-to-cellular-chaos" class="nav-link" data-scroll-target="#from-code-to-cellular-chaos">From Code to Cellular Chaos</a></li>
+  <li><a href="#setting-up-the-simulation" id="toc-setting-up-the-simulation" class="nav-link" data-scroll-target="#setting-up-the-simulation">Setting Up the Simulation</a></li>
+  <li><a href="#what-happens-if-we-tweak-the-knobs" id="toc-what-happens-if-we-tweak-the-knobs" class="nav-link" data-scroll-target="#what-happens-if-we-tweak-the-knobs">What Happens if We Tweak the Knobs?</a></li>
+  <li><a href="#so-what-did-our-digital-cells-actually-do" id="toc-so-what-did-our-digital-cells-actually-do" class="nav-link" data-scroll-target="#so-what-did-our-digital-cells-actually-do">So, What Did Our Digital Cells Actually Do?</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
@@ -330,8 +348,11 @@ window.Quarto = {
 <p>Trying to <strong>model these non-linear phenomena</strong> with simple straight lines (like in basic linear regression) is like trying to <strong>describe a roller coaster ride with a ruler</strong>, you’d miss all the exciting ups and downs, the twists and turns. It just doesn’t work. We need <strong>models that can capture these non-linear relationships</strong>, models that can bend and curve to fit complex biological systems. That’s where the <a href="https://en.wikipedia.org/wiki/Hill_equation_(biochemistry)">Hill function</a> and logistic growth equations come into play <span class="citation" data-cites="li2023intercellular">(<a href="#ref-li2023intercellular" role="doc-biblioref">Li et al. 2023</a>)</span>, they’re our tools for <strong>capturing these essential curves</strong> in our cellular stories.</p>
 <div class="page-columns page-full"><p><img src="national-institute-of-allergy-and-infectious-diseases-unsplash.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from the <a href="https://unsplash.com/es/@niaid?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">National Institute of Allergy and Infectious Diseases</a> in <a href="https://unsplash.com/es/fotos/un-primer-plano-de-una-celula-animal-con-una-sustancia-purpura-IQVsSGGWOKg?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></span></div></div>
 </section>
-<section id="simulating-cellular-mayhem-digital-petri-dishes-and-tiny-cellular-actors" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="simulating-cellular-mayhem-digital-petri-dishes-and-tiny-cellular-actors">Simulating Cellular Mayhem: Digital Petri Dishes and Tiny Cellular Actors</h4>
+</section>
+<section id="simulating-cellular-mayhem" class="level1 page-columns page-full">
+<h1>Simulating Cellular Mayhem</h1>
+<section id="digital-petri-dishes-and-tiny-cellular-actors" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="digital-petri-dishes-and-tiny-cellular-actors">Digital Petri Dishes and Tiny Cellular Actors</h4>
 <p>This is where agent-based modeling (ABM) swoops in like a superhero. <strong>ABM lets us create a virtual world filled with individual “agents”</strong>, but in our case, these actors are lymphocytes. Each agent gets its own set of rules, like a tiny cellular script to follow, dictating how it behaves and reacts to its environment <span class="citation" data-cites="azarov2019role">(<a href="#ref-azarov2019role" role="doc-biblioref">Azarov et al. 2019</a>)</span>.</p>
 <p>ABMs offer a powerful tool for <strong>studying lymphocyte dynamics</strong>, allowing us to explore how factors like clonal expansion, contraction, and differentiation are influenced by <strong>antigen exposure and immune system</strong> regulation <span class="citation" data-cites="an2021challenges">(<a href="#ref-an2021challenges" role="doc-biblioref">An et al. 2021</a>)</span>.</p>
 <div class="page-columns page-full"><p>The fun part is that we can then <strong>sit back and watch the cellular drama unfold</strong>, observing how these agents interact with each other and their digital surroundings over time (just like a movie!). It’s something like building a digital petri dish, <strong>a virtual stage where we can run experiments</strong> that would be impossible (given monetary or ethical reasons), or just plain messy to perform in real life. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">imagine trying to track the movement of millions of individual cells in a living organism, not exactly a walk in the park</span></div></div>
@@ -381,8 +402,9 @@ Advantages of Agent-Based Modeling and Inference
 <p>Here’s where the magic of non-linearity comes in. We’ll use a few key equations to dictate the behavior of our T cell agents.</p>
 <p>The <strong>activation of a naive T cell</strong> upon encountering an antigen <strong>isn’t a simple binary event</strong>; it’s not just “on” or “off,” like a light switch. Instead, <strong>it’s a graded response</strong>, much like a dimmer switch. The more antigen a T cell encounters, the higher the chance it gets activated <span class="citation" data-cites="joglekar2021t">(<a href="#ref-joglekar2021t" role="doc-biblioref">Joglekar and Li 2021</a>)</span>. But <strong>this increase in activation probability isn’t perfectly linear</strong>. There’s often a threshold effect: at low antigen concentrations, not much happens, but above a certain concentration, the activation probability shoots up dramatically. This “switch-like” behavior is what equations used in biochemistry like the <a href="https://en.wikipedia.org/wiki/Hill_equation_(biochemistry)">Hill function</a> elegantly captures.</p>
 <div class="page-columns page-full"><p><img src="naive-to-efector.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Checkpoints that regulate T cell response from their naive state to their final differentiated state. This shows how distinct mechanisms, including quiescence/ignorance, anergy, exhaustion/senescence, and various forms of cell death, act at T cell development and activation. Figure from <a href="https://www.nature.com/articles/s41577-020-00454-2">Nature Reviews Immunology 21, 257–267 (2021)</a></span></div></div>
-<section id="activation-function-the-on-switch" class="level5">
-<h5 class="anchored" data-anchor-id="activation-function-the-on-switch">Activation Function: The “On” Switch</h5>
+</section>
+<section id="activation-function-the-on-switch" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="activation-function-the-on-switch">Activation Function: The “On” Switch</h4>
 <p>Let’s build up the intuition behind this function. Imagine a <strong>T cell receptor</strong> (TCR) on the surface of a T cell. For simplicity, let’s consider that the <strong>interaction of the TCR with the antigen is a complex process</strong> that can involve multiple steps and interactions <span class="citation" data-cites="dushek2011antigen">(<a href="#ref-dushek2011antigen" role="doc-biblioref">Dushek et al. 2011</a>)</span>. While we might imagine that <span class="math inline">\(n\)</span> antigen molecules <strong>are required to bind for full activation</strong>, the Hill equation doesn’t directly represent this exact number of binding sites. Instead, it <strong>describes the overall cooperativity</strong> of the binding process <span class="citation" data-cites="stefan2013cooperative">(<a href="#ref-stefan2013cooperative" role="doc-biblioref">Stefan and Le Novère 2013</a>)</span>.</p>
 <p>Now, let’s think about the <strong>probability of activation as a function of antigen concentration</strong>. If the antigen concentration is low, the probability of any productive interaction between the antigen and TCR is low, and therefore, the probability of activation is also low. <strong>As the antigen concentration increases, the probability of productive interactions also increases</strong>. This increase is often non-linear, with a steeper rise at certain concentrations <span class="citation" data-cites="dushek2011antigen">(<a href="#ref-dushek2011antigen" role="doc-biblioref">Dushek et al. 2011</a>)</span>. This non-linearity is captured by the concept of <em>cooperativity</em>: the <strong>binding of one antigen molecule can influence the likelihood of subsequent binding events</strong> or downstream signaling events, leading to a more pronounced response.</p>
 <p>This intuition leads us to the Hill function:</p>
@@ -394,10 +416,8 @@ Advantages of Agent-Based Modeling and Inference
 <p><span class="math inline">\(\text{[Antigen]}\)</span> represents <strong>the concentration of the antigen</strong>. The more antigen present, the higher the chance of binding and activation.</p>
 <p><span class="math inline">\(n\)</span> is the <strong>Hill coefficient</strong>. It is a phenomenological parameter that describes the <em>steepness</em> or <em>cooperativity</em> of the response. A higher <span class="math inline">\(n\)</span> indicates a steeper curve and a more switch-like response. It reflects <strong>how much the binding of one antigen influences the binding of subsequent antigens</strong> or the downstream signaling events.</p>
 <p><span class="math inline">\(K\)</span> is the <strong>dissociation constant</strong>. It represents <strong>the antigen concentration at which the probability of activation is 50%</strong>. It’s a measure of the affinity between the antigen and the TCR. A smaller <span class="math inline">\(K\)</span> means a higher affinity (stronger binding), meaning that less antigen is needed to achieve 50% activation. You can think of <span class="math inline">\(K\)</span> as the <strong>“difficulty” of binding</strong>, a smaller <span class="math inline">\(K\)</span> means it’s easier to bind.</p>
-</section>
-</section>
-<section id="how-does-this-equation-capture-the-switch-like-behavior" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="how-does-this-equation-capture-the-switch-like-behavior">How Does this Equation Capture the Switch-Like Behavior?</h2>
+<section id="how-does-this-equation-capture-the-switch-like-behavior" class="level5 page-columns page-full">
+<h5 class="anchored" data-anchor-id="how-does-this-equation-capture-the-switch-like-behavior">How Does this Equation Capture the Switch-Like Behavior?</h5>
 <p>Okay but, how does this equation capture the switch-like behavior? Let’s see how:</p>
 <ul>
 <li>At <strong>very low antigen concentrations</strong> (<span class="math inline">\(\text{[Antigen]} &lt;&lt; K\)</span>), the term <span class="math inline">\(\text{[Antigen]}^n\)</span> is much smaller than <span class="math inline">\(K^n\)</span>, so the <strong>probability of activation is close to zero</strong>.</li>
@@ -435,14 +455,16 @@ Advantages of Agent-Based Modeling and Inference
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-3-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Hill coefficient (n) on T cell activation. When n = 1, the response is nearly linear. However, as n increases (n = 2, n = 4), the activation curve becomes increasingly steep, demonstrating enhanced cooperativity and a more pronounced threshold effect. This highlights how small changes in antigen concentration can trigger large changes in activation probability when cooperativity is high. It’s like comparing a gentle slope to a cliff, a small step can make a big difference when you’re near the edge of the cliff (high n)."><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img" alt="Hill coefficient (n) on T cell activation. When n = 1, the response is nearly linear. However, as n increases (n = 2, n = 4), the activation curve becomes increasingly steep, demonstrating enhanced cooperativity and a more pronounced threshold effect. This highlights how small changes in antigen concentration can trigger large changes in activation probability when cooperativity is high. It’s like comparing a gentle slope to a cliff, a small step can make a big difference when you’re near the edge of the cliff (high n)."></a></p>
 <figcaption class="margin-caption"><strong>Hill coefficient (<code>n</code>) on T cell activation</strong>. When <code>n = 1</code>, the response is nearly linear. However, as n increases (<code>n = 2</code>, <code>n = 4</code>), the activation curve becomes increasingly steep, demonstrating enhanced cooperativity and a more pronounced threshold effect. This highlights how small changes in antigen concentration can trigger large changes in activation probability when cooperativity is high. It’s like comparing a gentle slope to a cliff, a small step can make a big difference when you’re near the edge of the cliff (high <code>n</code>).</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<section id="proliferation-the-population-explosion" class="level5 page-columns page-full">
-<h5 class="anchored" data-anchor-id="proliferation-the-population-explosion">Proliferation: The Population Explosion</h5>
+</section>
+</section>
+<section id="proliferation-the-population-explosion" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="proliferation-the-population-explosion">Proliferation: The Population Explosion</h4>
 <p>Once a T cell is activated, <strong>it’s time for action</strong> (and lots of it). This action comes <strong>in the form of proliferation</strong>, where a single activated T cell divides and creates many identical copies of itself, building an army to fight the infection <span class="citation" data-cites="kumar2012robbins">(<a href="#ref-kumar2012robbins" role="doc-biblioref">Kumar, Abbas, and Aster 2012</a>)</span>. <strong>If there were no limits, this growth would be exponential</strong> (like compound interest in a bank account), but with cells instead of money. Imagine starting with one cell, and it doubles every hour. After just a day, you’d have millions!</p>
 <p>But, of course, <strong>in the real world</strong> (and even in our digital one), such <strong>unrestrained growth is impossible</strong>. There are limited resources: space, nutrients, signaling molecules, all the things a T cell needs to survive and multiply. Eventually, the <strong>growth must slow down and plateau</strong>. This is where the logistic growth equation comes in, providing a much more realistic model of population dynamics.</p>
 <p>Let’s start with the continuous form of the logistic growth equation:</p>
@@ -457,10 +479,8 @@ Advantages of Agent-Based Modeling and Inference
 <li><span class="math inline">\(K\)</span>: This is the <strong>carrying capacity</strong>. It represents the maximum number of T cells that the environment can sustain. It’s the “maximum occupancy” of our battlefield, there’s only so much room for T cells to operate.</li>
 </ul>
 <p>Now, let’s see how this equation captures the idea of limited growth.</p>
-<ul>
-<li><u><strong>At low population densities (N &lt;&lt; K)</strong></u>: When the number of T cells (<span class="math inline">\(N\)</span>) is much smaller than the carrying capacity (<span class="math inline">\(K\)</span>), the term <span class="math inline">\((1 - \frac{N}{K})\)</span> is close to 1. The equation then simplifies to <span class="math inline">\(\frac{\partial N}{\partial t} = rN\)</span>, <strong>which is the equation for exponential growth</strong>. This makes sense: when there are plenty of resources and space, the population grows rapidly, like those initial rabbits in a wide open field.</li>
-<li><u><strong>At high population densities (N ≈ K)</strong></u>: As the number of T cells (<span class="math inline">\(N\)</span>) approaches the carrying capacity (<span class="math inline">\(K\)</span>), the term <span class="math inline">\((1 - \frac{N}{K})\)</span> approaches 0. This causes the rate of change <span class="math inline">\(\frac{\partial N}{\partial t}\)</span> to also approach 0, meaning the <strong>population growth slows down and eventually stops</strong>. This also makes sense, given that as the battlefield becomes crowded, resources become scarce, and the T cell population can’t grow much more.</li>
-</ul>
+<p><u><strong>At low population densities (N &lt;&lt; K)</strong></u>, when the number of T cells (<span class="math inline">\(N\)</span>) is much smaller than the carrying capacity (<span class="math inline">\(K\)</span>), the term <span class="math inline">\((1 - \frac{N}{K})\)</span> is close to 1. The equation then simplifies to <span class="math inline">\(\frac{\partial N}{\partial t} = rN\)</span>, <strong>which is the equation for exponential growth</strong>. This makes sense: when there are plenty of resources and space, the population grows rapidly, like those initial rabbits in a wide open field.</p>
+<p><u><strong>At high population densities (N ≈ K)</strong></u>, as the number of T cells (<span class="math inline">\(N\)</span>) approaches the carrying capacity (<span class="math inline">\(K\)</span>), the term <span class="math inline">\((1 - \frac{N}{K})\)</span> approaches 0. This causes the rate of change <span class="math inline">\(\frac{\partial N}{\partial t}\)</span> to also approach 0, meaning the <strong>population growth slows down and eventually stops</strong>. This also makes sense, given that as the battlefield becomes crowded, resources become scarce, and the T cell population can’t grow much more.</p>
 <p>Since <strong>our simulation is discrete-time</strong> (we update the population at specific intervals, not continuously), we use a discrete-time approximation of the logistic growth equation:</p>
 <p><span class="math display">\[
 N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
@@ -507,15 +527,15 @@ N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-5-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-5-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Dynamics of T cell proliferation using the logistic growth model. Simulations with varying growth rates (r) show that faster proliferation leads to a more rapid initial increase in cell numbers. However, the carrying capacity (K = 200) acts as a limiting factor, causing all populations to eventually reach a plateau, highlighting the constraint of resources on cell growth. It’s like a race between different rabbit populations, the faster breeders get to the maximum population size quicker, but they all eventually hit the limit of their field."><img src="index_files/figure-html/unnamed-chunk-5-1.svg" class="img-fluid figure-img" alt="Dynamics of T cell proliferation using the logistic growth model. Simulations with varying growth rates (r) show that faster proliferation leads to a more rapid initial increase in cell numbers. However, the carrying capacity (K = 200) acts as a limiting factor, causing all populations to eventually reach a plateau, highlighting the constraint of resources on cell growth. It’s like a race between different rabbit populations, the faster breeders get to the maximum population size quicker, but they all eventually hit the limit of their field."></a></p>
 <figcaption class="margin-caption"><strong>Dynamics of T cell proliferation using the logistic growth model</strong>. Simulations with varying growth rates (r) show that faster proliferation leads to a more rapid initial increase in cell numbers. However, the carrying capacity (K = 200) acts as a limiting factor, causing all populations to eventually reach a plateau, highlighting the constraint of resources on cell growth. It’s like a race between different rabbit populations, the faster breeders get to the maximum population size quicker, but they all eventually hit the limit of their field.</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="apoptosis-constant-probability-the-programmed-exit" class="level5 page-columns page-full">
-<h5 class="anchored" data-anchor-id="apoptosis-constant-probability-the-programmed-exit">Apoptosis (Constant Probability): The Programmed Exit</h5>
+<section id="apoptosis-constant-probability-the-programmed-exit" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="apoptosis-constant-probability-the-programmed-exit">Apoptosis (Constant Probability): The Programmed Exit</h4>
 <p>Even the most valiant <strong>soldiers can’t fight forever</strong>. T cells, <strong>like all living cells, have a finite lifespan</strong>. They eventually undergo apoptosis, a process of <strong>programmed cell death</strong>. It’s like a built-in self-destruct mechanism that ensures cells don’t become a burden or pose a risk to the organism. In our model, <strong>we’ll represent apoptosis with a constant probability</strong>. This means that at each time step, every activated T cell has the same chance of undergoing apoptosis, regardless of how long it’s been activated or what it’s been doing.</p>
 <p>Let’s represent this with a simple equation:</p>
 <p><span class="math display">\[
@@ -570,15 +590,16 @@ N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-7-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-7-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Effect of apoptosis probability on cell population size over time. Simulations show that increasing the probability of apoptosis (p_{    ext{apoptosis}}) results in a more rapid decrease in the number of cells, illustrating the direct relationship between apoptosis rate and population decline. It’s like watching a sandcastle being washed away by the tide, the stronger the tide (higher p_apoptosis), the faster the sandcastle disappears."><img src="index_files/figure-html/unnamed-chunk-7-1.svg" class="img-fluid figure-img" alt="Effect of apoptosis probability on cell population size over time. Simulations show that increasing the probability of apoptosis (p_{    ext{apoptosis}}) results in a more rapid decrease in the number of cells, illustrating the direct relationship between apoptosis rate and population decline. It’s like watching a sandcastle being washed away by the tide, the stronger the tide (higher p_apoptosis), the faster the sandcastle disappears."></a></p>
 <figcaption class="margin-caption"><strong>Effect of apoptosis probability on cell population size over time</strong>. Simulations show that increasing the probability of apoptosis (<span class="math inline">\(p_{    ext{apoptosis}}\)</span>) results in a more rapid decrease in the number of cells, illustrating the direct relationship between apoptosis rate and population decline. It’s like watching a sandcastle being washed away by the tide, the stronger the tide (higher <code>p_apoptosis</code>), the faster the sandcastle disappears.</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="setting-up-the-simulation" class="level4">
-<h4 class="anchored" data-anchor-id="setting-up-the-simulation">Setting Up the Simulation</h4>
+</section>
+<section id="setting-up-the-simulation" class="level1 page-columns page-full">
+<h1>Setting Up the Simulation</h1>
 <p>Before we launch our digital immune response, <strong>we need to set the stage</strong>. This means <strong>defining the initial conditions and parameters for our simulation</strong>. Think of it as setting up a virtual battlefield where our T cells will fight their digital battles.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## T Cell population</span></span>
@@ -599,7 +620,6 @@ N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
 <li><code>n_hill</code>: This is the <strong>Hill coefficient</strong>, which controls the steepness of the activation curve. A higher n_hill means a more switch-like response.</li>
 </ul>
 <p>These parameters are like the initial settings of our simulation, <strong>determining the starting conditions</strong> of our virtual immune response.</p>
-</section>
 <section id="simulating-activation-and-early-response-lighting-the-fire" class="level4 page-columns page-full">
 <h4 class="anchored" data-anchor-id="simulating-activation-and-early-response-lighting-the-fire">Simulating Activation and Early Response: Lighting the Fire</h4>
 <p>Now that we have our equations and R functions ready, <strong>let’s simulate the initial activation of naive T cells in response to antigen</strong>. This section will focus on the early stages of the immune response, where naive T cells are first encountering the antigen and transitioning into their activated state. <strong>It’s like the first spark that ignites the immune fire</strong>, turning our rookie T cells into seasoned warriors.</p>
@@ -662,7 +682,7 @@ N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-10-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-10-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Early stages of T cell activation in response to antigen. The simulation demonstrates a decline in the naive T cell population coupled with a corresponding rise in the activated T cell population, reflecting the transition from naive to activated state. It’s like turning up the heat on the battlefield, the stronger the enemy (higher antigen level), the quicker our T cells get mobilized."><img src="index_files/figure-html/unnamed-chunk-10-1.svg" class="img-fluid figure-img" alt="Early stages of T cell activation in response to antigen. The simulation demonstrates a decline in the naive T cell population coupled with a corresponding rise in the activated T cell population, reflecting the transition from naive to activated state. It’s like turning up the heat on the battlefield, the stronger the enemy (higher antigen level), the quicker our T cells get mobilized."></a></p>
 <figcaption class="margin-caption"><strong>Early stages of T cell activation in response to antigen</strong>. The simulation demonstrates a decline in the naive T cell population coupled with a corresponding rise in the activated T cell population, reflecting the transition from naive to activated state. It’s like turning up the heat on the battlefield, the stronger the enemy (higher antigen level), the quicker our T cells get mobilized.</figcaption>
 </figure>
 </div>
@@ -695,7 +715,7 @@ N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-13-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Combined processes of T cell activation and proliferation. Following initial activation driven by antigen (as seen by the decrease in naive T cells and increase in activated T cells), the activated population undergoes logistic growth. This is characterized by an initial phase of rapid, near-exponential expansion, which then slows down as the population approaches the carrying capacity (K = 150), demonstrating resource limitation. It’s like a population of rabbits in a field, they multiply quickly at first, but eventually, they run out of space and resources, and the population stabilizes."><img src="index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img" alt="Combined processes of T cell activation and proliferation. Following initial activation driven by antigen (as seen by the decrease in naive T cells and increase in activated T cells), the activated population undergoes logistic growth. This is characterized by an initial phase of rapid, near-exponential expansion, which then slows down as the population approaches the carrying capacity (K = 150), demonstrating resource limitation. It’s like a population of rabbits in a field, they multiply quickly at first, but eventually, they run out of space and resources, and the population stabilizes."></a></p>
 <figcaption class="margin-caption"><strong>Combined processes of T cell activation and proliferation</strong>. Following initial activation driven by antigen (as seen by the decrease in naive T cells and increase in activated T cells), the activated population undergoes logistic growth. This is characterized by an initial phase of rapid, near-exponential expansion, which then slows down as the population approaches the carrying capacity (<code>K = 150</code>), demonstrating resource limitation. It’s like a population of rabbits in a field, they multiply quickly at first, but eventually, they run out of space and resources, and the population stabilizes.</figcaption>
 </figure>
 </div>
@@ -727,15 +747,16 @@ N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-15-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Integration of all key T cell processes: activation, proliferation, and apoptosis. Following antigen-driven activation, activated T cells proliferate, reaching a peak population size. Subsequently, apoptosis leads to a decline in the activated T cell population, demonstrating the dynamic balance between expansion and contraction of the immune response. It’s like watching a battle unfold, there’s an initial surge of troops, but eventually, attrition takes its toll, and the battle either reaches a stalemate or one side prevails."><img src="index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img" alt="Integration of all key T cell processes: activation, proliferation, and apoptosis. Following antigen-driven activation, activated T cells proliferate, reaching a peak population size. Subsequently, apoptosis leads to a decline in the activated T cell population, demonstrating the dynamic balance between expansion and contraction of the immune response. It’s like watching a battle unfold, there’s an initial surge of troops, but eventually, attrition takes its toll, and the battle either reaches a stalemate or one side prevails."></a></p>
 <figcaption class="margin-caption"><strong>Integration of all key T cell processes: activation, proliferation, and apoptosis</strong>. Following antigen-driven activation, activated T cells proliferate, reaching a peak population size. Subsequently, apoptosis leads to a decline in the activated T cell population, demonstrating the dynamic balance between expansion and contraction of the immune response. It’s like watching a battle unfold, there’s an initial surge of troops, but eventually, attrition takes its toll, and the battle either reaches a stalemate or one side prevails.</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="what-happens-if-we-tweak-the-knobs" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="what-happens-if-we-tweak-the-knobs">What Happens if We Tweak the Knobs?</h4>
+</section>
+<section id="what-happens-if-we-tweak-the-knobs" class="level1 page-columns page-full">
+<h1>What Happens if We Tweak the Knobs?</h1>
 <p>A crucial step in any modeling study is sensitivity analysis. <strong>It’s like playing with the knobs and dials of your model to see how it responds</strong>. We want to understand how changes in our input parameters (like the Hill coefficient or the carrying capacity) affect the outputs of our simulation (like the number of activated T cells). This helps us <strong>identify which parameters have the biggest influence on the model’s behavior</strong>, which knobs are the most important to turn if we want to change the outcome.</p>
 <p>For instance, we can show a quick example of sensitivity analysis by <strong>varying the Hill coefficient</strong> (<span class="math inline">\(n\)</span>), which, as we know, controls how switch-like the activation is:</p>
 <div class="cell page-columns page-full">
@@ -762,7 +783,7 @@ N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
 <div class="cell-output-display page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="index_files/figure-html/unnamed-chunk-16-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-16-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Impact of the Hill coefficient on the dynamics of T cell activation and recruitment. By varying n from 1 to 4, we observe a transition from a gradual, almost linear response (n=1) to a highly switch-like response (n=4)."><img src="index_files/figure-html/unnamed-chunk-16-1.svg" class="img-fluid figure-img" alt="Impact of the Hill coefficient on the dynamics of T cell activation and recruitment. By varying n from 1 to 4, we observe a transition from a gradual, almost linear response (n=1) to a highly switch-like response (n=4)."></a></p>
 <figcaption class="margin-caption"><strong>Impact of the Hill coefficient on the dynamics of T cell activation and recruitment</strong>. By varying n from 1 to 4, we observe a transition from a gradual, almost linear response (<code>n=1</code>) to a highly switch-like response (<code>n=4</code>).</figcaption>
 </figure>
 </div>
@@ -772,8 +793,6 @@ N(t+1) = N(t) + r * N(t) * \left(1 - \frac{N(t)}{K} \right)
 <p>The resulting plot is where we see the fruits of our labor. It shows how the dynamics of the activated T cell population and <strong>the recruitment of naive T cells change depending on the Hill coefficient</strong>. Tipically, higher values of <span class="math inline">\(n\)</span> lead to a more rapid and pronounced increase in activated T cells. However, this is only true when <span class="math inline">\(\text{[Antigen]}\)</span> are above the <span class="math inline">\(K\)</span> threshold.</p>
 <p><strong>In this case this relationship is inverted</strong> (recall the plot of the hill function we saw earlier), which might seem counterintuitive at first, but remember that the Hill coefficient affects the <em>steepness</em> of the activation curve. A <strong>higher Hill coefficient</strong> is like a very sharp switch, a small increase in antigen concentration leads to a big jump in activation after the <span class="math inline">\(K\)</span> threshold is surpassed. Conversely, a <strong><em>lower</em> Hill coefficient</strong> is like a more gradual dimmer switch.</p>
 <p>This <strong>sensitivity analysis</strong> is incredibly valuable because it helps us understand just how important are the parameters in the equation <strong>controlling how T cells get activated</strong>. It shows that this parameter can significantly impact the overall immune response. By <strong>playing with these parameters</strong>, we can get a much better feel for <strong>how the immune system works</strong> and how it might react to different challenges, it’s like fine-tuning an instrument to get the perfect sound.</p>
-</section>
-</section>
 </section>
 <section id="so-what-did-our-digital-cells-actually-do" class="level1 page-columns page-full">
 <h1>So, What Did Our Digital Cells Actually Do?</h1>
@@ -1280,6 +1299,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom","openEffect":"zoom"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

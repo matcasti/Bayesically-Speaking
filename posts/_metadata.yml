@@ -18,6 +18,15 @@ citation:
 
 google-scholar: true
 
+toc: true
+toc-location: left
+
+fig-format: svg
+fig-asp: 0.7
+fig-width: 10
+fig-responsive: true
+lightbox: true
+
 comments:
   utterances:
     repo: matcasti/Bayesically-Speaking

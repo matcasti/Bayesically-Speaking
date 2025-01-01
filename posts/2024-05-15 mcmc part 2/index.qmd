@@ -1,17 +1,18 @@
 ---
 title: "The Good, The Bad, and Hamiltonian Monte Carlo"
 description: |
-  Following the footsteps of the previous post, here we delve ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.
+  Following the footsteps of the previous post, here we dive deep ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.
 date: "2024-05-15"
+
 doi: "10.59350/fa26y-xa178"
-fig-format: svg
-fig-asp: 0.6666667
-fig-width: 10
-fig-responsive: true
-categories: [mcmc]
+
+categories: [mcmc, algorithms, inference]
+
 bibliography: ref.bib
+
 title-block-banner: title-block.png
 image: body_1.png
+
 resources: 
   - mcmc-demo-master/
 ---
@@ -311,13 +312,13 @@ Now, here's where the real magic kicks in. **We bring our likelihood and priors 
 The posterior it's nothing more than the **probability associated with our parameters** of interest (aka. the slope and intercept), **given the observed data**. We represent this posterior distribution as the following:
 
 $$
-P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
+P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \cdot P(\text{X})
 $$
 
 Which **is the same** as saying:
 
 $$
-\text{Posterior} \propto \text{Likelihood} \times \text{Prior}
+\text{Posterior} \propto \text{Likelihood} \cdot \text{Prior}
 $$
 
 ```{r}
@@ -429,7 +430,7 @@ $$
 3. **Taking a Step:** With this momentum tweak, we move the particle for a set distance $\epsilon$, updating its position from the starting point.
 
 $$
-q \leftarrow q - \epsilon \cdot p
+q \leftarrow q + \epsilon \cdot p
 $$
 
 4. **Repeat:** Now that our particle has a new spot, we rinse and repeat – estimating the slope and adjusting momentum.

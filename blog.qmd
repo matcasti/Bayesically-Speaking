@@ -2,6 +2,7 @@
 title: "[Blog]{.d-none}"
 listing:
   contents: posts
+  page-size: 6
   id: "sample-listings"
   sort: "date desc"
   type: default

@@ -1,7 +1,7 @@
 ---
 title: "[Home]{.d-none .p-0 .m-0}"
 listing:
-  page-size: 12
+  max-items: 4
   contents: posts
   id: "sample-listings"
   sort: "date desc"

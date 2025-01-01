@@ -8,7 +8,7 @@
 
 <meta name="author" content="Matías Castillo-Aguilar">
 <meta name="dcterms.date" content="2024-05-15">
-<meta name="description" content="Following the footsteps of the previous post, here we delve ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.">
+<meta name="description" content="Following the footsteps of the previous post, here we dive deep ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.">
 
 <title>The Good, The Bad, and Hamiltonian Monte Carlo – Bayesically Speaking</title>
 <style>
@@ -77,6 +77,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -163,7 +166,7 @@ window.Quarto = {
 <meta name="citation_reference" content="citation_title=Philosophy and the practice of bayesian statistics;,citation_author=Andrew Gelman;,citation_author=Cosma Rohilla Shalizi;,citation_publication_date=2013;,citation_cover_date=2013;,citation_year=2013;,citation_issue=1;,citation_volume=66;,citation_journal_title=British Journal of Mathematical and Statistical Psychology;,citation_publisher=Wiley Online Library;">
 </head>
 
-<body class="nav-fixed">
+<body class="floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -219,17 +222,19 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">The Good, The Bad, and Hamiltonian Monte Carlo</h1>
                   <div>
         <div class="description">
-          <p>Following the footsteps of the previous post, here we delve ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.</p>
+          <p>Following the footsteps of the previous post, here we dive deep ourselves into the mud of hamiltonian mechanics and how its dynamics can help us to explore parameter space more efficiently.</p>
         </div>
       </div>
                           <div class="quarto-categories">
                 <div class="quarto-category">mcmc</div>
+                <div class="quarto-category">algorithms</div>
+                <div class="quarto-category">inference</div>
               </div>
                   </div>
   </div>
@@ -265,9 +270,23 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#hamiltonian-mechanics-a-childs-play" id="toc-hamiltonian-mechanics-a-childs-play" class="nav-link" data-scroll-target="#hamiltonian-mechanics-a-childs-play">Hamiltonian Mechanics: A Child’s Play?</a></li>
+  <li><a href="#visualizing-hamiltons-equations" id="toc-visualizing-hamiltons-equations" class="nav-link" data-scroll-target="#visualizing-hamiltons-equations">Visualizing Hamilton’s Equations</a></li>
+  <li><a href="#building-our-own-hamiltonian-monte-carlo" id="toc-building-our-own-hamiltonian-monte-carlo" class="nav-link" data-scroll-target="#building-our-own-hamiltonian-monte-carlo">Building our own Hamiltonian Monte Carlo</a></li>
+  <li><a href="#visualizing-the-final-result" id="toc-visualizing-the-final-result" class="nav-link" data-scroll-target="#visualizing-the-final-result">Visualizing the Final Result</a></li>
+  <li><a href="#wrapping-it-up" id="toc-wrapping-it-up" class="nav-link" data-scroll-target="#wrapping-it-up">Wrapping It Up</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
@@ -316,7 +335,7 @@ About the animation
 <p>Let’s break down Hamiltonian dynamics <strong>in terms of position and momentum</strong> with a fun scenario: <strong>Imagine you’re on a swing</strong>. When you hit the highest point, you slow down, right? <strong>Your momentum’s almost zero</strong>. But here’s the kicker: You know <strong>you’re about to pick up speed on the way down</strong>, gaining momentum in the opposite direction. That moment when you’re at the top, almost motionless? That’s when you’re losing <strong>kinetic energy</strong> and gaining <strong>potential energy</strong>, thanks to gravity getting ready to pull you back down.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="swing-animation.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><a href="swing-animation.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Swing Animation"><img src="swing-animation.gif" class="img-fluid figure-img" style="width:100.0%" alt="Swing Animation"></a></p>
 <figcaption class="margin-caption">Swing Animation</figcaption>
 </figure>
 </div>
@@ -360,7 +379,7 @@ H(q, p) = K(p) + U(q)
 <p>Okay, I know we’re diving into some <strong>physics territory</strong> here <strong>in a stats blog</strong>, but trust me, understanding these concepts <strong>is key to unlocking what HMC’s all about</strong>. So, let’s take a little side trip and get a feel for Hamilton’s equations with a different example. <strong>Check out the gif below</strong>, see that weight on a string? It’s doing this cool back-and-forth dance thanks to the tug-of-war between the string pulling up and gravity pulling down.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="oscillator.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><a href="oscillator.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Simple harmonic oscillator. Within this example we could expect that the potential energy U(q) is the greatest at the bottom or top positions q, primarely because is in these positions that the force exerted by the string is greater, affecting in consequence the kinetic energy K(p) of the mass attached at the bottom of the string."><img src="oscillator.gif" class="img-fluid figure-img" style="width:100.0%" alt="Simple harmonic oscillator. Within this example we could expect that the potential energy U(q) is the greatest at the bottom or top positions q, primarely because is in these positions that the force exerted by the string is greater, affecting in consequence the kinetic energy K(p) of the mass attached at the bottom of the string."></a></p>
 <figcaption class="margin-caption">Simple harmonic oscillator. Within this example we could expect that the potential energy <span class="math inline">\(U(q)\)</span> is the greatest at the bottom or top positions <span class="math inline">\(q\)</span>, primarely because is in these positions that the force exerted by the string is greater, affecting in consequence the kinetic energy <span class="math inline">\(K(p)\)</span> of the mass attached at the bottom of the string.</figcaption>
 </figure>
 </div>
@@ -445,7 +464,7 @@ H(q, p) = K(p) + U(q)
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-3-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -475,7 +494,7 @@ Check out this funky <strong>phase space</strong> trajectory <strong>of a simple
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-4-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="index_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -557,11 +576,11 @@ y_i &amp;\sim \mathcal{N}(\mu_i, \sigma^2) \\
 <p>Now, here’s where the real magic kicks in. <strong>We bring our likelihood and priors together</strong> in a beautiful dance to reveal the superstar of Bayesian statistics: <strong>the posterior distribution!</strong> This bad boy tells us everything we wanna know <strong>after we’ve taken the data into account</strong>. This allow us to take into account previous knowledge (like past research, and the observed data) let’s say, samples from a new experiment.</p>
 <p>The posterior it’s nothing more than the <strong>probability associated with our parameters</strong> of interest (aka. the slope and intercept), <strong>given the observed data</strong>. We represent this posterior distribution as the following:</p>
 <p><span class="math display">\[
-P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
+P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \cdot P(\text{X})
 \]</span></p>
 <p>Which <strong>is the same</strong> as saying:</p>
 <p><span class="math display">\[
-\text{Posterior} \propto \text{Likelihood} \times \text{Prior}
+\text{Posterior} \propto \text{Likelihood} \cdot \text{Prior}
 \]</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine log likelihood and log prior to get log posterior</span></span>
@@ -588,7 +607,7 @@ P(\text{X}|\text{Data}) \propto P(\text{Data}|\text{X}) \times P(\text{X})
 <p><strong>Picture a frog hopping from one lily pad to another</strong>, that’s where the name “leapfrog” comes from. It helps us <strong>explore new spots</strong> in the parameter space by <strong>discretizing the motion</strong> of this imaginary particle by using Hamiltonian dynamics, using the slope information (<span class="math inline">\(\nabla U(q)\)</span>) of the current position <span class="math inline">\(q\)</span> to gain/loss momentum <span class="math inline">\(p\)</span> and move to another position <span class="math inline">\(q\)</span> in the parameter space.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="frog-jumping.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><a href="frog-jumping.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="A frog jumping, with a fixed step size, from one point in the phase space into another."><img src="frog-jumping.gif" class="img-fluid figure-img" style="width:100.0%" alt="A frog jumping, with a fixed step size, from one point in the phase space into another."></a></p>
 <figcaption class="margin-caption">A frog jumping, with a fixed step size, from one point in the phase space into another.</figcaption>
 </figure>
 </div>
@@ -643,7 +662,7 @@ Here, I’m using the concept of a particle moving through a probability space. 
 <p>Now that our imaginary particle is all geared up with an <strong>initial momentum and position</strong>, it’s time to let it loose and see where it goes in this <strong>parameter playground</strong>. We know we’re using Hamiltonian mechanics, but to make it computationally feasible, we’re bringing in our trusty leapfrog integrator. We’ve already seen that this bad boy <strong>discretizes the motion of our particle</strong>, making it manageable to track its journey without breaking our computers.</p>
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
-<p><img src="canica.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><a href="canica.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Marble rolling over a surface. In a perfect world, we’d love to follow our particle smoothly gliding through the parameter space, but hey, computing that would take ages. So instead, we chunk its movement into smaller steps, kind of like a flipbook, to keep tabs on its position."><img src="canica.gif" class="img-fluid figure-img" style="width:100.0%" alt="Marble rolling over a surface. In a perfect world, we’d love to follow our particle smoothly gliding through the parameter space, but hey, computing that would take ages. So instead, we chunk its movement into smaller steps, kind of like a flipbook, to keep tabs on its position."></a></p>
 <figcaption class="margin-caption">Marble rolling over a surface. In a perfect world, we’d love to follow our particle smoothly gliding through the parameter space, but hey, computing that would take ages. So instead, we chunk its movement into smaller steps, kind of like a flipbook, to keep tabs on its position.</figcaption>
 </figure>
 </div>
@@ -670,7 +689,7 @@ Then, we update the momentum <span class="math inline">\(p\)</span> with the gra
 <li><strong>Taking a Step:</strong> With this momentum tweak, we move the particle for a set distance <span class="math inline">\(\epsilon\)</span>, updating its position from the starting point.</li>
 </ol>
 <p><span class="math display">\[
-q \leftarrow q - \epsilon \cdot p
+q \leftarrow q + \epsilon \cdot p
 \]</span></p>
 <ol start="4" type="1">
 <li><strong>Repeat:</strong> Now that our particle has a new spot, we rinse and repeat – estimating the slope and adjusting momentum.</li>
@@ -822,7 +841,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-13-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -849,7 +868,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-14-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-14-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="index_files/figure-html/unnamed-chunk-14-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -873,7 +892,7 @@ A(q',q) &amp;= min(1,exp(\alpha))
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img"></p>
+<p><a href="index_files/figure-html/unnamed-chunk-15-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1330,6 +1349,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","closeEffect":"zoom","selector":".lightbox","openEffect":"zoom","loop":false});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

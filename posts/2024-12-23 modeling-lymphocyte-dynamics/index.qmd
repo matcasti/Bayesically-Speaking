@@ -3,18 +3,20 @@ title: "Modeling Lymphocyte Dynamics: Agent-Based Simulations and Non-Linear Equ
 description: |
   In this post, we'll take you step by step through building and playing with a model of lymphocyte dynamics. So, grab your keyboard, and let's whip up a recipe for understanding how T cells become the immune system's MVPs.
 date: "2024-12-23"
-fig-format: svg
-fig-asp: 0.6666667
-fig-width: 10
-fig-responsive: true
+
 execute: 
   warning: false
   error: false
+
 doi: "10.59350/aqa1r-e2v59"
-categories: [non-linear, simulation, biology]
+
+categories: [non-linear, simulation, biology, educational]
+
 bibliography: ref.bib
+
 title-block-banner: title-block.jpeg
 image: body_1.jpeg
+
 editor_options: 
   chunk_output_type: console
 ---
@@ -66,7 +68,9 @@ Trying to **model these non-linear phenomena** with simple straight lines (like 
 ![](national-institute-of-allergy-and-infectious-diseases-unsplash.jpeg){.img-fluid width="100%"}
 [Photo from the [National Institute of Allergy and Infectious Diseases](https://unsplash.com/es/@niaid?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) in [Unsplash](https://unsplash.com/es/fotos/un-primer-plano-de-una-celula-animal-con-una-sustancia-purpura-IQVsSGGWOKg?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)]{.aside}
 
-#### Simulating Cellular Mayhem: Digital Petri Dishes and Tiny Cellular Actors
+# Simulating Cellular Mayhem
+
+#### Digital Petri Dishes and Tiny Cellular Actors
 
 This is where agent-based modeling (ABM) swoops in like a superhero. **ABM lets us create a virtual world filled with individual "agents"**, but in our case, these actors are lymphocytes. Each agent gets its own set of rules, like a tiny cellular script to follow, dictating how it behaves and reacts to its environment [@azarov2019role].
 
@@ -123,7 +127,7 @@ The **activation of a naive T cell** upon encountering an antigen **isn't a simp
 ![](naive-to-efector.png){.img-fluid width="100%"}
 [Checkpoints that regulate T cell response from their naive state to their final differentiated state. This shows how distinct mechanisms, including quiescence/ignorance, anergy, exhaustion/senescence, and various forms of cell death, act at T cell development and activation. Figure from [Nature Reviews Immunology 21, 257–267 (2021)](https://www.nature.com/articles/s41577-020-00454-2)]{.aside}
 
-##### Activation Function: The "On" Switch
+#### Activation Function: The "On" Switch
 
 Let's build up the intuition behind this function. Imagine a **T cell receptor** (TCR) on the surface of a T cell. For simplicity, let's consider that the **interaction of the TCR with the antigen is a complex process** that can involve multiple steps and interactions [@dushek2011antigen]. While we might imagine that $n$ antigen molecules **are required to bind for full activation**, the Hill equation doesn't directly represent this exact number of binding sites. Instead, it **describes the overall cooperativity** of the binding process [@stefan2013cooperative].
 
@@ -145,7 +149,7 @@ $n$ is the **Hill coefficient**. It is a phenomenological parameter that describ
 
 $K$ is the **dissociation constant**. It represents **the antigen concentration at which the probability of activation is 50%**. It's a measure of the affinity between the antigen and the TCR. A smaller $K$ means a higher affinity (stronger binding), meaning that less antigen is needed to achieve 50% activation. You can think of $K$ as the **"difficulty" of binding**, a smaller $K$ means it's easier to bind.
 
-## How Does this Equation Capture the Switch-Like Behavior?
+##### How Does this Equation Capture the Switch-Like Behavior?
 
 Okay but, how does this equation capture the switch-like behavior? Let's see how:
 
@@ -189,7 +193,7 @@ ggplot(df, aes(Antigen, Pr)) +
   scale_color_ordinal()
 ```
 
-##### Proliferation: The Population Explosion
+#### Proliferation: The Population Explosion
 
 Once a T cell is activated, **it's time for action** (and lots of it). This action comes **in the form of proliferation**, where a single activated T cell divides and creates many identical copies of itself, building an army to fight the infection [@kumar2012robbins]. **If there were no limits, this growth would be exponential** (like compound interest in a bank account), but with cells instead of money. Imagine starting with one cell, and it doubles every hour. After just a day, you'd have millions!
 
@@ -211,8 +215,9 @@ Let's break down this equation and connect it to our intuitive understanding of 
 
 Now, let's see how this equation captures the idea of limited growth.
 
--   <u>**At low population densities (N << K)**</u>: When the number of T cells ($N$) is much smaller than the carrying capacity ($K$), the term $(1 - \frac{N}{K})$ is close to 1. The equation then simplifies to $\frac{\partial N}{\partial t} = rN$, **which is the equation for exponential growth**. This makes sense: when there are plenty of resources and space, the population grows rapidly, like those initial rabbits in a wide open field.
--   <u>**At high population densities (N ≈ K)**</u>: As the number of T cells ($N$) approaches the carrying capacity ($K$), the term $(1 - \frac{N}{K})$ approaches 0. This causes the rate of change $\frac{\partial N}{\partial t}$ to also approach 0, meaning the **population growth slows down and eventually stops**. This also makes sense, given that as the battlefield becomes crowded, resources become scarce, and the T cell population can't grow much more.
+<u>**At low population densities (N << K)**</u>, when the number of T cells ($N$) is much smaller than the carrying capacity ($K$), the term $(1 - \frac{N}{K})$ is close to 1. The equation then simplifies to $\frac{\partial N}{\partial t} = rN$, **which is the equation for exponential growth**. This makes sense: when there are plenty of resources and space, the population grows rapidly, like those initial rabbits in a wide open field.
+
+<u>**At high population densities (N ≈ K)**</u>, as the number of T cells ($N$) approaches the carrying capacity ($K$), the term $(1 - \frac{N}{K})$ approaches 0. This causes the rate of change $\frac{\partial N}{\partial t}$ to also approach 0, meaning the **population growth slows down and eventually stops**. This also makes sense, given that as the battlefield becomes crowded, resources become scarce, and the T cell population can't grow much more.
 
 Since **our simulation is discrete-time** (we update the population at specific intervals, not continuously), we use a discrete-time approximation of the logistic growth equation:
 
@@ -266,7 +271,7 @@ ggplot(df, aes(Time, Cells, color = Rate)) +
        title = "Simulation of Cell Proliferation over Time")
 ```
 
-##### Apoptosis (Constant Probability): The Programmed Exit
+#### Apoptosis (Constant Probability): The Programmed Exit
 
 Even the most valiant **soldiers can't fight forever**. T cells, **like all living cells, have a finite lifespan**. They eventually undergo apoptosis, a process of **programmed cell death**. It's like a built-in self-destruct mechanism that ensures cells don't become a burden or pose a risk to the organism. In our model, **we'll represent apoptosis with a constant probability**. This means that at each time step, every activated T cell has the same chance of undergoing apoptosis, regardless of how long it's been activated or what it's been doing.
 
@@ -329,7 +334,7 @@ ggplot(df, aes(Time, Cells, color = Probability)) +
        color = expression(P[Apoptosis]))
 ```
 
-#### Setting Up the Simulation
+# Setting Up the Simulation
 
 Before we launch our digital immune response, **we need to set the stage**. This means **defining the initial conditions and parameters for our simulation**. Think of it as setting up a virtual battlefield where our T cells will fight their digital battles.
 
@@ -558,7 +563,7 @@ ggplot(df, aes(x = Time, y = value, color = variable)) +
   labs(title = "Full T Cell Dynamics: Activation, Proliferation, and Apoptosis", x = "Time Steps", y = "Number of Cells", color = "Cell Type")
 ```
 
-#### What Happens if We Tweak the Knobs?
+# What Happens if We Tweak the Knobs?
 
 A crucial step in any modeling study is sensitivity analysis. **It's like playing with the knobs and dials of your model to see how it responds**. We want to understand how changes in our input parameters (like the Hill coefficient or the carrying capacity) affect the outputs of our simulation (like the number of activated T cells). This helps us **identify which parameters have the biggest influence on the model's behavior**, which knobs are the most important to turn if we want to change the outcome.
 
