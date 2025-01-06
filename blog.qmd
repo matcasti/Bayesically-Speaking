@@ -32,6 +32,10 @@ css: libs/styles.css
   background-attachment: fixed;
   background-position: 50% 50%;
 } 
+
+.quarto-sidebar-toggle {
+z-index:1;
+}
 </style>
 
 ::::{style="height:40vh"}
