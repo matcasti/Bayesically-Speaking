@@ -411,7 +411,7 @@ acceptance_prob <- function(current_logp, proposed_logp) {
 
 We will incorporate this acceptance step into the full NUTS sampler in the next section, along with the complete NUTS algorithm and the adaptive step size procedure.
 
-##### Adaptative Epsilon
+##### Adaptative Step-Size
 
 One of the most crucial aspects of NUTS (and HMC in general) is choosing an appropriate step size, $\epsilon$. A good step size allows the sampler to efficiently explore the posterior distribution. Too small, and the sampler takes tiny, slow steps, like a snail on a marathon. Too large, and it overshoots, bouncing around erratically, like a caffeinated kangaroo on a trampoline.
 
@@ -474,7 +474,7 @@ epsilons <- numeric(50)
   
   ggplot(plot_data, aes(x = iteration, y = epsilon, col = gamma, group = gamma)) +
     geom_line(aes(linewidth = accept_rate, alpha = accept_rate)) +
-    labs(title = "Epsilon Adaptation", x = "Iteration", 
+    labs(title = "Step-Size Adaptation", x = "Iteration", 
          y = "Epsilon", col = expression("Adaptation Rate ("*gamma*")")) +
     geom_hline(yintercept = 1, linewidth = 1/2, color = "gray50", linetype = 2) +
     scale_alpha_continuous(range = c(0.3,1), name = "Acceptance Rate",
@@ -554,8 +554,6 @@ Here's a breakdown of the full nuts function:
     -  We store the current position in the `samples` matrix.
 
 This implementation provides a basic but functional NUTS sampler. In the next section, we'll discuss diagnostics and validation to ensure our sampler is working correctly.
-
-Okay, let's move on to the "Diagnostics and Validation" section, starting with "Visual Diagnostics."
 
 # Is Our Sampler Behaving Itself?
 
@@ -713,17 +711,15 @@ With these visual and numerical diagnostics, we can be confident in the performa
 
 Now that we have a basic NUTS sampler, let's talk about how to fine-tune it for real-world applications. Because, let's face it, toy examples are fun, but real-world problems are where the real challenges (and rewards) lie.
 
-#### Practical Considerations
-
 When applying NUTS to real-world problems, there are a few practical considerations to keep in mind: choosing an initial step size, setting the maximum tree depth, and understanding the computational trade-offs.
 
-##### Choosing an Initial Step Size
+#### Choosing an Initial Step Size
 
 While NUTS adapts the step size during warmup, a good initial step size can significantly improve the efficiency of the adaptation process. A common approach is to perform a short pilot run (a few hundred iterations) and adjust the initial step size based on the acceptance rate. If the acceptance rate is too low (e.g., below 0.6), decrease the initial step size. If it's too high (e.g., above 0.9), increase it.
 
 In our implementation, we used a very simple adaptation strategy. In real-world applications, more robust methods like dual averaging are used. These methods are more stable and efficient at finding a good step size.
 
-##### Setting the Maximum Tree Depth
+#### Setting the Maximum Tree Depth
 
 The maximum tree depth limits the maximum trajectory length that NUTS will explore. A larger tree depth allows for longer trajectories, which can be beneficial for exploring complex posteriors. However, it also increases exponentially the computational cost. A common default value is 10, which allows for trajectories up to $2^{10} = 1024$ leapfrog steps.
 
@@ -732,11 +728,6 @@ It is important to notice that a too small tree depth can lead to poor explorati
 ##### Computational Trade-offs
 
 NUTS, like other HMC methods, involves computational trade-offs between memory, runtime, and efficiency. Longer trajectories (achieved by larger tree depths or smaller step sizes) can lead to better exploration and lower autocorrelation but also increase the runtime and memory usage. It's important to find a balance that works for your specific problem and computational resources.
-
-Here's a summary of the trade-offs:
-
-*   **Larger tree depth:** Longer trajectories, better exploration, higher runtime, higher memory usage.
-*   **Smaller step size:** More accurate trajectories, better exploration (up to a point), higher runtime.
 
 In practice, you'll often need to experiment with different settings to find the optimal balance for your problem. This might involve running several short test runs with different parameter values and comparing the results.
 

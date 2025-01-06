@@ -10,7 +10,1767 @@
 <atom:link href="https://bayesically-speaking.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>The place where statistics, coffee and bayes theorem come toghether</description>
 <generator>quarto-1.5.55</generator>
-<lastBuildDate>Mon, 23 Dec 2024 03:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 06 Jan 2025 03:00:00 GMT</lastBuildDate>
+<item>
+  <title>Decoding the Neuron’s Spark: Building Intuition for Action Potential Dynamics</title>
+  <dc:creator>Matías Castillo-Aguilar</dc:creator>
+  <link>https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="introduction" class="level1 page-columns page-full">
+<h1>Introduction</h1>
+<p>Ever wondered how your brain manages to <strong>tell your hand to grab that slice of pizza</strong> before your roommate does? It’s all thanks to an incredibly complex, yet surprisingly efficient communication network, <strong>your nervous system</strong>. Think of it as the internet of your body, but instead of cat videos and online shopping, it’s buzzing with <strong>urgent messages about survival</strong> (like pizza acquisition) and other important stuff, like not walking into walls.</p>
+<p>This network relies on <strong>specialized cells called neurons</strong>, which are basically your body’s tiny gossips. They constantly chatter with each other, passing along information in the form of rapid electrical signals called action potentials <span class="citation" data-cites="drukarch2023thinking">(Drukarch and Wilhelmus 2023)</span>. <strong>These aren’t your grandma’s static shocks</strong>; they’re more like carefully crafted Morse code messages, zipping along neural pathways at impressive speeds. <strong>Imagine each neuron as a tiny town crier</strong>, shouting the latest news (or sensory input) to the next town over.</p>
+<p>Now, you might be thinking, <strong>“Electrical signals? Sounds complicated.”</strong> And you’d be right. But fear not! In this post, we’re going to break down the magic behind action potentials using a simplified mathematical model. Think of it as a cheat sheet for understanding how these tiny electrical storms work. <strong>We’ll start with the basics and gradually add complexity</strong>, like adding extra gossip to the town crier’s message, until we have a decent understanding of the dynamics at play. <strong>No PhD in neuroscience required (though a craving for pizza is always helpful)</strong>. So, buckle up, because we’re about to drive into the electrifying world of neuronal communication!</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/action-potential-neuron.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://www.britannica.com/science/action-potential">Encyclopaedia Britannica</a></span></div></div>
+</section>
+<section id="the-neuron-as-a-simple-circuit-a-first-approximation" class="level1 page-columns page-full">
+<h1>The Neuron as a Simple Circuit: A First Approximation</h1>
+<p><strong>Let’s imagine our neuron not as a bustling town crier, but as a tiny, slightly bored house</strong>. It’s got walls (the cell membrane), an inside (intracellular fluid), and an outside (extracellular fluid). These fluids are salty solutions, full of charged particles called ions like <strong>sodium, potassium, and chloride (the electrolyte gang you see advertised in sports drinks)</strong>. Now, because these fluids have different concentrations of these ions, there’s a difference in electrical charge between the inside and the outside of the house. <strong>This difference in charge is what we call the <u>membrane potential</u></strong>, measured in millivolts (mV). Think of it like a tiny battery inside the neuron, just waiting to be used.</p>
+<p>Normally, this “battery” sits at a <strong>resting voltage of around -70 mV</strong>. Why negative? It’s just a convention: <strong>we define the outside of the cell as zero</strong>, and the inside is negatively charged relative to it. So, our little neuron house is just chilling, with a slight negative charge inside (like a grumpy teenager refusing to get out of bed).</p>
+<p>Now, <strong>our neuron’s walls (the membrane) aren’t completely airtight</strong>. They have tiny holes, called <strong><u>leak channels</u></strong>, which allow some ions to slowly trickle in and out. <strong>It’s like having a slightly leaky faucet</strong>, not a major flood, but a constant drip. These leaks are crucial because they maintain that resting membrane potential <span class="citation" data-cites="rubin2021basics">(Rubin 2021)</span>.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/leakage-channels.jpg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://ecampusontario.pressbooks.pub/neurosciencecdn/chapter/anatomy-physiology-the-nervous-system-and-nervous-tissue/">Neuroscience: Canadian 1st Edition</a></span></div></div>
+<p>Another important property of the membrane is its <strong>ability to store electrical charge</strong>, much like a capacitor in an electronic circuit. <strong>This is called <u>capacitance</u></strong>. Imagine the membrane as two conductive plates (the inside and outside of the cell) separated by an insulator (the membrane itself). When there’s a difference in charge across the membrane (our membrane potential), <strong>it stores some of that charge</strong> <span class="citation" data-cites="rubin2021basics">(Rubin 2021)</span>. It’s like a tiny electrical reservoir, ready to release its charge when needed.</p>
+<p>So, to summarize our lazy neuron house:</p>
+<ul>
+<li><strong>Membrane potential:</strong> A voltage difference between the inside and outside.</li>
+<li><strong>Leak channels:</strong> Tiny holes that allow ions to slowly leak across the membrane, maintaining the resting potential.</li>
+<li><strong>Capacitance:</strong> The membrane’s ability to store electrical charge.</li>
+</ul>
+<section id="expanding-our-intuition-using-math-waking-up-the-sleeping-neuron" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="expanding-our-intuition-using-math-waking-up-the-sleeping-neuron">Expanding our Intuition Using Math: Waking Up the Sleeping Neuron</h4>
+<p><strong>Right now, our neuron is basically a zombie</strong>. It’s just sitting there, leaking a bit of charge and generally being a bit of a slacker. No exciting messages, no action potentials, <strong>it’s like a town crier who’s decided to take an eternal nap</strong>. But fear not! Things are about to get much more interesting. We’re about to introduce the real heroes of the story: <strong>voltage-gated ion channels</strong>.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/voltage-dependent-channels.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://ecampusontario.pressbooks.pub/neurosciencecdn/chapter/anatomy-physiology-the-nervous-system-and-nervous-tissue/">Neuroscience: Canadian 1st Edition</a></span></div></div>
+<p>Now, <strong>let’s get a little mathematical here</strong> (don’t worry, we’ll keep it fun!). We need a function to describe <strong>how the membrane potential</strong> (<img src="https://latex.codecogs.com/png.latex?V">) <strong>changes over time</strong> (<img src="https://latex.codecogs.com/png.latex?t">) due to all that pesky leakage.</p>
+<p>So, what kind of function would you use to describe something that decays gradually, like a deflating balloon? You guessed it! <strong>We need an exponential function</strong>, that classic workhorse of mathematical modeling.</p>
+<p>Exponential functions look something like this:</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">input <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.table</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">input =</span> input,</span>
+<span id="cb1-4">           <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">e^x</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(input),</span>
+<span id="cb1-5">           <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-e^x</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(input),</span>
+<span id="cb1-6">           <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">e^{-x}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>input),</span>
+<span id="cb1-7">           <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-e^{-x}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>input))</span>
+<span id="cb1-8"></span>
+<span id="cb1-9">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">melt</span>(df, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">id.vars =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"input"</span>)</span>
+<span id="cb1-10"></span>
+<span id="cb1-11"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(input, value)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_wrap</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> variable, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">labeller =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"label_parsed"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">scales =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"free_y"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_hline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yintercept =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, </span>
+<span id="cb1-14">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linetype =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gray50"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, </span>
+<span id="cb1-16">                <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"orange"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-17">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Input"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Output"</span>,</span>
+<span id="cb1-18">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Exponential Function Dynamics"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><a href="index_files/figure-html/unnamed-chunk-2-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Exponential Function and Common Variations. Here we see how changing a small detail in the original function (in this case a negative sign) can yield dramatically different behavior."><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img" alt="Exponential Function and Common Variations. Here we see how changing a small detail in the original function (in this case a negative sign) can yield dramatically different behavior."></a></p>
+<figcaption class="margin-caption"><strong>Exponential Function and Common Variations</strong>. Here we see how changing a small detail in the original function (in this case a negative sign) can yield dramatically different behavior.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>At first glance, we can see that the bottom variations of the exponential function (the ones with negative exponents) <strong>seem to behave more like a neuron should</strong>. They oscillate nicely, staying within a reasonable range. This function with the negative exponent, <img src="https://latex.codecogs.com/png.latex?e%5E%7B-x%7D">, seems like a good starting point to describe <strong>how the membrane potential gradually returns to its resting state</strong>. It’s like watching a deflating balloon (slow and steady).</p>
+</section>
+<section id="customizing-it-further-tweaking-the-decay-rate" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="customizing-it-further-tweaking-the-decay-rate">Customizing It Further: Tweaking the Decay Rate</h4>
+<p>Now, let’s get a little more creative! <strong>We can tweak this function to control how quickly the membrane potential returns to rest</strong>. Imagine it’s like adjusting the valve on a tire, you can control how fast the air leaks out.</p>
+<p>We can do this by adding a “<strong>rate parameter</strong>” to our exponent. Instead of just <img src="https://latex.codecogs.com/png.latex?e%5E%7B-x%7D">, we can use <img src="https://latex.codecogs.com/png.latex?e%5E%7B-x%20%5Ccdot%20%5Clambda%7D">. This <img src="https://latex.codecogs.com/png.latex?%5Clambda"> value acts <strong>like a speed control for the decay</strong>. By changing <img src="https://latex.codecogs.com/png.latex?%5Clambda">, we can adjust how quickly the membrane potential returns to its resting value. It’s like having a dial to control how fast the balloon deflates.</p>
+<p>Let’s visualize this change and see how it affects the decay rate!</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">input <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>)</span>
+<span id="cb2-2"></span>
+<span id="cb2-3">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">X =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.4</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>), <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb2-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.table</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Input =</span> input, </span>
+<span id="cb2-5">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lambda =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">format</span>(x, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">digits =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nsmall =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),</span>
+<span id="cb2-6">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Output =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>input <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> x))</span>
+<span id="cb2-7">}) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbindlist</span>()</span>
+<span id="cb2-8"></span>
+<span id="cb2-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(Input, Output, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ordered</span>(lambda))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_hline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yintercept =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, </span>
+<span id="cb2-11">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linetype =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gray50"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(lambda),</span>
+<span id="cb2-14">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(e<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span>{<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>x<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>lambda}),</span>
+<span id="cb2-15">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Rate Parameter ("</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>lambda<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">") on Output Dynamics"</span>))</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><a href="index_files/figure-html/unnamed-chunk-3-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Effect of Rate Parameter on Function Dynamics. Here we see that by altering the rate parameter \lambda we can toy around with “how fast” our exponential function is returning to baseline."><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/index_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img" alt="Effect of Rate Parameter on Function Dynamics. Here we see that by altering the rate parameter \lambda we can toy around with “how fast” our exponential function is returning to baseline."></a></p>
+<figcaption class="margin-caption"><strong>Effect of Rate Parameter on Function Dynamics</strong>. Here we see that by altering the rate parameter <img src="https://latex.codecogs.com/png.latex?%5Clambda"> we can toy around with “how fast” our exponential function is returning to baseline.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Great! <strong>Now we need to give this function a little personality</strong>. Right now, it’s a bit generic. It always starts at 1 and decays towards 0. But <strong>what if we want to start at a different value?</strong> Or maybe we want it to <strong>decay towards a different value than 0?</strong></p>
+<p>No problem! We can easily customize this function.</p>
+<p>First, let’s give it a starting point. We can add a multiplicative factor (let’s call it <img src="https://latex.codecogs.com/png.latex?b">) to the exponential function. <strong>This is like giving our function a “starting height”</strong>. Now, our function looks like this:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ab%20%5Ccdot%20e%5E%7B-x%20%5Ccdot%20%5Clambda%7D%0A"></p>
+<p>Next, <strong>let’s give it a target value</strong>. We can add a linear factor (let’s call it <img src="https://latex.codecogs.com/png.latex?a">) to shift the entire curve up or down. This is <strong>like setting a new “ground level”</strong> for our function.</p>
+<p>With these adjustments, our function now looks like this:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Aa%20+%20b%20%5Ccdot%20e%5E%7B-x%20%5Ccdot%20%5Clambda%7D%0A"></p>
+<p><strong>This gives us much more flexibility!</strong> For example, if we set <img src="https://latex.codecogs.com/png.latex?a"> to 0 and <img src="https://latex.codecogs.com/png.latex?b"> to 1, we get our original function. <strong>It’s like having a basic template and then customizing it</strong> to fit our specific needs.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/exponential-function-cartoon.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">In fact, she did use it at the end. Photo from Frank Mariani in <a href="https://www.cartoonistforhire.com/frank-mariani-book-illustration/">Cartoonist for Hire</a></span></div></div>
+<p>But wait a minute! We’ve been doing all this math, and <strong>we haven’t even talked about neurons yet!</strong> What was the point of all this mental gymnastics? Well, it turns out that this seemingly random function has a <strong>very real biological meaning</strong>.</p>
+<p>Let’s take a look at that equation again, but this time with some real neuron terms:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AV(t)%20=%20E_L%20+%20(V_0%20-%20E_L)%20%5Ccdot%20e%5E%7B-g_L%20%5Ccdot%20t%7D%0A"></p>
+<p>Now, this equation starts to make sense. It tells us how the membrane potential (<img src="https://latex.codecogs.com/png.latex?V">) changes over time (<img src="https://latex.codecogs.com/png.latex?t">). It’s like watching a movie of the membrane potential.</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?V(t)">: This is the <strong>membrane potential at any given moment</strong>, the voltage across the cell membrane at that exact instant.</li>
+<li><img src="https://latex.codecogs.com/png.latex?E_L">: This is the <strong>“leak reversal potential”</strong>, the magical voltage where the leak channels are perfectly balanced. It’s like the <em>“sweet spot”</em> for the membrane, usually close to the resting membrane potential (around -70 mV). This is the value our function will try to get over time.</li>
+<li><img src="https://latex.codecogs.com/png.latex?V_0">: This is the starting point, <strong>the initial membrane potential</strong> at time <img src="https://latex.codecogs.com/png.latex?t%20=%200">. It’s like the starting position in a race.</li>
+<li><img src="https://latex.codecogs.com/png.latex?g_L">: This is the <strong>“leak conductance”</strong>, a measure of <em>how easily</em> ions can leak through the membrane. Think of it as how wide the leaky faucet is open. A higher <img src="https://latex.codecogs.com/png.latex?g_L"> means ions leak faster, and the membrane potential changes more quickly.</li>
+<li><img src="https://latex.codecogs.com/png.latex?e%5E%7B-g_L%20%5Ccdot%20t%7D">: This is <strong>the exponential decay term</strong>, the engine that drives the change. It ensures that the membrane potential gradually approaches <img src="https://latex.codecogs.com/png.latex?E_L"> over time, like a car slowly coming to a stop.</li>
+</ul>
+<p>Now, <strong>let’s get a little more mathematical</strong>. If we want to express how the membrane potential changes over time, <strong>we need to find the “rate of change”</strong> of the membrane potential. In math terms, this is called the <em>derivative</em>.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/confused-math.gif" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside"><strong>Average Bayesically-Speaking reader</strong> going through the content on a typical blog post after I say “We’ll start with the basics”. Photo from <a href="https://giphy.com/gifs/producthunt-zach-galifianakis-algorithm-3o6Yg4GUVgIUg3bf7W">Giphy</a></span></div></div>
+<p>If we take the derivative of our previous equation (don’t worry, you don’t need to know the calculus!), we get something like this:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%20V%7D%7Bd%20t%7D%20=%20-g_L%20%5Ccdot%20(V_0%20-%20E_L)%0A"></p>
+<p>This equation tells us <strong>how fast the membrane potential is changing</strong> at any given moment.</p>
+<p>Let’s break this down:</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cfrac%7Bd%20V%7D%7Bd%20t%7D">: This fancy term represents the <strong>“rate of change” of the membrane potential</strong>. It tells us how quickly the voltage is rising or falling.</li>
+<li><img src="https://latex.codecogs.com/png.latex?g_L">: This is our old friend, the <strong>leak conductance</strong>. A higher <img src="https://latex.codecogs.com/png.latex?g_L"> means the membrane is <em>“more leaky”</em>, and the membrane potential will change more rapidly.</li>
+<li><img src="https://latex.codecogs.com/png.latex?(V_0%20-%20E_L)">: This term represents <strong>the “driving force”</strong> for the leak current. The bigger the difference between the current potential and the leak reversal potential, the stronger the <em>“urge”</em> for the membrane potential to return to equilibrium. It’s like a ball rolling down a steep hill, the steeper the hill, the faster it rolls.</li>
+</ul>
+<p>If the next plot, we’ll see the solution to this equation, <strong>an exponential decay curve</strong>. It’s like watching a ball rolling down a hill, it starts fast but gradually slows down as it approaches the bottom.</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Parameters</span></span>
+<span id="cb3-2">time <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Time vector</span></span>
+<span id="cb3-3"></span>
+<span id="cb3-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Function to calculate membrane potential over time</span></span>
+<span id="cb3-5">membrane_potential <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(time, V0, g_L, E_L) {</span>
+<span id="cb3-6">  V <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> (V0 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> E_L) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>g_L <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> E_L</span>
+<span id="cb3-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">return</span>(V)</span>
+<span id="cb3-8">}</span>
+<span id="cb3-9"></span>
+<span id="cb3-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Starting membrane potentials</span></span>
+<span id="cb3-11">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">65</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">68</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">72</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">75</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">80</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">90</span>), <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb3-12">           <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.table</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">v =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">membrane_potential</span>(time, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">V0 =</span> x, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">g_L =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">E_L =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">70</span>),</span>
+<span id="cb3-13">                      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">start_v =</span> x,</span>
+<span id="cb3-14">                      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">time =</span> time)</span>
+<span id="cb3-15">         }) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb3-16">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbindlist</span>()</span>
+<span id="cb3-17"></span>
+<span id="cb3-18"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create the plot using ggplot2</span></span>
+<span id="cb3-19"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> time, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> v, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ordered</span>(start_v))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-20">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-21">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_hline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yintercept =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">70</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linetype =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"dashed"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"black"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Add E_L line</span></span>
+<span id="cb3-22">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(</span>
+<span id="cb3-23">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (Arbitrary Units)"</span>,</span>
+<span id="cb3-24">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Membrane Potential (mV)"</span>,</span>
+<span id="cb3-25">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Membrane Potential Decay Due to Leak Current"</span>,</span>
+<span id="cb3-26">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Starting Voltage (mV)"</span></span>
+<span id="cb3-27">  )</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><a href="index_files/figure-html/unnamed-chunk-4-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Membrane Potential and Leak Current. Here we can see that the membrane tends to return to its resting potential. This behavior is accomplished by the tweaks we made earlier to our exponential function."><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/index_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid figure-img" alt="Membrane Potential and Leak Current. Here we can see that the membrane tends to return to its resting potential. This behavior is accomplished by the tweaks we made earlier to our exponential function."></a></p>
+<figcaption class="margin-caption"><strong>Membrane Potential and Leak Current</strong>. Here we can see that the membrane tends to return to its resting potential. This behavior is accomplished by the tweaks we made earlier to our exponential function.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>For example, if we inject a small current that briefly changes the membrane potential to -60 mV, the membrane potential will decay back to -70 mV, following the equation.</p>
+</section>
+<section id="too-simple" class="level4">
+<h4 class="anchored" data-anchor-id="too-simple">Too Simple?</h4>
+<p>This simple model is important because it shows us how the membrane potential would behave <em>passively</em>, <strong>in the absence of any active processes</strong>. It explains how the resting membrane potential is maintained. However, <strong>it <u>doesn’t</u> explain the rapid, dramatic changes we see during an action potential</strong>. Our sleepy neuron is still just leaking and slowly returning to its resting state. It’s like watching paint dry (not exactly thrilling). We need something more to explain the neuron’s “shouting” behavior. <strong>That “something more” is the introduction of <u>voltage-gated ion channels</u></strong>, which we’ll explore in the next section.</p>
+<p>Okay, let’s add some simplified equations to represent the voltage-gated channels and incorporate them into our membrane potential equation.</p>
+</section>
+</section>
+<section id="adding-voltage-gated-channels-the-key-to-excitation" class="level1 page-columns page-full">
+<h1>Adding Voltage-Gated Channels: The Key to Excitation</h1>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/recording-animation.gif" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://www.humanbiomedia.org/action-potential-media/">Human Bio Media</a></span></div></div>
+<p>Okay, let’s get down to the nitty-gritty. <strong>How does this whole “voltage” thing actually work?</strong> Well, picture this: the change in voltage over time (basically how fast the voltage is shifting), <strong>is all about the flow of ions</strong>. You’ve got ions lazily leaking through the membrane (let’s call that the “lazy ion flow”), and then you’ve got the more exciting players: sodium, potassium, and even some other ions that like to join the party.</p>
+<p>So, if we want to get fancy, we could say that <strong>the change in voltage over time</strong>, which we can write as <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7BdV%7D%7Bdt%7D"> for all you math whizzes out there, <strong>is basically a sum of all these ion flows</strong>. We’ve got the lazy ion flow (<img src="https://latex.codecogs.com/png.latex?I_L">), the sodium party crashers (<img src="https://latex.codecogs.com/png.latex?I_%7BNa%7D">), the potassium crew (<img src="https://latex.codecogs.com/png.latex?I_K">), and any other surprise guests (<img src="https://latex.codecogs.com/png.latex?I_%7B%5Ctext%7Bother%20ions%7D%7D">).</p>
+<p>And if we want to put it all together in a fancy equation, we could say that:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7BdV%7D%7Bdt%7D%20=%20I_L%20+%20I_%7BNa%7D%20+%20I_K%20+%20%5Cdots%20+%20I_%7B%5Ctext%7Bother%20ions%7D%7D%0A"></p>
+<p>So, now we’ve got this “leaky current” (<img src="https://latex.codecogs.com/png.latex?I_L">), which we can basically describe using that fancy equation <img src="https://latex.codecogs.com/png.latex?-g_L%20%5Ccdot%20(V_0%20-%20E_L)">. <strong>But what about those exciting voltage-gated channels?</strong> How do we explain their contribution to the party? To figure that out, we need to dive deeper into the wild world of voltage-gated channel dynamics.</p>
+<p><strong>Remember our boring old passive membrane?</strong> It just kind of slumped back to its resting potential, like a deflated balloon. Well, <strong>our active neurons</strong> are a whole different story. They’ve <strong>got these amazing channels that open and close depending on the voltage</strong>, making the whole system much more exciting.</p>
+<p><strong>These channels</strong>, especially the sodium (<img src="https://latex.codecogs.com/png.latex?Na%5E+">) and potassium (<img src="https://latex.codecogs.com/png.latex?K%5E+">) channels, <strong>are the real stars of the show</strong>. They’re the ones that cause those dramatic swings in voltage during an action potential.</p>
+<p><strong><u>Sodium channels</u></strong> are like little gates. They have an <em>“activation gate”</em> (let’s call it gate <img src="https://latex.codecogs.com/png.latex?m">) that swings <strong>open around -55 mV</strong>. This is like the starting pistol for the race! <strong>Sodium ions flood into the cell, and the voltage skyrockets</strong>. But here’s the catch: these channels also have an <em>“inactivation gate”</em> (let’s call it gate <img src="https://latex.codecogs.com/png.latex?h">) that slams <strong>shut around +30 mV</strong>. It’s like the emergency brakes! This <strong>prevents the cell from exploding with too much sodium</strong>. And don’t worry, <strong>the inactivation gate eventually reopens</strong> when the cell calms down and returns to its resting potential (around -70 mV).</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/sodium-channel-open-state.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Sodium channel in an open state, illustrating its activation and inactivation gates. Photo from <a href="https://www.humanbiomedia.org/action-potential-media/">Human Bio Media</a></span></div></div>
+<p>So, if we want to express the sodium current (<img src="https://latex.codecogs.com/png.latex?I_%7BNa%7D">) in all its glory, we could say that:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AI_%7BNa%7D%20=%20-g_%7BNa%7D%20%5Ccdot%20m%20%5Ccdot%20h%20%5Ccdot%20(V_0%20-%20E_%7BNa%7D)%0A"></p>
+<p>Where:</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?g_%7BNa%7D">: <strong>Sodium conductance</strong> (how easily sodium ions flow when channels are open).</li>
+<li><img src="https://latex.codecogs.com/png.latex?m">: Sodium <strong>activation gate</strong> (1 = open, 0 = closed).</li>
+<li><img src="https://latex.codecogs.com/png.latex?h">: Sodium <strong>inactivation gate</strong> (1 = open, 0 = closed). This gate introduces a delay and helps terminate the sodium current.</li>
+<li><img src="https://latex.codecogs.com/png.latex?E_%7BNa%7D">: Sodium <strong>reversal potential</strong>.</li>
+</ul>
+<p>In contrast, <strong>potassium channels are a bit simpler</strong>. They only have one gate (let’s call it gate <img src="https://latex.codecogs.com/png.latex?n">), which <strong>acts like a slow-opening door</strong>. This gate starts to swing <strong>open around +30mV</strong>, allowing potassium ions to flood out of the cell. This outflow of positive charge <strong>helps bring the voltage back down to resting potential</strong> (a phase we call “repolarization”). But here’s the twist: this gate is a bit slow to close. <strong>It doesn’t fully shut until the voltage dips below -80 mV</strong>, which is even more negative than the resting potential. This creates a slight undershoot before the cell finally settles back down.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/potassium-channel-open-state.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Potassium channel in an open state, with its only voltage-dependent gate. Photo from <a href="https://www.humanbiomedia.org/action-potential-media/">Human Bio Media</a></span></div></div>
+<p>Just like we did with the sodium channels, we can express the potassium current (<img src="https://latex.codecogs.com/png.latex?I_K">) as the following:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AI_%7BK%7D%20=%20-g_%7BK%7D%20%5Ccdot%20n%20%5Ccdot%20(V_0%20-%20E_%7BK%7D)%0A"></p>
+<p>Where:</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?g_K">: Potassium conductance.</li>
+<li><img src="https://latex.codecogs.com/png.latex?n">: Potassium activation gate (1 = open, 0 = closed).</li>
+<li><img src="https://latex.codecogs.com/png.latex?E_K">: Potassium reversal potential.</li>
+</ul>
+<p>So now, our updated equation now looks like this:</p>
+<div class="page-columns page-full"><p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cfrac%7BdV%7D%7Bdt%7D%20=%20-&amp;g_L%20%5Ccdot%20(V%20-%20E_L)%20+%20%5C%5C%0A-&amp;g_%7BNa%7D%20%5Ccdot%20m%20%5Ccdot%20h%20%5Ccdot%20(V%20-%20E_%7BNa%7D)%20+%20%5C%5C%0A-&amp;g_K%20%5Ccdot%20n%20%5Ccdot%20(V%20-%20E_K)%0A%5Cend%7Baligned%7D%0A"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">To maintain clarity and focus on the core dynamics, we’ll use simplified “on/off” gating variables rather than the full Hodgkin-Huxley equations (which we can explore another time).</span></div></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Simplified Gating: A Key Simplification
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>In the real world, these gating variables (<code>m</code>, <code>h</code>, and <code>n</code>) are described by some seriously complex equations in the full <strong>Hodgkin-Huxley model</strong> <span class="citation" data-cites="yao2023dynamic">(see Yao et al. 2023)</span>. It’s like trying to understand the inner workings of a Swiss watch!</p>
+<p>But for our simplified model, we’re going to take a shortcut. We’ll assume these gates simply snap open and shut based on the voltage. It’s like we’re replacing that intricate Swiss watch with a simple on/off switch. <strong>This simplification helps us grasp the fundamental principles</strong> of action potential generation without getting bogged down in a sea of equations.</p>
+</div>
+</div>
+</div>
+<p>With these additions, our model finally starts to show some exciting behavior! If the membrane potential reaches a certain <em>“trigger point”</em> (called the threshold), <strong>the sodium channels swing open</strong> wide (<img src="https://latex.codecogs.com/png.latex?m"> = 1). It’s like a floodgate opening! <strong>Sodium ions rush into the cell</strong>, causing a rapid spike in voltage, that’s our action potential!</p>
+<p>But then, the sodium inactivation gate slams shut (<img src="https://latex.codecogs.com/png.latex?h"> = 0), and the <strong>potassium channels finally open their doors</strong> (<img src="https://latex.codecogs.com/png.latex?n"> = 1). <strong>Potassium ions rush out of the cell</strong>, bringing the voltage back down to normal, that’s the “repolarization” phase.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/ion-channels.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Voltage-gated channels for sodium (Na<sup>+</sup>) and potassium (K<sup>+</sup>). ECF, extracellular fluid; ICF, intracellular fluid. Photo from <a href="https://www.humanbiomedia.org/action-potential-media/">Human Bio Media</a></span></div></div>
+<p>Now, <strong>let’s put this model into action</strong>! We’ll use something called the <em>Euler method</em>, which is basically a fancy way of <strong>numerically solving our equation</strong>. This will allow us to see how the membrane potential changes over time in response to a stimulus. <strong>It’s like running a simulation</strong> to see how our “neuron” behaves in the real world.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+About the Hodgkin-Huxley Model
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>The <em>Hodgkin-Huxley equations</em> <span class="citation" data-cites="hodgkin1939action">(see Hodgkin and Huxley 1939)</span>, developed in the mid-20th century, <strong>revolutionized our understanding of how neurons fire</strong>. These complex equations, initially derived from meticulous experiments on the giant squid axon, <strong>accurately model the intricate interplay of ion channels</strong> that generate the action potential.</p>
+<p>Okay but, why it matters today? Well, for many reasons like:</p>
+<ul>
+<li><strong>Foundation for modern neuroscience:</strong> The <em>Hodgkin-Huxley model</em> remains a cornerstone of computational neuroscience, providing a framework for understanding the electrical behavior of neurons.</li>
+<li><strong>Drug development:</strong> Researchers use these equations to study the effects of drugs and toxins on neuronal activity, aiding in the development of new medications for neurological disorders.</li>
+<li><strong>Artificial intelligence:</strong> Inspired by the <em>Hodgkin-Huxley model</em>, researchers are developing biologically realistic artificial neurons for use in neuromorphic computing, a promising area of artificial intelligence.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="simulating-an-action-potential-bringing-the-model-to-life" class="level1 page-columns page-full">
+<h1>Simulating an Action Potential: Bringing the Model to Life</h1>
+<p>Alright, <strong>let’s get this show on the road!</strong> Now that we have our simplified mathematical model of the neuron, it’s time to bring it to life. We’ll use R, a powerful programming language, <strong>to simulate our model</strong> and watch how the membrane potential changes over time.</p>
+<p>We’ll use a technique called the <em>Euler method</em>, which is basically like taking tiny little steps to solve our equation. It’s a bit like trying to reach a destination <strong>by taking a series of small hops</strong> instead of jumping straight there.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/wojak-meme.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside"><strong>Average Bayesically-Speaking reader</strong> when is asked about their knowledge on voltage-gated channels. Photo from <a href="https://wojak-studio.com">Wojak-Studio</a></span></div></div>
+<section id="setting-the-stage-defining-the-parameters" class="level4">
+<h4 class="anchored" data-anchor-id="setting-the-stage-defining-the-parameters">Setting the Stage: Defining the Parameters</h4>
+<p>First, <strong>we need to define the parameters of our model</strong>. These parameters represent the <strong>properties of our neuron</strong>, such as how <em>“leaky”</em> the membrane is and the properties of the sodium and potassium channels. We also need to define <strong>the time step</strong> (<code>dt</code>), which determines how often we <em>“take a picture”</em> of the membrane potential during our simulation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Parameters</span></span>
+<span id="cb4-2">params <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(</span>
+<span id="cb4-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">g_L =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">E_L =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">70</span>,   <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Leak Channels</span></span>
+<span id="cb4-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">g_Na =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">E_Na =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>, <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Sodium Channels</span></span>
+<span id="cb4-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">g_K =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">E_K =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">90</span>,   <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Potassium Channels</span></span>
+<span id="cb4-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">dt =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.001</span></span>
+<span id="cb4-7">)</span></code></pre></div>
+</div>
+<p>Here:</p>
+<ul>
+<li><code>g_L</code>: Leak conductance.</li>
+<li><code>E_L</code>: Leak reversal potential (resting potential).</li>
+<li><code>g_Na</code>: Sodium conductance.</li>
+<li><code>E_Na</code>: Sodium reversal potential.</li>
+<li><code>g_K</code>: Potassium conductance.</li>
+<li><code>E_K</code>: Potassium reversal potential.</li>
+<li><code>dt</code>: Time step (0.001 ms).</li>
+</ul>
+</section>
+<section id="the-sodium-activation-gate-the-onoff-switch" class="level4">
+<h4 class="anchored" data-anchor-id="the-sodium-activation-gate-the-onoff-switch">The Sodium Activation Gate: The On/Off Switch</h4>
+<p>The <strong>sodium activation</strong> gate (<code>m</code>) is like the <em>“on”</em> switch for sodium channels. When the membrane potential (<code>V_prev</code>) reaches a critical point, around -55 mV, <strong>this gate swings open instantly</strong>, allowing sodium ions to flood in. It’s like someone yelling <em>“Go!”</em> at a starting line.</p>
+<p>In our simplified model, <strong>we’re making a big assumption</strong>: this gate is an <em>all-or-nothing</em> switch. Either it’s completely open (<code>m</code> becomes 1) or completely closed (<code>m</code> is 0). <strong>This is a simplification</strong>, but it helps us capture the essence of the rapid rise of the action potential.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">update_m <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(V_prev) {</span>
+<span id="cb5-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(V_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">55</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb5-3">}</span></code></pre></div>
+</div>
+<p>This function takes the previous membrane potential (<code>V_prev</code>) as input <strong>and tells us whether the sodium activation gate is open or closed</strong>.</p>
+</section>
+<section id="the-sodium-inactivation-gate-the-emergency-brake" class="level4">
+<h4 class="anchored" data-anchor-id="the-sodium-inactivation-gate-the-emergency-brake">The Sodium Inactivation Gate: The Emergency Brake</h4>
+<p>The <strong>sodium inactivation gate</strong> (<code>h</code>) is like the emergency brake for the sodium channels. It starts open (<code>h</code> = 1) at rest, but when the membrane depolarizes and sodium channels open wide (<code>m</code> = 1), this gate slowly starts to close (<code>h</code> transitions towards 0). This <strong>is crucial to prevent a runaway influx of sodium</strong>.</p>
+<p>However, the <strong>inactivation gate only starts to close when the membrane potential is sufficiently positive</strong> (around +20 mV). It’s like the brake only engages when the car is going fast enough.</p>
+<p>Conversely, when the membrane repolarizes and <strong>the sodium channels close</strong> (<code>m</code> = 0), the inactivation gate slowly reopens (<code>h</code> transitions towards 1). But <strong>this recovery only happens when the membrane potential is sufficiently negative</strong> (around -70 mV). It’s like the brake only releases when the car has slowed down significantly.</p>
+<p>This conditional behavior is implemented in the following function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">update_h <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(m_current, V_prev, h_prev) {</span>
+<span id="cb6-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(</span>
+<span id="cb6-3">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">test =</span> m_current <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> V_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, </span>
+<span id="cb6-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yes =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, </span>
+<span id="cb6-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">no =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(</span>
+<span id="cb6-6">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">test =</span> m_current <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> V_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">70</span>, </span>
+<span id="cb6-7">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yes =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, </span>
+<span id="cb6-8">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">no =</span> h_prev</span>
+<span id="cb6-9">    )</span>
+<span id="cb6-10">  )</span>
+<span id="cb6-11">}</span></code></pre></div>
+</div>
+<p>This function takes the current value of <code>m</code> (<code>m_current</code>), the previous membrane potential (<code>V_prev</code>), and the previous value of <code>h</code> (<code>h_prev</code>) as inputs and <strong>returns the updated value of <code>h</code></strong>.</p>
+</section>
+<section id="the-potassium-activation-gate-the-slow-and-steady-door" class="level4">
+<h4 class="anchored" data-anchor-id="the-potassium-activation-gate-the-slow-and-steady-door">The Potassium Activation Gate: The Slow and Steady Door</h4>
+<p>The <strong>potassium activation gate</strong> (<code>n</code>) is like a slow-opening door. It <strong>starts to open when the membrane potential reaches a sufficiently positive value</strong> (around +20 mV). But unlike the sodium gate, it’s a bit sluggish.</p>
+<p>There’s also a bit of <em>“<a href="https://en.wikipedia.org/wiki/Hysteresis">hysteresis</a>”</em> here. This means that the potassium gate <strong>only closes when the membrane potential becomes extremely negative</strong> (around -80 mV) and it was already open in the previous time step. <strong>It’s like the door is reluctant to close once it’s been opened</strong>. This hysteresis ensures that the membrane repolarizes completely before the potassium channels fully close.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">update_n <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(V_prev, n_prev) {</span>
+<span id="cb7-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(</span>
+<span id="cb7-3">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">test =</span> V_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, </span>
+<span id="cb7-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yes =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, </span>
+<span id="cb7-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">no =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ifelse</span>(</span>
+<span id="cb7-6">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">test =</span> V_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">80</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> n_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, </span>
+<span id="cb7-7">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yes =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, </span>
+<span id="cb7-8">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">no =</span> n_prev</span>
+<span id="cb7-9">    )</span>
+<span id="cb7-10">  )</span>
+<span id="cb7-11">}</span></code></pre></div>
+</div>
+<p>This function takes the previous membrane potential (<code>V_prev</code>) and the previous value of <code>n</code> (<code>n_prev</code>) as input and <strong>returns the updated value of <code>n</code></strong>.</p>
+</section>
+<section id="calculating-the-ion-flows-the-grand-finale" class="level4">
+<h4 class="anchored" data-anchor-id="calculating-the-ion-flows-the-grand-finale">Calculating the Ion Flows: The Grand Finale</h4>
+<p>This function calculates the flow of ions across the membrane. We have three main players:</p>
+<ul>
+<li><strong>The Leaky Current:</strong> This is the <em>“background”</em> current, where ions slowly leak through the membrane.</li>
+<li><strong>The Sodium Current:</strong> This is where the action happens! It’s influenced by the sodium activation gate (<code>m</code>) and the inactivation gate (<code>h</code>).</li>
+<li><strong>The Potassium Current:</strong> This current is controlled by the potassium activation gate (<code>n</code>).</li>
+</ul>
+<p>To calculate each current, we use a simple formula: <img src="https://latex.codecogs.com/png.latex?I%20=%20g%20%5Ccdot%20(V%20-%20E)">. <strong>It’s like calculating the flow of water through a pipe</strong>, where <img src="https://latex.codecogs.com/png.latex?g"> represents the size of the pipe, <img src="https://latex.codecogs.com/png.latex?V"> is the pressure difference, and <img src="https://latex.codecogs.com/png.latex?E"> is a kind of “equilibrium point.”</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1">calculate_currents <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> </span>
+<span id="cb8-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(V_prev, m, h, n, params) {</span>
+<span id="cb8-3">    </span>
+<span id="cb8-4">  l_current <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>g_L <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (V_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>E_L)</span>
+<span id="cb8-5">  na_current <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>g_Na <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> m <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> h <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (V_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>E_Na)</span>
+<span id="cb8-6">  k_current <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>g_K <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> n <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (V_prev <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>E_K)</span>
+<span id="cb8-7">  </span>
+<span id="cb8-8">  output <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">l_current =</span> l_current, </span>
+<span id="cb8-9">                 <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na_current =</span> na_current, </span>
+<span id="cb8-10">                 <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">k_current =</span> k_current)</span>
+<span id="cb8-11">  </span>
+<span id="cb8-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">return</span>(output)</span>
+<span id="cb8-13">}</span></code></pre></div>
+</div>
+<p>This function takes the previous membrane potential (<code>V_prev</code>), the gating variables (<code>m</code>, <code>h</code>, <code>n</code>), and the parameters (<code>params</code>) as input and <strong>returns a list containing the calculated currents</strong>.</p>
+</section>
+<section id="simulating-neurons-in-action-bringing-it-all-together" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="simulating-neurons-in-action-bringing-it-all-together">Simulating Neurons in Action: Bringing it All Together!</h4>
+<p>This is the grand finale! <strong>This function brings all the pieces together</strong> to simulate how our neuron actually behaves. It takes the <u>model parameters</u>, a <u>time vector</u> (which tells us how long to run the simulation), and a <u>stimulus current</u> (like an external input to the neuron) as input.</p>
+<p>Then, <strong>it iterates through each time step</strong>, updating the gating variables (those pesky “m,” “h,” and “n” gates) and <strong>calculating how the membrane potential changes</strong> using the Euler method. It’s like watching a movie frame-by-frame, seeing how the neuron responds to the different inputs.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">simulate_ap <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(params, time, stimulus_current) {</span>
+<span id="cb9-2">  n <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(time)</span>
+<span id="cb9-3">  V <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rep</span>(params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>E_L, n) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize Membrane potential</span></span>
+<span id="cb9-4">  m <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize Sodium Activation</span></span>
+<span id="cb9-5">  h <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rep</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, n) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize Sodium Inactivation</span></span>
+<span id="cb9-6">  n_inf <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize Potassium Activation</span></span>
+<span id="cb9-7">  l_current <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize Leak Current</span></span>
+<span id="cb9-8">  na_current <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize Sodium Current</span></span>
+<span id="cb9-9">  k_current <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(n) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize Potassium Current</span></span>
+<span id="cb9-10">  </span>
+<span id="cb9-11">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> (i <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>n) {</span>
+<span id="cb9-12">    <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Updates the state of each channel's gates</span></span>
+<span id="cb9-13">    m[i] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">update_m</span>(V[i <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>])</span>
+<span id="cb9-14">    h[i] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">update_h</span>(m[i], V[i <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], h[i <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>])</span>
+<span id="cb9-15">    n_inf[i] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">update_n</span>(V[i <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], n_inf[i <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>])</span>
+<span id="cb9-16">    </span>
+<span id="cb9-17">    <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Compute the current </span></span>
+<span id="cb9-18">    currents <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">calculate_currents</span>(</span>
+<span id="cb9-19">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">V_prev =</span> V[i <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], </span>
+<span id="cb9-20">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">m =</span> m[i], </span>
+<span id="cb9-21">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">h =</span> h[i], </span>
+<span id="cb9-22">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> n_inf[i], </span>
+<span id="cb9-23">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">params =</span> params</span>
+<span id="cb9-24">    )</span>
+<span id="cb9-25">    </span>
+<span id="cb9-26">    l_current[i] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> currents<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>l_current</span>
+<span id="cb9-27">    na_current[i] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> currents<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>na_current</span>
+<span id="cb9-28">    k_current[i] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> currents<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>k_current</span>
+<span id="cb9-29">    </span>
+<span id="cb9-30">    <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Sum each current contribution to the overall voltage change</span></span>
+<span id="cb9-31">    dVdt <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> </span>
+<span id="cb9-32">      l_current[i] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb9-33">      na_current[i] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb9-34">      k_current[i] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb9-35">      stimulus_current[i]</span>
+<span id="cb9-36">    </span>
+<span id="cb9-37">    <span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## Update the Voltage based on current net flow</span></span>
+<span id="cb9-38">    V[i] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> </span>
+<span id="cb9-39">      V[i <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dVdt <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>dt</span>
+<span id="cb9-40">  }</span>
+<span id="cb9-41">  </span>
+<span id="cb9-42">  output <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.table</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Time =</span> time, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Voltage =</span> V)</span>
+<span id="cb9-43">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">return</span>(output)</span>
+<span id="cb9-44">}</span></code></pre></div>
+</div>
+<p>This function gets the party started! <strong>It initializes the membrane potential and all those gating variables</strong> (“m,” “h,” and “n”) to their starting values. Then, it enters a loop, <strong>stepping through time</strong> and updating these variables at each step. It’s like watching a movie play out <em>frame-by-frame</em>, observing how the membrane potential changes in response to the shifting currents.</p>
+<p>Now, <strong>let’s run this simulation and see what happens!</strong> We’ll visualize the results to get a better understanding of how the neuron behaves.</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Simulation time</span></span>
+<span id="cb10-2">time <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>dt)</span>
+<span id="cb10-3"></span>
+<span id="cb10-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Stimulus</span></span>
+<span id="cb10-5">stimulus_current <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(time))</span>
+<span id="cb10-6">stimulus_current[time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2.5</span>] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span></span>
+<span id="cb10-7"></span>
+<span id="cb10-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Run the simulation</span></span>
+<span id="cb10-9">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">simulate_ap</span>(params, time, stimulus_current)</span>
+<span id="cb10-10"></span>
+<span id="cb10-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plotting</span></span>
+<span id="cb10-12"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(df, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(Time, Voltage)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb10-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_hline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yintercept =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">70</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linetype =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gray50"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb10-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"orange"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb10-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (ms)"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Membrane Potential (mV)"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Simplified Action Potential Model"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><a href="index_files/figure-html/unnamed-chunk-11-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Simplified Action Potential Model. Here we can see that after taking into account each contribution to the overall voltage dynamics over time (based on net current flow), we can see something more alike to a real action potential curve."><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/index_files/figure-html/unnamed-chunk-11-1.svg" class="img-fluid figure-img" alt="Simplified Action Potential Model. Here we can see that after taking into account each contribution to the overall voltage dynamics over time (based on net current flow), we can see something more alike to a real action potential curve."></a></p>
+<figcaption class="margin-caption"><strong>Simplified Action Potential Model</strong>. Here we can see that after taking into account each contribution to the overall voltage dynamics over time (based on net current flow), we can see something more alike to a real action potential curve.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<!-- Systematically vary key parameters, such as: -->
+</section>
+</section>
+<section id="tweaking-the-knobs-sensitivity-analysis" class="level1 page-columns page-full">
+<h1>Tweaking the Knobs: Sensitivity Analysis</h1>
+<p>Now that we have our neuron simulation up and running, let’s see what happens when we start tinkering with the settings. This is called <em>sensitivity analysis</em>. <strong>We’ll systematically change one parameter at a time and see how it affects the neuron’s behavior</strong>. It’s like tweaking the knobs on a radio to see how it changes the sound.</p>
+<p>This analysis is <strong>crucial for understanding how our model works</strong> and figuring out which parameters have the biggest impact on the action potential. It’s like trying to figure out <strong>which ingredients are most important</strong> for baking the perfect cake.</p>
+<p>To make this process easier, we’ll create a special function called <code>sensitivity_analysis</code>. This function takes the model parameters, the time vector, the stimulus current, the name of the parameter we want to change (<code>param_name</code>), and a list of values we want to test for that parameter (<code>values</code>) as input. It then <strong>runs the simulation for each value in the list</strong>, stores the results, and combines them all into a single, organized data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">sensitivity_analysis <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> </span>
+<span id="cb11-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(params, time, stimulus_current, param_name, values) {</span>
+<span id="cb11-3">  </span>
+<span id="cb11-4">    results <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vector</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mode =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"list"</span>)</span>
+<span id="cb11-5">    </span>
+<span id="cb11-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> (value <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> values) {</span>
+<span id="cb11-7">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Modify the parameter value</span></span>
+<span id="cb11-8">      modified_params <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> params</span>
+<span id="cb11-9">      modified_params[[param_name]] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> value </span>
+<span id="cb11-10">      </span>
+<span id="cb11-11">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Run the simulation</span></span>
+<span id="cb11-12">      df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">simulate_ap</span>(modified_params, time, stimulus_current) </span>
+<span id="cb11-13">      </span>
+<span id="cb11-14">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Add a column to track the parameter value</span></span>
+<span id="cb11-15">      df<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>ParameterValue <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> value</span>
+<span id="cb11-16">      </span>
+<span id="cb11-17">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Store the results</span></span>
+<span id="cb11-18">      results[[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.character</span>(value)]] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> df</span>
+<span id="cb11-19">    }</span>
+<span id="cb11-20">    </span>
+<span id="cb11-21">    output <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbindlist</span>(results)</span>
+<span id="cb11-22">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">return</span>(output) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Combine all data.tables into one</span></span>
+<span id="cb11-23">}</span></code></pre></div>
+</div>
+<p>Inside the function, we do the following:</p>
+<ol type="1">
+<li><strong>Create an empty list:</strong> We create an empty list called <code>results</code> to store the output of each simulation. Think of it as an empty box to store all our simulation results.</li>
+<li><strong>Loop through the values:</strong> We loop through each value in the list of values we want to test. It’s like trying different settings on a machine one by one.</li>
+<li><strong>Make a copy:</strong> We create a copy of our original parameters called <code>modified_params</code>. This is crucial to avoid messing up the original settings.</li>
+<li><strong>Tweak the parameter:</strong> We modify the specific parameter (<code>param_name</code>) in our <code>modified_params</code> copy to the current value from our list.</li>
+<li><strong>Run the simulation:</strong> We run our <code>simulate_ap</code> function with these modified parameters to see how the neuron behaves.</li>
+<li><strong>Add a label:</strong> We add a new column called <code>ParameterValue</code> to the results to keep track of which parameter value we used for that simulation. It’s like labeling each experiment.</li>
+<li><strong>Store the results:</strong> We store the results of this simulation in our <code>results</code> list, using the parameter value as a label for easy reference.</li>
+<li><strong>Combine the results:</strong> Finally, we use a special function called <code>rbindlist</code> to neatly combine all the individual data frames in our <code>results</code> list into one big data frame. This gives us a complete overview of how the neuron behaves with different parameter settings.</li>
+</ol>
+<section id="the-plotting-function-seeing-the-results" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="the-plotting-function-seeing-the-results">The Plotting Function: Seeing the Results</h4>
+<p>Now, let’s visualize our results! We’ll create a special function called <code>plot_sensitivity</code> to do this. This function takes the combined results data frame and the name of the parameter we were analyzing as input. It then generates a plot that shows how the membrane potential changes over time <strong>for each of the parameter values we tested</strong>. It’s like creating a visual story of how the neuron behaves under different conditions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">plot_sensitivity <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(results, param_name) {</span>
+<span id="cb12-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(results, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(Time, Voltage, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">factor</span>(ParameterValue))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-3">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_hline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yintercept =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">70</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linetype =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gray50"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-5">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (ms)"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Membrane Potential (mV)"</span>, </span>
+<span id="cb12-6">         <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> scales<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">label_parse</span>()(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Sensitivity~Analysis~of~"</span>, param_name))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb12-7">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_color_ordinal</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">name =</span> scales<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">label_parse</span>()(param_name))</span>
+<span id="cb12-8">}</span></code></pre></div>
+</div>
+<p>This function creates a line plot using <code>ggplot2</code>, where the x-axis represents time, the y-axis represents the membrane potential, and <strong>different colors represent different values of the varied parameter</strong>. The <code>factor()</code> function is used to treat the <code>ParameterValue</code> as a categorical variable, ensuring that each value gets a distinct color in the plot.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/math-confused-girl.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Your face after I told you that we’re going to see the basics and it turned out not so basic after all. Photo from <a href="https://cl.pinterest.com/pin/800022321283732215/">Pinteres</a></span></div></div>
+</section>
+<section id="setting-the-stage-for-simulations" class="level4">
+<h4 class="anchored" data-anchor-id="setting-the-stage-for-simulations">Setting the Stage for Simulations</h4>
+<p>Before we dive into the nitty-gritty of sensitivity analysis, we need to set the stage for our simulations.</p>
+<ul>
+<li><strong>Time:</strong> We define the simulation time, which tells us how long to run the experiment. We’ll run the simulation from 0 to 8 milliseconds (ms).</li>
+<li><strong>Time Step:</strong> We need to decide how often we “take a picture” of the membrane potential. This is determined by the <code>dt</code> parameter in our <code>params</code> list.</li>
+<li><strong>Stimulus:</strong> We’ll create a brief stimulus current, like a little jolt of electricity, that’s applied between 0.5 and 1.0 milliseconds.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Simulation time and stimulus</span></span>
+<span id="cb13-2">time <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> params<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>dt)</span>
+<span id="cb13-3">stimulus_current <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">length =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(time))</span>
+<span id="cb13-4">stimulus_current[time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span></span></code></pre></div>
+</div>
+</section>
+<section id="assessing-the-effect-of-sodium-conductance-g_na-turning-up-the-heat" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="assessing-the-effect-of-sodium-conductance-g_na-turning-up-the-heat">Assessing the Effect of Sodium Conductance (<img src="https://latex.codecogs.com/png.latex?g_%7BNa%7D">): Turning Up the Heat</h4>
+<p>Now, let’s see what happens when we tweak the sodium conductance (<img src="https://latex.codecogs.com/png.latex?g_%7BNa%7D">). This is like adjusting the heat on a stove.</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Run sensitivity analysis for g_Na</span></span>
+<span id="cb14-2">gna_values <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9.5</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>)</span>
+<span id="cb14-3"></span>
+<span id="cb14-4">gna_results <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sensitivity_analysis</span>(params, time, stimulus_current, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"g_Na"</span>, gna_values)</span>
+<span id="cb14-5"></span>
+<span id="cb14-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_sensitivity</span>(gna_results, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"g[Na]"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><a href="index_files/figure-html/unnamed-chunk-15-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Effect of Sodium Conductance in Potential Dynamics. Here we can see the overall effect of changing the sodium conductance on membrane potential dynamics."><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img" alt="Effect of Sodium Conductance in Potential Dynamics. Here we can see the overall effect of changing the sodium conductance on membrane potential dynamics."></a></p>
+<figcaption class="margin-caption"><strong>Effect of Sodium Conductance in Potential Dynamics</strong>. Here we can see the overall effect of changing the sodium conductance on membrane potential dynamics.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>By running our <code>sensitivity_analysis</code> function and then plotting the results, we can clearly see how <strong>changing <img src="https://latex.codecogs.com/png.latex?g_%7BNa%7D"> affects the action potential</strong>. It’s like watching how turning up the heat affects how quickly water boils. As expected, increasing <img src="https://latex.codecogs.com/png.latex?g_%7BNa%7D"> makes the depolarization much faster and more dramatic.</p>
+</section>
+<section id="assessing-the-effect-of-potassium-conductance-g_k-controlling-the-cool-down" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="assessing-the-effect-of-potassium-conductance-g_k-controlling-the-cool-down">Assessing the Effect of Potassium Conductance (<img src="https://latex.codecogs.com/png.latex?g_%7BK%7D">): Controlling the Cool-Down</h4>
+<p>Next, let’s see how changing the potassium conductance (<img src="https://latex.codecogs.com/png.latex?g_%7BK%7D">) affects things. This is like adjusting the thermostat, <strong>it controls the cool-down period</strong>.</p>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Run sensitivity analysis for g_K</span></span>
+<span id="cb15-2">gk_values <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb15-3"></span>
+<span id="cb15-4">gk_results <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sensitivity_analysis</span>(params, time, stimulus_current, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"g_K"</span>, gk_values)</span>
+<span id="cb15-5"></span>
+<span id="cb15-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_sensitivity</span>(gk_results, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"g[K]"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><a href="index_files/figure-html/unnamed-chunk-16-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Effect of Potassium Conductance in Potential Dynamics. Here we can see the overall effect of changing the potassium conductance on membrane potential dynamics."><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/index_files/figure-html/unnamed-chunk-16-1.svg" class="img-fluid figure-img" alt="Effect of Potassium Conductance in Potential Dynamics. Here we can see the overall effect of changing the potassium conductance on membrane potential dynamics."></a></p>
+<figcaption class="margin-caption"><strong>Effect of Potassium Conductance in Potential Dynamics</strong>. Here we can see the overall effect of changing the potassium conductance on membrane potential dynamics.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Again, using our handy functions, we can easily see how <img src="https://latex.codecogs.com/png.latex?g_%7BK%7D"> impacts the action potential. Increasing <img src="https://latex.codecogs.com/png.latex?g_%7BK%7D"> <strong>makes the repolarization phase much faster and more pronounced</strong>. It’s like adding more ice to a hot drink, it cools down much quicker. This structured approach allows us to efficiently explore how <strong>different parameters affect our model</strong> and gain a deeper understanding of its dynamics.</p>
+</section>
+</section>
+<section id="so-you-think-you-know-how-a-neuron-fires-think-again" class="level1 page-columns page-full">
+<h1>So, You Think You Know How a Neuron Fires? Think Again!</h1>
+<p>Okay, let’s be honest, this <em>“action potential”</em> business is a bit overhyped. It’s basically just a fancy term for a <strong>sudden influx of sodium ions followed by a swift efflux of potassium</strong>. Really, who needs all those fancy textbooks and intimidating equations? (Kidding! We need them).</p>
+<p>Our little model here? Yeah, it’s basically a <em>“neuron for beginners”</em>. <strong>We stripped it down to the essentials</strong>, ignoring the nitty-gritty details like how ion channels actually open and close and the subtle ways different potassium channels interact. <strong>Who needs that level of detail, right?</strong><sup>1</sup></p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;In fact we do! But that much level of detail is reserved for another blog post</p></div></div><p>Now, let’s get real for a second. Real neurons? They’re not this simple. Oh no. <strong>They have a whole zoo of ion channels</strong>, each with its own quirks and preferences for voltage <span class="citation" data-cites="drukarch2023thinking">(Drukarch and Wilhelmus 2023)</span>. Sodium channels? Potassium channels? Please, <strong>it’s more like a neurochemical orchestra!</strong> And don’t even get me started on the calcium-dependent potassium channels…</p>
+<p>But hey, our little <em>“dumbed-down”</em> neuron serves a purpose. It’s like, the <em>“Cliff’s Notes”</em> of neurophysiology. You get the main idea, <strong>you understand the basic principles of membrane excitability</strong>. And that, my friends, is enough to impress at your next cocktail party.</p>
+<p>Now, <strong>let’s talk about drugs</strong>. Oh boy, drugs. You know, those pesky little molecules that interfere with neuronal signaling? Well, guess what? <strong>They love to target these ion channels</strong>. Lidocaine? Blocks sodium channels, basically shutting down the neuron. Potassium channel blockers? Well, let’s just say they can make neurons go wild. <strong>Our model? It can predict these effects</strong>, to a certain extent. Of course, it’s not exactly a perfect predictor of pharmacological outcomes. But hey, it’s a start.</p>
+<p>And finally, <strong>let’s talk about the big picture</strong>. Communication. You know, how your brain actually <em>does</em> stuff? Well, <strong>it all starts with these action potentials</strong>. They’re like, the brain’s version of Morse code. But instead of dots and dashes, it’s a symphony of electrical impulses, traveling along axons and <strong>triggering the release of neurotransmitters</strong>. And our little model? It gives us a glimpse into this mysterious world of neuronal chatter.</p>
+<div class="page-columns page-full"><p><img src="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/multipolar-neurons.jpg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Motor Neurons (Multipolar) with many Processes (mostly Dendrites). Photo from <a href="https://www.neurologyadvisor.com/news/spinal-cord-gray-matter-atrophy-post-polio-syndrome-functional-decline/">Neurology Advisor</a></span></div></div>
+</section>
+<section id="hasta-la-vista-baby" class="level1 page-columns page-full">
+<h1>Hasta la Vista Baby</h1>
+<p>So, there you have it. Our <em>“simplified”</em> action potential model. Not exactly a perfect mirror of reality, but hey, it’s a good start. Now go forth and <strong>explore the wonders of neuroscience!</strong> Dive deeper into the hows and whys of <strong>ion channel behavior</strong>, uncover the secrets of synaptic transmission, and maybe even contribute to the next big breakthrough in neuroscience! <strong>The human brain is an incredibly complex machine</strong>, and understanding its workings is a journey of endless fascination.</p>
+<div class="page-columns page-full"><p>Just remember, this is <strong>just the tip of the iceberg</strong>. Real neurons are far more sophisticated than our little model. They’re a tornado of activity, a symphony of ions, and a constant dance of electrical signals. But hey, at least <strong>now you have a basic understanding of how these amazing cells work</strong>. </p><div class="no-row-height column-margin column-container"><span class="margin-aside"><strong>Disclaimer</strong>: This model is for entertainment purposes only. Please do not attempt to perform any neurological procedures based on the information presented here (or maybe try it, but don’t mention my name).</span></div></div>
+<p>Now go forth and <strong>amaze your friends with your newfound knowledge of neurophysiology</strong>. Just don’t get carried away and start diagnosing everyone with <em>“abnormal neuronal activity”</em>. And most importantly, remember to have fun! Neuroscience is a fascinating field, and there’s always something new to learn.</p>
+
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-drukarch2023thinking" class="csl-entry">
+Drukarch, Benjamin, and Micha MM Wilhelmus. 2023. <span>“Thinking about the Action Potential: The Nerve Signal as a Window to the Physical Principles Guiding Neuronal Excitability.”</span> <em>Frontiers in Cellular Neuroscience</em> 17: 1232020.
+</div>
+<div id="ref-hodgkin1939action" class="csl-entry">
+Hodgkin, Alan L, and Andrew F Huxley. 1939. <span>“Action Potentials Recorded from Inside a Nerve Fibre.”</span> <em>Nature</em> 144 (3651): 710–11.
+</div>
+<div id="ref-rubin2021basics" class="csl-entry">
+Rubin, Devon I. 2021. <span>“Basics of Neurophysiology.”</span> <em>Clinical Neurophysiology</em>, 9.
+</div>
+<div id="ref-yao2023dynamic" class="csl-entry">
+Yao, Wei, Yingchen Li, Zhihao Ou, Mingzhu Sun, Qiongxu Ma, and Guanghong Ding. 2023. <span>“Dynamic Analysis of Neural Signal Based on Hodgkin–Huxley Model.”</span> <em>Mathematical Methods in the Applied Sciences</em> 46 (4): 4676–87.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{castillo-aguilar2025,
+  author = {Castillo-Aguilar, Matías},
+  title = {Decoding the {Neuron’s} {Spark:} {Building} {Intuition} for
+    {Action} {Potential} {Dynamics}},
+  date = {2025-01-06},
+  url = {https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-castillo-aguilar2025" class="csl-entry quarto-appendix-citeas">
+Castillo-Aguilar, Matías. 2025. <span>“Decoding the Neuron’s Spark:
+Building Intuition for Action Potential Dynamics.”</span> January 6,
+2025. <a href="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/">https://bayesically-speaking.com/posts/2025-01-06
+simulating-action-potential/</a>.
+</div></div></section></div> ]]></description>
+  <category>non-linear</category>
+  <category>neuroscience</category>
+  <category>educational</category>
+  <guid>https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/</guid>
+  <pubDate>Mon, 06 Jan 2025 03:00:00 GMT</pubDate>
+  <media:content url="https://bayesically-speaking.com/posts/2025-01-06 simulating-action-potential/body_1.jpeg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Modeling Lymphocyte Dynamics: Agent-Based Simulations and Non-Linear Equations</title>
   <dc:creator>Matías Castillo-Aguilar</dc:creator>

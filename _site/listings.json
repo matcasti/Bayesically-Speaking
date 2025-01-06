@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/2025-01-06 simulating-action-potential/index.html",
       "/posts/2024-12-23 modeling-lymphocyte-dynamics/index.html",
       "/posts/2024-12-10 a-case-for-synaptic-plasticity/index.html",
       "/posts/2024-08-05 non-linear-models part 1/index.html",
@@ -13,6 +14,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/2025-01-06 simulating-action-potential/index.html",
       "/posts/2024-12-23 modeling-lymphocyte-dynamics/index.html",
       "/posts/2024-12-10 a-case-for-synaptic-plasticity/index.html",
       "/posts/2024-08-05 non-linear-models part 1/index.html",

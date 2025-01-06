@@ -640,8 +640,8 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 <p>We will incorporate this acceptance step into the full NUTS sampler in the next section, along with the complete NUTS algorithm and the adaptive step size procedure.</p>
 </section>
-<section id="adaptative-epsilon" class="level5">
-<h5 class="anchored" data-anchor-id="adaptative-epsilon">Adaptative Epsilon</h5>
+<section id="adaptative-step-size" class="level5">
+<h5 class="anchored" data-anchor-id="adaptative-step-size">Adaptative Step-Size</h5>
 <p>One of the most crucial aspects of NUTS (and HMC in general) is choosing an appropriate step size, <span class="math inline">\(\epsilon\)</span>. A good step size allows the sampler to efficiently explore the posterior distribution. Too small, and the sampler takes tiny, slow steps, like a snail on a marathon. Too large, and it overshoots, bouncing around erratically, like a caffeinated kangaroo on a trampoline.</p>
 <p>NUTS uses an adaptive step size procedure, especially during the warmup phase, to find a good value for <span class="math inline">\(\epsilon\)</span>. The goal is to achieve a target acceptance rate, typically around 0.8. This indicates that the sampler is neither accepting too many nor too few proposals.</p>
 <p>A simple way to adapt the step size is to use the following update rule:</p>
@@ -691,7 +691,7 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(plot_data, <span class="fu">aes</span>(<span class="at">x =</span> iteration, <span class="at">y =</span> epsilon, <span class="at">col =</span> gamma, <span class="at">group =</span> gamma)) <span class="sc">+</span></span>
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">linewidth =</span> accept_rate, <span class="at">alpha =</span> accept_rate)) <span class="sc">+</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Epsilon Adaptation"</span>, <span class="at">x =</span> <span class="st">"Iteration"</span>, </span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Step-Size Adaptation"</span>, <span class="at">x =</span> <span class="st">"Iteration"</span>, </span>
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Epsilon"</span>, <span class="at">col =</span> <span class="fu">expression</span>(<span class="st">"Adaptation Rate ("</span><span class="sc">*</span>gamma<span class="sc">*</span><span class="st">")"</span>)) <span class="sc">+</span></span>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">linewidth =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">color =</span> <span class="st">"gray50"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_alpha_continuous</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">0.3</span>,<span class="dv">1</span>), <span class="at">name =</span> <span class="st">"Acceptance Rate"</span>,</span>
@@ -779,7 +779,6 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </ul></li>
 </ol>
 <p>This implementation provides a basic but functional NUTS sampler. In the next section, we’ll discuss diagnostics and validation to ensure our sampler is working correctly.</p>
-<p>Okay, let’s move on to the “Diagnostics and Validation” section, starting with “Visual Diagnostics.”</p>
 </section>
 </section>
 <section id="is-our-sampler-behaving-itself" class="level1">
@@ -947,27 +946,19 @@ $mpsrf
 <section id="making-it-sing-in-the-real-world" class="level1">
 <h1>Making It Sing in the Real World</h1>
 <p>Now that we have a basic NUTS sampler, let’s talk about how to fine-tune it for real-world applications. Because, let’s face it, toy examples are fun, but real-world problems are where the real challenges (and rewards) lie.</p>
-<section id="practical-considerations" class="level4">
-<h4 class="anchored" data-anchor-id="practical-considerations">Practical Considerations</h4>
 <p>When applying NUTS to real-world problems, there are a few practical considerations to keep in mind: choosing an initial step size, setting the maximum tree depth, and understanding the computational trade-offs.</p>
-<section id="choosing-an-initial-step-size" class="level5">
-<h5 class="anchored" data-anchor-id="choosing-an-initial-step-size">Choosing an Initial Step Size</h5>
+<section id="choosing-an-initial-step-size" class="level4">
+<h4 class="anchored" data-anchor-id="choosing-an-initial-step-size">Choosing an Initial Step Size</h4>
 <p>While NUTS adapts the step size during warmup, a good initial step size can significantly improve the efficiency of the adaptation process. A common approach is to perform a short pilot run (a few hundred iterations) and adjust the initial step size based on the acceptance rate. If the acceptance rate is too low (e.g., below 0.6), decrease the initial step size. If it’s too high (e.g., above 0.9), increase it.</p>
 <p>In our implementation, we used a very simple adaptation strategy. In real-world applications, more robust methods like dual averaging are used. These methods are more stable and efficient at finding a good step size.</p>
 </section>
-<section id="setting-the-maximum-tree-depth" class="level5">
-<h5 class="anchored" data-anchor-id="setting-the-maximum-tree-depth">Setting the Maximum Tree Depth</h5>
+<section id="setting-the-maximum-tree-depth" class="level4">
+<h4 class="anchored" data-anchor-id="setting-the-maximum-tree-depth">Setting the Maximum Tree Depth</h4>
 <p>The maximum tree depth limits the maximum trajectory length that NUTS will explore. A larger tree depth allows for longer trajectories, which can be beneficial for exploring complex posteriors. However, it also increases exponentially the computational cost. A common default value is 10, which allows for trajectories up to <span class="math inline">\(2^{10} = 1024\)</span> leapfrog steps.</p>
 <p>It is important to notice that a too small tree depth can lead to poor exploration of the parameter space, and a too large tree depth can lead to unnecessary computational burden. Therefore, it is important to choose a tree depth that is appropriate for the problem at hand.</p>
-</section>
 <section id="computational-trade-offs" class="level5">
 <h5 class="anchored" data-anchor-id="computational-trade-offs">Computational Trade-offs</h5>
 <p>NUTS, like other HMC methods, involves computational trade-offs between memory, runtime, and efficiency. Longer trajectories (achieved by larger tree depths or smaller step sizes) can lead to better exploration and lower autocorrelation but also increase the runtime and memory usage. It’s important to find a balance that works for your specific problem and computational resources.</p>
-<p>Here’s a summary of the trade-offs:</p>
-<ul>
-<li><strong>Larger tree depth:</strong> Longer trajectories, better exploration, higher runtime, higher memory usage.</li>
-<li><strong>Smaller step size:</strong> More accurate trajectories, better exploration (up to a point), higher runtime.</li>
-</ul>
 <p>In practice, you’ll often need to experiment with different settings to find the optimal balance for your problem. This might involve running several short test runs with different parameter values and comparing the results.</p>
 </section>
 </section>
@@ -1504,7 +1495,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","selector":".lightbox","openEffect":"zoom","closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"loop":false,"selector":".lightbox","descPosition":"bottom","closeEffect":"zoom","openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
