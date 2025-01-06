@@ -4,7 +4,7 @@ description: |
   Action potentials are the language of neurons. In this post we build a simplified model to explain how these electrical signals are generated. We'll explore the role of ion channels and build an intuitive understanding of neuronal firing.
 date: "2025-01-06"
 
-# doi: "10.59350/mgpv2-d5e33"
+doi: "10.59350/e3kv7-20r70"
 
 execute: 
   warning: false
