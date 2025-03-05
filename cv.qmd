@@ -55,6 +55,22 @@ Research areas of interest
 <span class="badge bg-primary">Bayesian Statistics</span>
 :::
 
+:::{.g-col-12}
+
+:::{.callout-note appearance="simple"}
+## NotebookLM Review of Me
+
+Hear this overview from [NotebookLM](https://notebooklm.google.com/) about me using my CV and this website as data sources. Enjoy!
+
+```{=html}
+<audio controls style="width:100%">
+  <source src="images/mca-overview.wav" type="audio/wav">
+</audio>
+```
+:::
+
+:::
+
 :::
 
 <br>
