@@ -28,14 +28,14 @@ theme_set(new = theme_classic(base_size = 20))
 
 # Introducción
 
-Hablemos de tu corazón. **No el metafórico** que todavía se está recuperando del final *esa* temporada de *Stranger Things*, **sino el órgano de carne y papas** que bombea en tu pecho. Ya sabís, esa cosa que se acelera cuando corres para alcanzar la micro o cuando te tragas *Squid Game* con una pizza familiar solito (eso le llamo autodeterminación gourmet). Resulta que los científicos (como este humilde servidor) llevamos obsesionados con **entender cómo este solo de batería biológico reacciona al ejercicio**. Y créeme, no es tan simple como el iconito feliz del corazón de tu Fitbit quiere hacerte creer.  
+Hablemos de tu corazón. **No el metafórico** que todavía se está recuperando del final *esa* temporada de *Stranger Things*, **sino el órgano de carne y papas** que bombea en tu pecho. Ya sabes, esa cosa que se acelera cuando corres para alcanzar la micro o cuando te tragas *Squid Game* con una pizza familiar solito (eso le llamo autodeterminación gourmet). Resulta que los científicos (como este humilde servidor) llevamos obsesionados con **entender cómo este solo de batería biológico reacciona al ejercicio**. Y créeme, no es tan simple como el iconito feliz del corazón de tu Fitbit quiere hacerte creer.  
 
-Imagina que tu frecuencia cardíaca durante el ejercicio **es como el guión de una película de Christopher Nolan**: llena de vueltas, giros y momentos en que no cachai qué está pasando, pero *sientes* que es profundo. Los métodos tradicionales para analizar la variabilidad del ritmo cardíaco (VRC) son **como tratar de explicar *Inception* con un celular del 2005**: técnicamente posible, pero pierdes *toda* la onda. Por décadas, los investigadores han usado modelos lineales y métricas de VRC resumidas, que sirven **tanto para capturar el caos del corazón durante el ejercicio como un paraguas en un terremoto**. Sí, te dicen *algo*, pero es como resumir *El Señor de los Anillos* como "unos tipos caminaron a un volcán". ¿Perdiendo el punto? Un poquito nomás.  
+Imagina que tu frecuencia cardíaca durante el ejercicio **es como el guión de una película de Christopher Nolan**: llena de vueltas, giros y momentos en que no sabes qué está pasando, pero *sientes* que es profundo. Los métodos tradicionales para analizar la variabilidad del ritmo cardíaco (VRC) son **como tratar de explicar *Inception* con un celular del 2005**: técnicamente posible, pero pierdes *toda* la onda. Por décadas, los investigadores han usado modelos lineales y métricas de VRC resumidas, que sirven **tanto para capturar el caos del corazón durante el ejercicio como un paraguas en un terremoto**. Sí, te dicen *algo*, pero es como resumir *El Señor de los Anillos* como "unos tipos caminaron a un volcán". ¿Perdiendo el punto? Un poquito nomás.  
 
 ![](../services.jpeg){.img-fluid width=100%}  
 [Foto de [Ketut Subiyanto](https://www.pexels.com/es-es/foto/sano-mujer-telefono-inteligente-navegando-4436296/)]{.aside}  
 
-¡Pero atención! Tengo buenas noticias. Desarrollamos y publicamos un nuevo modelo no lineal, **el Tony Stark de los análisis cardíacos**: brillante, preciso y hecho en una cueva (bueno, un laboratorio) con matemáticas que *casi* entenderías. En vez de meter los intervalos latido a latido (llamados *intervalos R-R* para los amigos) en el corsé rígido de ecuaciones lineales, **abrazamos el caos con funciones logísticas**. Imagínatelo como cambiar del internet con módem al 5G. **Estas funciones logísticas son la Beyoncé de las matemáticas**: versátiles, dinámicas y capaces de manejar cambios bruscos (como cuando pasas de modo vago a HIIT en 0.2 segundos). **Modelan el picaduelo del corazón durante el ejercicio *y* su lento retorno** al modo Netflix-relajo después, todo mientras escupen parámetros que importan para tu cuerpo. ¿"Intervalo R-R basal"? Es el *ritmo base* de tu corazón. ¿"Proporción de recuperación"? Cuán rápido te perdona por esos burpees.  
+¡Pero atención! Tengo buenas noticias. Desarrollamos y publicamos un nuevo modelo no lineal, **el Tony Stark de los análisis cardíacos**: brillante, preciso y hecho en una cueva (bueno, un laboratorio) con matemáticas que *casi* entenderías. En vez de meter los intervalos latido a latido (llamados *intervalos R-R* para los amigos) en el corsé rígido de ecuaciones lineales, **abrazamos el caos con funciones logísticas**. Imagínatelo como cambiar del internet con módem al 5G. **Estas funciones logísticas son la Beyoncé de las matemáticas**: versátiles, dinámicas y capaces de manejar cambios bruscos (como cuando pasas de modo vago a HIIT en 0.2 segundos). **Modelan la caída del corazón durante el ejercicio *y* su lento retorno** al modo Netflix-relajo después, todo mientras escupen parámetros que importan para tu cuerpo. ¿"Intervalo R-R basal"? Es el *ritmo base* de tu corazón. ¿"Proporción de recuperación"? Cuán rápido te perdona por esos burpees.  
 
 ![](../publised-paper.png){.img-fluid width=100%}  
 [Revisa el paper donde discutimos en profundidad el modelo para todos los tecnicismos. Puedes verlo [acá](https://www.nature.com/articles/s41598-025-93654-6).]{.aside}  
@@ -71,7 +71,7 @@ Esto no es solo sopa de letras. **Es un puro *caso* coordinado entre dos funcion
 
 #### 1. Intervalo RR Basal ($\alpha$): La Calma Antes de la Tormenta  
 
-$\alpha$ (alfa) **es el estado de reposo de tu corazón**, el intervalo R-R cuando estai tirado en el sillón pensando si ver *The Office* por quinta vez. Matemáticamente, **es el corrimiento vertical de toda la curva**. Imagínatelo como el amigo que insiste en tomarse "días de salud mental" todos los lunes.  
+$\alpha$ (alfa) **es el estado de reposo de tu corazón**, el intervalo R-R cuando esta tirado en el sillón pensando si ver *The Office* por quinta vez. Matemáticamente, **es el corrimiento vertical de toda la curva**. Imagínatelo como el amigo que insiste en tomarse "días de salud mental" todos los lunes.  
 
 En el código, $\alpha$ es simple. Cuando estandarizamos los datos RRi, centramos cada dato en su media ($\text{RRi}_i$) y lo escalamos por su desviación estándar ($S_{\text{RRi}_i}$). **Así comparamos el corazón de la abuela Rosa con el del Gym Bro Chad sin sesgos**. En R, esto sería como revertir un z-score. Nada de magia, solo aritmética para que cada corazón se quede en su cancha.  
 
@@ -95,7 +95,7 @@ ggplot(plot_data, aes(value, fill = variable)) +
 
 #### 2. El Parámetro del Pánico ($\beta$): Cuando el Ejercicio Pegue Como Twist de Telenovela  
 
-$\beta$ es donde empieza el drama. Este término controla **la caída del intervalo RR cuando empiezas a ejercitarte**. Valores negativos significan que tu corazón se está *despilocando*, como cuando cachai que dejaste la estufa prendida haciendo sentadillas. Mientras más grande el valor absoluto de $\beta$, **más brusco el picaduelo**. En el estudio, $\beta = -345$ ms significó que los corazones hicieron un *Free Solo* en pleno ejercicio.  
+$\beta$ es donde empieza el drama. Este término controla **la caída del intervalo RR cuando empiezas a ejercitarte**. Valores negativos significan que tu corazón se está *agitando*, como cuando sabes que dejaste la estufa prendida haciendo sentadillas. Mientras más grande el valor absoluto de $\beta$, **más brusca la caída en los intervalos R-R**. En el estudio, $\beta = -345$ ms significó que los corazones hicieron un *Free Solo* en pleno ejercicio.  
 
 El primer término logístico, $\frac{\beta}{1 + e^{\lambda(t-\tau)}}$, es **el equivalente matemático de tu sistema simpático apretando el acelerador**. El denominador $1 + e^{\lambda(t-\tau)}$ asegura que la caída no sea instantánea, sino suave (más o menos), como una montaña rusa subiendo la primera cuesta.  
 
@@ -113,7 +113,7 @@ Poné $\alpha = 860$ ms, $\beta = -345$, $\lambda = -3.05$, y $\tau = 6.71$, y t
 
 $\lambda$ (lambda) dicta **qué tan rápido se desploma el intervalo RR**. Un $\lambda$ más negativo significa una caída más brusca, como tu corazón en una corrida versus una caminata tranquila. En el modelo, $\lambda = -3.05$ es como si tu corazón gritara "¡SÁLVESE QUIEN PUEDA!" al empezar el ejercicio.  
 
-$\tau$ (tau) es el punto de inflexión, **el momento exacto en que empieza el caos**. Con $\tau = 6.71$ minutos, es el segundo en que tu corazón cachó que hablas en serio con los burpees. Este parámetro evita que el modelo asuma que todos entran en pánico al mismo tiempo (porque, seamos honestos, a algunos nos transpira la mano solo de *pensar* en ejercicios).  
+$\tau$ (tau) es el punto de inflexión, **el momento exacto en que empieza el caos**. Con $\tau = 6.71$ minutos, es el segundo en que tu corazón notó que hablabass en serio con los burpees. Este parámetro evita que el modelo asuma que todos entran en pánico al mismo tiempo (porque, seamos honestos, a algunos nos transpira la mano solo de *pensar* en ejercicios).  
 
 El código para este término es **engañosamente simple**, pero la magia está en el exponente: $\lambda(t - \tau)$. Esto hace que la caída se acelere exponencialmente **una vez activada**, imitando la respuesta de "todos a la bodega" del cuerpo al estrés físico.  
 
@@ -192,7 +192,7 @@ Traducción: Le dijimos a Stan, **"acá está la ecuación, los datos, y porfa n
 Este modelo **no es solo un truco para ñoños de estadísticas**. Es un puente entre datos fríos y el caos de la fisiología humana. Al vincular **parámetros con mecanismos reales** (como activación simpática o tono vagal), podemos:  
 
 - **Personalizar rehabilitación**: Adaptar ejercicios a tu "personalidad" autonómica.  
-- **Detectar riesgos temprano**: Cachar recuperación lenta antes de que sea grave.  
+- **Detectar riesgos temprano**: Reconocer cuando tu recuperación lenta antes de que sea grave.
 - **Optimizar entrenamiento**: Ajustar intensidad según dinámicas cardíacas en tiempo real.  
 
 Imagina un Fitbit que **no solo cuente pasos**, sino que te diga: *"Oye, tu $\phi$ está bajo, mejor no tomes café hoy."* Ese es el futuro que estamos creando.  
@@ -249,9 +249,9 @@ model_formula <- bf(
 
 **Traducción**: "Oye Stan, acá está la ecuación. Los parámetros son $\alpha, \beta, \lambda, \tau, c, \phi, \delta$. ¡Métete con todo!".  
 
-#### Paso 4: Poniendo Previos, Porque Hasta las Mates Necesitan Límites  
+#### Paso 4: Poniendo priors, Porque Hasta las Ecuaciones Necesitan Límites  
 
-Los previos evitan que los parámetros se descontrolen. Por ejemplo:  
+Los priors evitan que los parámetros se descontrolen. Por ejemplo:  
 - $\beta$ (**caída por ejercicio**) debe ser negativo; nadie tiene intervalos R-R que *aumenten* al correr.  
 - $\tau$ (**inicio del pánico**) no puede ser negativo (a menos que tu corazón entre en pánico *antes* de ejercitarte... igual, te entiendo).  
 
@@ -269,7 +269,7 @@ priors <- c(
 )  
 ```  
 
-Estos previos no son inventos, **vienen de conocimiento del área** (o, en este caso, de datos del estudio).  
+Estos priors no son inventos, **vienen de conocimiento del área** (o, en este caso, de datos del estudio).  
 
 #### Paso 5: Simulando Datos, Entre Más Ruido, Mejor  
 
@@ -301,7 +301,7 @@ ggplot(data, aes(tiempo, RRi)) +
 
 #### Paso 6: Ajustando el Modelo, Que Stan Haga la Pega Fuerte  
 
-Con la fórmula, previos y datos listos, **ajustar el modelo es poco emocionante**:
+Con la fórmula, priors y datos listos, **ajustar el modelo es poco emocionante**:
 
 ```{r}  
 fit <- brm(  
@@ -347,7 +347,7 @@ Estos parámetros no son solo números, **son biomarcadores**. Un $c$ bajo podr�
 
 Implementar HMC **es como enseñarle a un robot a bailar**. Es complejo, requiere ajustes y a veces parece magia. Pero con herramientas como Stan y `brms, **no necesitas ser físico**, solo un humano con datos y un problema que resolver.  
 
-Así que la próxima vez que tu corazón se acelere en el gimnasio, acuérdate: **hay todo un universo de ecuaciones y código** trabajando para entender sus pataletas. Y eso es bonito po.  
+Así que la próxima vez que tu corazón se acelere en el gimnasio, acuérdate: **hay todo un universo de ecuaciones y código** trabajando para entender sus pataletas. ¡Y eso es lo bonito!  
 
 # Visualizando el la Distribución Posterior  
 
