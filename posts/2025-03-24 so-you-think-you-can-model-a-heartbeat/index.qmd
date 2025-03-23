@@ -42,7 +42,7 @@ But hey! I have good news. We [developed and published](https://www.researchgate
 
 Now, let's address the elephant in the room: **why should you care?** Well, unless you're a cyborg (looking at you, Boston Dynamics), **your autonomic nervous system**, the puppet master behind your heart's rhythm, **is a drama queen**. During exercise, it's a tug-of-war between the "*fight-or-flight*" **sympathetic system** (the one yelling **GO!**) and the "*chill-out*" **parasympathetic system** (the one whispering *maybe just one more episode*?). Traditional models treat this like a seesaw with one kid glued to the ground. The model that we developed? It's the entire playground, complete with swing sets, monkey bars, and that one kid who **definitely** ate too much sugar.
 
-Here's where it gets spicy: **we tested this bad boy on 272 elderly folks**. Why seniors? Because if your heart can handle Zumba at 70, it's basically the Dwayne Johnson of organs. *Spoiler alert*: **the model nailed it**. With an R^2^ of 0.868 (translation: it's scarily accurate) and RMSE of 32.6 ms (translation: it's precise enough to detect your existential crisis during plank holds), **it's like giving doctors and trainers a cheat code for your cardiovascular health**. Oh, and we used Hamiltonian Monte Carlo for parameter estimation, which sounds like a spell from *Harry Potter* but is really just math wizardry for "we didn't guess, we *calculated*".
+Here's where it gets spicy: **we tested this bad boy on 272 elderly folks**. Why seniors? Because if your heart can handle Zumba at 70, it's basically the Dwayne Johnson of organs. *Spoiler alert*: **the model nailed it**. With an R^2^ of 0.868 (translation: it's scarily accurate) and RMSE of 32.6 ms (translation: it's precise enough to detect your existential crisis during plank holds), **it's like giving doctors and trainers a cheat code for your cardiovascular health**. Oh, and we used Hamiltonian Monte Carlo for parameter estimation, which sounds like a spell from *Harry Potter* but is really just math jedi tricks for "we didn't guess, we *calculated*".
 
 But wait, there's more! Using Sobol **sensitivity analysis** (a fancy way of asking, "*Which part of this equation is doing the heavy lifting?*"), we discovered that baseline RR intervals and recovery proportion are the MVPs of heart rate dynamics. Translation: **your heart's default setting and its ability to bounce back post-workout are the LeBron and Jordan of this game**. The other parameters? They're the benchwarmers. Useful, but not stealing the spotlight.  
 
@@ -182,7 +182,7 @@ The sigmoid shape of $\frac{1}{1 + e^{-x}}$ is perfect **for modeling transition
 
 These parameters **aren't just academic, they're actionable**. A low $c$ (recovery proportion) **could signal poor autonomic resilience**, hinting at conditions like diabetes or hypertension. A wild $\lambda$ (drop rate) might mean your sympathetic system is overzealous, like a puppy seeing a squirrel.  
 
-#### Behind the Curtain: Stan, HMC, and Bayesian Wizardry
+#### Behind the Curtain: Stan, HMC, and Bayesian Jedi Tricks
 
 Fitting this model isn't for the faint of heart. We used **Stan** (a probabilistic programming language) and **[Hamiltonian Monte Carlo (HMC)](https://doi.org/10.59350/fa26y-xa178)** to estimate parameters. Think of HMC as a GPS for navigating the jagged terrain of parameter space, it avoids dead ends and U-turns (thanks, [No-U-Turn Sampler](https://doi.org/10.59350/hnk21-ggm53)!) to find the optimal values.  
 

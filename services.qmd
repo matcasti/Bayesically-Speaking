@@ -23,7 +23,7 @@ title-block-banner: true
 :::{.grid}
 
 :::{.g-col-12 .g-col-md-6}
-## Every problem is an oportunity
+## Every problem is an opportunity
 
 If you are having issues with your statistical analyses, research or thesis project, say no more. Here at Bayesically-Speaking we believe in a collaborative and supporting environment, providing consulting services throughout your stats problem.
 

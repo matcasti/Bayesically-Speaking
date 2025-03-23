@@ -100,6 +100,20 @@ In the following section, I provide a concise summary of my research undertaking
 :::{.grid}
 
 :::{.g-col-12}
+### 2025
+:::
+
+:::{.g-col-6 .g-col-md-4}
+Enhancing cardiovascular monitoring: a non-linear model for characterizing RR interval fluctuations in exercise and recovery. *Scientific Reports*. 
+
+<span class="badge bg-primary">Original research</span>
+
+[[Matías Castillo-Aguilar]{.text-body} Diego Mabe-Castro, David Medina & Cristian Núñez-Espinosa]{.small .text-black-50 .d-none .d-sm-block}
+
+<a class="btn btn-outline-primary" href="http://dx.doi.org/10.1038/s41598-025-93654-6">Full-text {{< fa link >}}</a>
+:::
+
+:::{.g-col-12}
 ### 2024
 :::
 
