@@ -3,20 +3,14 @@ title: "Modeling Lymphocyte Dynamics: Agent-Based Simulations and Non-Linear Equ
 description: |
   In this post, we'll take you step by step through building and playing with a model of lymphocyte dynamics. So, grab your keyboard, and let's whip up a recipe for understanding how T cells become the immune system's MVPs.
 date: "2024-12-23"
-
 execute: 
   warning: false
   error: false
-
 doi: "10.59350/aqa1r-e2v59"
-
 categories: [non-linear, simulation, biology, educational]
-
 bibliography: ref.bib
-
 title-block-banner: title-block.jpeg
 image: body_1.jpeg
-
 editor_options: 
   chunk_output_type: console
 ---

@@ -57,7 +57,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -161,11 +181,11 @@ window.Quarto = {
 <meta name="citation_year" content="2025">
 <meta name="citation_online_date" content="2025-01-21">
 <meta name="citation_fulltext_html_url" content="https://bayesically-speaking.com/posts/2025-01-21 hmc-nuts-from-zero/">
+<meta name="citation_doi" content="10.59350/hnk21-ggm53">
 <meta name="citation_language" content="en">
-<meta name="citation_reference" content="citation_title=Thinking about the action potential: The nerve signal as a window to the physical principles guiding neuronal excitability;,citation_author=Benjamin Drukarch;,citation_author=Micha MM Wilhelmus;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_volume=17;,citation_journal_title=Frontiers in cellular neuroscience;,citation_publisher=Frontiers Media SA;">
-<meta name="citation_reference" content="citation_title=Basics of neurophysiology;,citation_author=Devon I Rubin;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_journal_title=Clinical Neurophysiology;,citation_publisher=Oxford University Press;">
-<meta name="citation_reference" content="citation_title=Dynamic analysis of neural signal based on hodgkin–huxley model;,citation_author=Wei Yao;,citation_author=Yingchen Li;,citation_author=Zhihao Ou;,citation_author=Mingzhu Sun;,citation_author=Qiongxu Ma;,citation_author=Guanghong Ding;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=4;,citation_volume=46;,citation_journal_title=Mathematical Methods in the Applied Sciences;,citation_publisher=Wiley Online Library;">
-<meta name="citation_reference" content="citation_title=Action potentials recorded from inside a nerve fibre;,citation_author=Alan L Hodgkin;,citation_author=Andrew F Huxley;,citation_publication_date=1939;,citation_cover_date=1939;,citation_year=1939;,citation_issue=3651;,citation_volume=144;,citation_journal_title=Nature;,citation_publisher=Nature Publishing Group UK London;">
+<meta name="citation_reference" content="citation_title=Fast bayesian inference for neutrino non-standard interactions at dark matter direct detection experiments;,citation_author=Dorian Amaral;,citation_author=Shixiao Liang;,citation_author=Juehang Qin;,citation_author=Christopher Tunnell;,citation_publication_date=2025;,citation_cover_date=2025;,citation_year=2025;,citation_journal_title=Machine Learning: Science and Technology;">
+<meta name="citation_reference" content="citation_title=EMRI_MC: A GPU-based code for bayesian inference of EMRI waveforms;,citation_author=Ippocratis Saltas;,citation_author=Roberto Oliveri;,citation_publication_date=2025;,citation_cover_date=2025;,citation_year=2025;,citation_journal_title=SciPost Physics Codebases;">
+<meta name="citation_reference" content="citation_title=Running markov chain monte carlo on modern hardware and software;,citation_author=Pavel Sountsov;,citation_author=Colin Carroll;,citation_author=Matthew D Hoffman;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_journal_title=arXiv preprint arXiv:2411.04260;">
 </head>
 
 <body class="floating nav-fixed slimcontent">
@@ -260,6 +280,14 @@ window.Quarto = {
     </div>
     
       
+      <div>
+      <div class="quarto-title-meta-heading">Doi</div>
+      <div class="quarto-title-meta-contents">
+        <p class="doi">
+          <a href="https://doi.org/10.59350/hnk21-ggm53">10.59350/hnk21-ggm53</a>
+        </p>
+      </div>
+    </div>
     </div>
     
   
@@ -272,11 +300,36 @@ window.Quarto = {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#when-your-posterior-looks-like-a-jackson-pollock-painting" id="toc-when-your-posterior-looks-like-a-jackson-pollock-painting" class="nav-link" data-scroll-target="#when-your-posterior-looks-like-a-jackson-pollock-painting">When Your Posterior Looks Like a Jackson Pollock Painting</a></li>
-  <li><a href="#how-to-not-get-lost-in-probability-space" id="toc-how-to-not-get-lost-in-probability-space" class="nav-link" data-scroll-target="#how-to-not-get-lost-in-probability-space">How to Not Get Lost in Probability Space</a></li>
-  <li><a href="#step-by-step-implementation-of-nuts" id="toc-step-by-step-implementation-of-nuts" class="nav-link" data-scroll-target="#step-by-step-implementation-of-nuts">Step-by-Step Implementation of NUTS</a></li>
-  <li><a href="#is-our-sampler-behaving-itself" id="toc-is-our-sampler-behaving-itself" class="nav-link" data-scroll-target="#is-our-sampler-behaving-itself">Is Our Sampler Behaving Itself?</a></li>
-  <li><a href="#making-it-sing-in-the-real-world" id="toc-making-it-sing-in-the-real-world" class="nav-link" data-scroll-target="#making-it-sing-in-the-real-world">Making It Sing in the Real World</a></li>
-  <li><a href="#where-do-we-go-from-here" id="toc-where-do-we-go-from-here" class="nav-link" data-scroll-target="#where-do-we-go-from-here">Where Do We Go From Here?</a></li>
+  <li><a href="#how-to-not-get-lost-in-probability-space" id="toc-how-to-not-get-lost-in-probability-space" class="nav-link" data-scroll-target="#how-to-not-get-lost-in-probability-space">How to Not Get Lost in Probability Space</a>
+  <ul class="collapse">
+  <li><a href="#adaptive-path-length" id="toc-adaptive-path-length" class="nav-link" data-scroll-target="#adaptive-path-length">Adaptive Path Length</a></li>
+  <li><a href="#the-u-turn-criterion" id="toc-the-u-turn-criterion" class="nav-link" data-scroll-target="#the-u-turn-criterion">The U-Turn Criterion</a></li>
+  <li><a href="#tree-building-for-sampling" id="toc-tree-building-for-sampling" class="nav-link" data-scroll-target="#tree-building-for-sampling">Tree Building for Sampling</a></li>
+  </ul></li>
+  <li><a href="#step-by-step-implementation-of-nuts" id="toc-step-by-step-implementation-of-nuts" class="nav-link" data-scroll-target="#step-by-step-implementation-of-nuts">Step-by-Step Implementation of NUTS</a>
+  <ul class="collapse">
+  <li><a href="#setting-things-up" id="toc-setting-things-up" class="nav-link" data-scroll-target="#setting-things-up">Setting Things Up</a></li>
+  <li><a href="#core-steps-of-nuts" id="toc-core-steps-of-nuts" class="nav-link" data-scroll-target="#core-steps-of-nuts">Core Steps of NUTS</a></li>
+  <li><a href="#implementation-strategy" id="toc-implementation-strategy" class="nav-link" data-scroll-target="#implementation-strategy">Implementation Strategy</a></li>
+  </ul></li>
+  <li><a href="#is-our-sampler-behaving-itself" id="toc-is-our-sampler-behaving-itself" class="nav-link" data-scroll-target="#is-our-sampler-behaving-itself">Is Our Sampler Behaving Itself?</a>
+  <ul class="collapse">
+  <li><a href="#visual-diagnostics" id="toc-visual-diagnostics" class="nav-link" data-scroll-target="#visual-diagnostics">Visual Diagnostics</a></li>
+  <li><a href="#numerical-diagnostics" id="toc-numerical-diagnostics" class="nav-link" data-scroll-target="#numerical-diagnostics">Numerical Diagnostics</a></li>
+  </ul></li>
+  <li><a href="#making-it-sing-in-the-real-world" id="toc-making-it-sing-in-the-real-world" class="nav-link" data-scroll-target="#making-it-sing-in-the-real-world">Making It Sing in the Real World</a>
+  <ul class="collapse">
+  <li><a href="#choosing-an-initial-step-size" id="toc-choosing-an-initial-step-size" class="nav-link" data-scroll-target="#choosing-an-initial-step-size">Choosing an Initial Step Size</a></li>
+  <li><a href="#setting-the-maximum-tree-depth" id="toc-setting-the-maximum-tree-depth" class="nav-link" data-scroll-target="#setting-the-maximum-tree-depth">Setting the Maximum Tree Depth</a></li>
+  <li><a href="#when-things-go-wrong" id="toc-when-things-go-wrong" class="nav-link" data-scroll-target="#when-things-go-wrong">When Things Go Wrong</a></li>
+  <li><a href="#taking-it-to-the-next-level" id="toc-taking-it-to-the-next-level" class="nav-link" data-scroll-target="#taking-it-to-the-next-level">Taking It to the Next Level</a></li>
+  </ul></li>
+  <li><a href="#where-do-we-go-from-here" id="toc-where-do-we-go-from-here" class="nav-link" data-scroll-target="#where-do-we-go-from-here">Where Do We Go From Here?</a>
+  <ul class="collapse">
+  <li><a href="#expanding-the-horizons-of-nuts" id="toc-expanding-the-horizons-of-nuts" class="nav-link" data-scroll-target="#expanding-the-horizons-of-nuts">Expanding the Horizons of NUTS</a></li>
+  <li><a href="#your-turn-to-go-nuts" id="toc-your-turn-to-go-nuts" class="nav-link" data-scroll-target="#your-turn-to-go-nuts">Your Turn to Go NUTS!</a></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead">Looking Ahead</a></li>
+  </ul></li>
   
   </ul>
 <div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="hmc-nuts-functions.R"><i class="bi bi-file-code"></i>R Functions Used</a></li></ul></div></nav>
@@ -294,20 +347,20 @@ window.Quarto = {
 
 <section id="introduction" class="level1 page-columns page-full">
 <h1>Introduction</h1>
-<div class="page-columns page-full"><p>Remember MCMC from our series on these algorithms? Good times. We wandered through probability space like tourists with outdated maps, occasionally stumbling upon the good parts of the posterior. Then came Hamiltonian Monte Carlo (HMC), which, let’s be honest, felt like finally getting a GPS. We could <em>actually</em> explore the posterior, using gradients to guide our journey. It was efficient! It was elegant! It was… still kind of a pain in the neck. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Check our <a href="https://doi.org/10.59350/mxfyk-6av39">first post</a> on MCMC principles and use cases before diving into this post, if you haven’t done it already.</span></div></div>
+<div class="page-columns page-full"><p>Remember MCMC from our series on these algorithms? Good times. We wandered through probability space <strong>like tourists with outdated maps</strong>, occasionally stumbling upon the good parts of the posterior. Then came <strong>Hamiltonian Monte Carlo</strong> (HMC), which, let’s be honest, felt like finally <strong>getting a GPS</strong>. We could <em>actually</em> explore the posterior, using gradients to guide our journey. It was efficient! It was elegant! It was… still kind of a pain in the neck. </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Check our <a href="https://doi.org/10.59350/mxfyk-6av39">first post</a> on MCMC principles and use cases before diving into this post, if you haven’t done it already.</span></div></div>
 <section id="why-your-hmc-was-probably-just-running-in-circles" class="level4 page-columns page-full">
 <h4 class="anchored" data-anchor-id="why-your-hmc-was-probably-just-running-in-circles">Why Your HMC Was Probably Just Running in Circles</h4>
-<div class="page-columns page-full"><p>See, HMC, for all its brilliance, has this one little quirk: it needs to be told how far to travel in each step. It’s like having a GPS that only understands instructions in increments of “exactly 5 kilometers”. Want to go 4.8 km? Too bad. Want to go 5.2 km? Tough luck. This “step size” parameter is crucial. Too small, and you’re just shuffling around like a confused shopper in a supermarket, making painfully slow progress. Too large, and you’re overshooting your target, bouncing around like a pinball, and generally wasting everyone’s time (especially your computer’s). </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Check our <a href="https://doi.org/10.59350/mxfyk-6av39">second post</a> on MCMC, more specifically on HMC, to get a better intuition of what this algorithm is doing.</span></div></div>
+<div class="page-columns page-full"><p>See, HMC, for all its brilliance, has this one little quirk: <strong>it needs to be told how far to travel in each step</strong>. It’s like having a GPS that only understands instructions in increments of “exactly 5 kilometers”. Want to go 4.8 km? Too bad. Want to go 5.2 km? Tough luck. This “step size” parameter is crucial. <strong>Too small</strong>, and you’re just shuffling around like a confused shopper in a supermarket, making painfully slow progress. <strong>Too large</strong>, and you’re overshooting your target, bouncing around like a pinball, and generally wasting everyone’s time (especially your computer’s). </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Check our <a href="https://doi.org/10.59350/mxfyk-6av39">second post</a> on MCMC, more specifically on HMC, to get a better intuition of what this algorithm is doing.</span></div></div>
 <div class="page-columns page-full"><p><img src="running-circles.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Typical HMC running in circles around the posterior. Photo from <a href="https://www.redlegnation.com/2016/08/15/running-in-circles">Redleg Nation</a>.</span></div></div>
-<p>This manual tuning of the step size is about as fun as watching paint dry. You fiddle with it, run your sampler, check the results, fiddle some more, run it again… It’s an iterative process that makes you question your life choices. You start to wonder if there’s a better way. A way to tell the sampler, “Hey, just go where you need to go, okay?”</p>
-<p>Enter the No-U-Turn Sampler (NUTS). Yes, it’s a ridiculous name. But it’s also a brilliant solution. NUTS is like giving your HMC GPS a brain. It dynamically figures out how far to travel in each step, adapting to the local geometry of the posterior. No more tedious manual tuning! No more endless tweaking! NUTS takes the wheel and drives you straight to the heart of the posterior distribution, efficiently exploring even the most complex landscapes.</p>
-<p>In this post, we’re going to dive deep into the inner workings of NUTS. We’ll explore how it cleverly avoids those wasteful U-turns (hence the name), how it builds efficient trajectories, and how you can implement it yourself in R. By the end, you’ll be able to unleash the power of adaptive Hamiltonian sampling on your own Bayesian models, and finally say goodbye to the tyranny of fixed step sizes. You’ll learn how to transform your sampling from a tedious chore into a smooth, efficient, and (dare I say) even enjoyable experience. So buckle up, because we’re about to go NUTS!</p>
+<p>This manual tuning of the step size is about <strong>as fun as watching paint dry</strong>. You fiddle with it, run your sampler, check the results, fiddle some more, run it again… It’s an iterative process that <strong>makes you question your life choices</strong>. You start to wonder if there’s a better way. A way to tell the sampler, <em>“Hey, just go where you need to go, okay?”</em></p>
+<p>Enter the <em>No-U-Turn Sampler</em> (NUTS). Yes, it’s a ridiculous name. But it’s also a brilliant solution. NUTS <strong>is like giving your HMC GPS a brain</strong>. It dynamically figures out how far to travel in each step, adapting to the local geometry of the posterior. No more tedious manual tuning! No more endless tweaking! NUTS takes the wheel and drives you straight to the heart of the posterior distribution, <strong>efficiently exploring even the most complex landscapes</strong>.</p>
+<p>In this post, we’re going to dive deep into the <strong>inner workings of NUTS</strong>. We’ll explore how it cleverly <strong>avoids those wasteful U-turns</strong> (hence the name), how it builds efficient trajectories, and how you can implement it yourself in R. By the end, you’ll be able to unleash the power of adaptive Hamiltonian sampling on your own Bayesian models, and <strong>finally say goodbye to the tyranny of fixed step sizes</strong>. You’ll learn how to transform your sampling from a tedious chore into a smooth, efficient, and (dare I say) even enjoyable experience. So buckle up, because <strong>we’re about to go NUTS!</strong></p>
 </section>
 </section>
 <section id="when-your-posterior-looks-like-a-jackson-pollock-painting" class="level1 page-columns page-full">
 <h1>When Your Posterior Looks Like a Jackson Pollock Painting</h1>
-<p>So, we know HMC with fixed step sizes can be a bit… finicky. But why should we care? Are there actual problems where this matters? You bet your Bayesian priors there are! Imagine you’re trying to model something complex, like the spread of a disease, the performance of a stock portfolio, or the migratory patterns of extremely confused pigeons. These kinds of problems often lead to posterior distributions that are… well, let’s just say they’re not always nice, well-behaved Gaussians.</p>
-<p>Sometimes, your posterior might have multiple peaks (multimodal), like a mountain range with several summits. Traditional MCMC methods, like Metropolis-Hastings or Gibbs sampling, can get stuck in one peak, completely missing the others. It’s like trying to find all the best restaurants in a city by only exploring one neighborhood. You might find a decent burger joint, but you’ll miss out on the amazing sushi place across town.</p>
+<p>So, we know HMC with fixed step sizes can be a bit… finicky. But <strong>why should we care?</strong> Are there actual problems where this matters? You bet your Bayesian priors there are! <strong>Imagine you’re trying to model something complex</strong>, like the spread of a disease, the performance of a stock portfolio, or the migratory patterns of extremely confused pigeons. These kinds of problems often lead to posterior distributions that are… well, let’s just say <strong>they’re not always nice, well-behaved Gaussians</strong>.</p>
+<p>Sometimes, your posterior might have multiple peaks (multimodal), like a mountain range with several summits. Traditional MCMC methods, like Metropolis-Hastings or Gibbs sampling, can get stuck in one peak, completely missing the others. <strong>It’s like trying to find all the best restaurants in a city by only exploring one neighborhood</strong>. You might find a decent burger joint, but you’ll miss out on the amazing sushi place across town.</p>
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
@@ -337,9 +390,9 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Fixed-step HMC fares a little better, thanks to its gradient-based exploration. But even it can struggle. Imagine trying to navigate that same mountain range with a vehicle that can only move in fixed increments. If the step size is too large, you might overshoot the peaks and bounce around erratically. If it’s too small, you’ll take forever to explore the terrain. And if the terrain is particularly treacherous—say, with narrow valleys and steep cliffs, you might get stuck altogether.</p>
-<p>A particularly illustrative example is a posterior with a “banana-shaped” density. This isn’t some exotic fruit we’re talking about; it’s a type of distribution that curves like a banana. These curved, elongated shapes are common in hierarchical models and other complex statistical models. They present a challenge for fixed-step HMC because the optimal step size varies drastically across the distribution. A small step size might be necessary in the curved part of the “banana,” while a much larger step size would be more efficient in the straighter parts.</p>
-<p>To make this concrete, let’s consider a simple bivariate Gaussian distribution with a banana-shaped density. We can define this as follows:</p>
+<p>Fixed-step HMC fares a little better, thanks to its gradient-based exploration. But even it can struggle. <strong>Imagine trying to navigate that same mountain range with a vehicle that can only move in fixed increments</strong>. If the step size is too large, you might overshoot the peaks and bounce around erratically. If it’s too small, you’ll take forever to explore the terrain. And if the terrain is particularly treacherous, say, with narrow valleys and steep cliffs, <strong>you might get stuck altogether</strong>.</p>
+<p>A particularly illustrative example is a posterior with a “banana-shaped” density. <strong>This isn’t some exotic fruit we’re talking about; it’s a type of distribution that curves like a banana</strong>. These curved, elongated shapes are common in hierarchical models and other complex statistical models. They present a challenge for fixed-step HMC because the optimal step size varies drastically across the distribution. A small step size might be necessary <strong>in the curved part of the “banana”</strong>, while a much larger step size would be more efficient in the straighter parts.</p>
+<p>To make this concrete, let’s consider a simple bivariate Gaussian distribution with a <em>banana-shaped</em> density. We can define this as follows:</p>
 <p><span class="math display">\[
 \begin{aligned}
 x &amp;\sim \mathcal{N}(0, 1) \\
@@ -377,34 +430,34 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 </div>
 </div>
-<p>As you can see, this posterior is far from a simple, spherical Gaussian. Trying to efficiently sample from this distribution with a fixed step size is like trying to fit a square peg in a round hole (or, in this case, a banana-shaped hole).</p>
+<p>As you can see, <strong>this posterior is far from a simple, spherical Gaussian</strong>. Trying to efficiently sample from this distribution with a fixed step size is like trying to fit a square peg in a round hole (or, in this case, a banana-shaped hole).</p>
 </section>
 <section id="how-to-not-get-lost-in-probability-space" class="level1 page-columns page-full">
 <h1>How to Not Get Lost in Probability Space</h1>
-<p>Now that we understand why fixed-step HMC can struggle, let’s dig into the magic behind NUTS. The core idea is to let the sampler <em>decide</em> how far to travel in each step, adapting to the local geometry of the posterior. This involves two key components: adaptive path length and the U-turn criterion.</p>
-<section id="adaptive-path-length" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="adaptive-path-length">Adaptive Path Length</h4>
-<p>In fixed-step HMC, you predefine a fixed number of leapfrog steps. This determines the length of the trajectory. But what if the optimal trajectory length varies across the posterior? What if sometimes you need to take a short stroll and other times a long hike?</p>
+<p>Now that we understand why fixed-step HMC can struggle, let’s dig into the magic behind NUTS. The core idea is to let the sampler <em>decide</em> <strong>how far to travel in each step</strong>, adapting to the local geometry of the posterior. This involves two key components: (1) adaptive path length and (2) the U-turn criterion.</p>
+<section id="adaptive-path-length" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="adaptive-path-length">Adaptive Path Length</h3>
+<p>In fixed-step HMC, you predefine a fixed number of leapfrog steps. This determines the length of the trajectory. <strong>But what if the optimal trajectory length varies across the posterior?</strong> What if sometimes you need to take a short stroll and other times a long hike?</p>
 <div class="page-columns page-full"><p><img src="foot-steps.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Foot steps in representation of the concept of “stepsize”. Photo from <a href="https://unsplash.com/es/@agneska?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">magnezis magnestic</a> in <a href="https://unsplash.com/es/fotos/huellas-en-la-arena-TW62wXQ6Omc?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a>.</span></div></div>
-<p>NUTS solves this by dynamically adjusting the trajectory length. It starts with a short trajectory (e.g., just one leapfrog step) and then <em>doubles</em> it repeatedly. This doubling process continues until a certain criterion is met (which we’ll get to in the next subsection).</p>
-<p>Why doubling? Because it’s efficient! It allows NUTS to quickly explore a wide range of trajectory lengths without having to try every single possible length. It’s like searching for a light switch in a dark room: you start by checking nearby, then you check a wider area, and so on, doubling your search radius until you find it.</p>
-<p>Now, let’s consider a 2D example. Remember our banana-shaped posterior? With HMC-NUTS, we start with a single leapfrog step in a random direction. Then, we double the trajectory length by taking two steps, then four, and so on. The trajectory starts to resemble a branching path, exploring the posterior in ever-widening arcs.</p>
+<p>NUTS solves this by <strong>dynamically adjusting the trajectory length</strong>. It starts with a short trajectory (e.g., just one leapfrog step) and then <em>doubles</em> it repeatedly. This doubling process continues <strong>until a certain criterion is met</strong> (which we’ll get to in the next subsection).</p>
+<p>Why doubling? Because it’s efficient! It allows NUTS to quickly explore a wide range of trajectory lengths without having to try every single possible length. <strong>It’s like searching for a light switch in a dark room</strong>: you start by checking nearby, then you check a wider area, and so on, doubling your search radius <strong>until you find it</strong>.</p>
+<p>Now, let’s consider a 2D example. <strong>Remember our banana-shaped posterior?</strong> With HMC-NUTS, we start with a single leapfrog step in a random direction. Then, we double the trajectory length by taking two steps, then four, and so on. <strong>The trajectory starts to resemble a branching path</strong>, exploring the posterior in ever-widening arcs.</p>
 <p>Let’s now see <strong>an interactive animation</strong> of the NUTS dynamics in action over our banana-shaped distribution.</p>
 <iframe width="100%" height="500" src="demo-mcmc/app.html" title="MCMC">
 </iframe>
 <div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="margin-aside">The code for this animation is borrowed from <a href="https://github.com/chi-feng">Chi Feng’s github</a>. You can find the original repository with corresponding code here: <a href="https://github.com/chi-feng/mcmc-demo" class="uri">https://github.com/chi-feng/mcmc-demo</a>.</span></div></div>
-<p>This dynamic doubling of the trajectory length is a crucial part of NUTS’s efficiency. It allows the sampler to quickly adapt to the local geometry of the posterior, taking long steps when appropriate and short steps when necessary. But how does NUTS know when to stop doubling? That’s where the U-turn criterion comes in, which we’ll explore in the next section.</p>
+<p>This <strong>dynamic doubling of the trajectory length is a crucial part of NUTS’s efficiency</strong>. It allows the sampler to quickly adapt to the local geometry of the posterior, taking long steps when appropriate and short steps when necessary. <strong>But how does NUTS know when to stop doubling?</strong> That’s where the U-turn criterion comes in, which we’ll explore in the next section.</p>
 </section>
-<section id="the-u-turn-criterion" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="the-u-turn-criterion">The U-Turn Criterion</h4>
-<p>So, we’re doubling the trajectory length, exploring the posterior like eager adventurers. But how do we know when to stop? We don’t want to keep doubling indefinitely, wasting computational resources and potentially revisiting already explored regions. This is where the U-turn criterion comes in.</p>
-<p>The basic idea is simple: if our trajectory starts to double back on itself—making a “U-turn”—it’s a good sign that we’ve explored the relevant part of the posterior in that direction. Continuing further would just be redundant. It’s like hiking up a mountain: once you reach the summit and start heading down the other side, you know you’ve gone far enough in that direction. No need to keep walking just for the sake of it (unless you’re really into hiking, I guess).</p>
+<section id="the-u-turn-criterion" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="the-u-turn-criterion">The U-Turn Criterion</h3>
+<p>So, we’re doubling the trajectory length, exploring the posterior like eager adventurers. <strong>But how do we know when to stop?</strong> We don’t want to keep doubling indefinitely, wasting computational resources and potentially revisiting already explored regions. <strong>This is where the U-turn criterion comes in</strong>.</p>
+<p>The basic idea is simple: if our trajectory starts to double back on itself, making <strong>a “U-turn”, it’s a good sign that we’ve explored the relevant part of the posterior in that direction</strong>. Continuing further would just be redundant. It’s like hiking up a mountain: once you reach the summit and start heading down the other side, you know you’ve gone far enough in that direction. <strong>No need to keep walking</strong> just for the sake of it (unless you’re really into hiking, I guess).</p>
 <div class="page-columns page-full"><p><img src="u-turn-sign.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://www.ricardosalinas.com/blog/images/no_existe_el_error_solo_lecciones.jpg">Ricardo Salinas’ site</a>.</span></div></div>
-<p>Mathematically, a U-turn is detected by looking at the dot product of the momentum vectors at the beginning and end of the trajectory. Remember, the momentum vector indicates the direction of travel. If the dot product is negative, it means the two momentum vectors are pointing in roughly opposite directions—a clear sign of a U-turn.</p>
+<p>Mathematically, a <strong>U-turn is detected by looking at the dot product of the momentum vectors at the beginning and end of the trajectory</strong>. Remember, the momentum vector indicates the direction of travel. If the dot product is negative, it means the two momentum vectors are pointing in roughly opposite directions, a clear sign of a U-turn.</p>
 <p>Let’s break this down with a small example. Imagine we’re sampling from a 2D Gaussian. We start at a point <span class="math inline">\(q_0\)</span> with momentum <span class="math inline">\(p_0\)</span>. We take a few leapfrog steps and end up at a point <span class="math inline">\(q_T\)</span> with momentum <span class="math inline">\(p_T\)</span>.</p>
 <ul>
-<li>If <span class="math inline">\(p_0 \cdot p_T &gt; 0\)</span>, the momentum vectors are pointing in roughly the same direction. No U-turn yet. Keep exploring!</li>
-<li>If <span class="math inline">\(p_0 \cdot p_T &lt; 0\)</span>, the momentum vectors are pointing in roughly opposite directions. We’ve made a U-turn! Time to stop doubling the trajectory in this direction.</li>
+<li>If <span class="math inline">\(p_0 \cdot p_T &gt; 0\)</span>, the momentum vectors are pointing in roughly the same direction. <strong>No U-turn yet. Keep exploring!</strong></li>
+<li>If <span class="math inline">\(p_0 \cdot p_T &lt; 0\)</span>, the momentum vectors are pointing in roughly opposite directions. <strong>We’ve made a U-turn! Time to stop doubling the trajectory</strong> in this direction.</li>
 </ul>
 <div class="cell page-columns page-full">
 <details class="code-fold">
@@ -466,16 +519,16 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 </div>
 </div>
-<p>This U-turn criterion is a clever way to prevent NUTS from over-exploring. It ensures that the sampler focuses its efforts on the relevant regions of the posterior, leading to more efficient sampling. Now that we know how NUTS adapts the trajectory length and when to stop, let’s see how it organizes these trajectories into a neat and efficient structure: the binary tree.</p>
+<p>This U-turn criterion <strong>is a clever way to prevent NUTS from over-exploring</strong>. It ensures that the sampler focuses its efforts on the relevant regions of the posterior, <strong>leading to more efficient sampling</strong>. Now that we know how NUTS adapts the trajectory length and when to stop, let’s see how it organizes these trajectories into a neat and efficient structure: the binary tree.</p>
 </section>
-<section id="tree-building-for-sampling" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="tree-building-for-sampling">Tree Building for Sampling</h4>
-<p>We now know how NUTS dynamically adjusts the trajectory length and how it uses the U-turn criterion to avoid redundant sampling. But how does it keep track of all these different trajectories? The answer is: with a binary tree!</p>
-<p>Imagine you’re exploring a maze. You start at the entrance, and at each intersection, you have two choices: go left or go right. You keep making choices until you reach a dead end or decide to turn back. This is essentially how NUTS builds its binary tree.</p>
+<section id="tree-building-for-sampling" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="tree-building-for-sampling">Tree Building for Sampling</h3>
+<p>We now know how NUTS dynamically adjusts the trajectory length and how it uses the U-turn criterion to avoid redundant sampling. <strong>But how does it keep track of all these different trajectories?</strong> The answer is: with a <em>binary tree!</em></p>
+<p><strong>Imagine you’re exploring a maze</strong>. You start at the entrance, and at each intersection, you have two choices: <strong>go left or go right</strong>. You keep making choices <strong>until you reach a dead end or decide to turn back</strong>. This is essentially how NUTS builds its binary tree.</p>
 <div class="page-columns page-full"><p><img src="maze.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Picture of a Maze, representing that each choice (either left or right) is an example of binary decision, which represents the binary tree building process. Photo from <a href="https://stock.adobe.com/cl/images/man-entering-a-huge-mysterious-maze-3d-rendering/322713363">Adobe Stock</a>.</span></div></div>
-<p>NUTS starts with a single leapfrog step (our initial trajectory). This is the root of our tree. Then, it doubles the trajectory length by taking two steps: one to the “left” and one to the “right.” These two trajectories become the children of the root node. This doubling process continues, creating a balanced binary tree.</p>
-<p>Why a tree? Because it’s an efficient way to organize the exploration. It allows NUTS to quickly explore different parts of the posterior without having to revisit already explored regions (thanks to the U-turn criterion).</p>
-<p>Let’s break down the tree-building process:</p>
+<p>NUTS starts with a single leapfrog step (our initial trajectory). This is the root of our tree. Then, <strong>it doubles the trajectory length by taking two steps: one to the “left” and one to the “right”</strong>. These two trajectories become the children of the root node. This doubling process continues, creating a balanced binary tree.</p>
+<p>Why a tree? Because <strong>it’s an efficient way to organize the exploration</strong>. It allows NUTS to quickly explore different parts of the posterior without having to revisit already explored regions (thanks to the U-turn criterion).</p>
+<p>Let’s break down the <em>tree-building</em> process:</p>
 <ol type="1">
 <li><strong>Start with a single leapfrog step:</strong> This is the root node of the tree.</li>
 <li><strong>Double the trajectory length:</strong> Create two new trajectories by extending the current trajectory in both directions (forward and backward in time). These are the left and right children of the current node.</li>
@@ -483,22 +536,22 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <li><strong>Repeat steps 2 and 3:</strong> Continue doubling the trajectory length and checking for U-turns until a certain stopping criterion is met (e.g., a maximum tree depth).</li>
 </ol>
 <div class="page-columns page-full"><p><img src="tree-example.png" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Binary tree building process. Photo from <a href="https://www.jmlr.org/papers/volume15/hoffman14a/hoffman14a.pdf">J. Mach. Learn. Res., 15(1), 1593-1623</a>.</span></div></div>
-<p>Now, how does NUTS use this tree for sampling? It uses a process called recursive sampling. It starts at the root node and recursively traverses the tree, choosing either the left or right child at each node. The choice is made probabilistically, based on the Metropolis-Hastings acceptance criterion. This ensures that the samples are drawn from the target posterior distribution.</p>
-<p>This tree-building and recursive sampling process is what makes NUTS so efficient. It allows it to explore the posterior in a structured and organized way, avoiding redundant sampling and quickly adapting to the local geometry.</p>
+<p>Now, <em>how does NUTS use this tree for sampling?</em> It uses a process called <strong>recursive sampling</strong>. It starts at the root node and recursively traverses the tree, choosing either the left or right child at each node. The choice is made probabilistically, <strong>based on the Metropolis-Hastings acceptance criterion</strong>. This ensures that the samples are drawn from the target posterior distribution.</p>
+<p>This <strong>tree-building and recursive sampling process</strong> is what makes NUTS so efficient. It allows it to explore the posterior in a structured and organized way, <strong>avoiding redundant sampling</strong> and quickly adapting to the local geometry.</p>
 </section>
 </section>
 <section id="step-by-step-implementation-of-nuts" class="level1">
 <h1>Step-by-Step Implementation of NUTS</h1>
-<p>Now that we understand the theory behind NUTS, it’s time to put our knowledge into practice. In this section, we’ll build a NUTS sampler from scratch in R. Don’t worry, we’ll take it one step at a time (or, should I say, one leapfrog step at a time?).</p>
-<section id="setting-things-up" class="level4">
-<h4 class="anchored" data-anchor-id="setting-things-up">Setting Things Up</h4>
-<p>Before we start building our NUTS engine, we need to gather our tools. This involves defining our target distribution, its gradient, and the leapfrog integration method. We’ll reuse the gradient and leapfrog functions from our previous HMC implementation (because why reinvent the wheel?).</p>
-<p>Let’s consider a simple 2D Gaussian distribution as our target posterior. This will make it easier to visualize and understand the behavior of NUTS. We can define the log-posterior as follows:</p>
+<p>Now that we understand the theory behind NUTS, <strong>it’s time to put our knowledge into practice</strong>. In this section, we’ll build a NUTS sampler from scratch in R. Don’t worry, we’ll take it one step at a time (<em>or, should I say, one leapfrog step at a time?</em>).</p>
+<section id="setting-things-up" class="level3">
+<h3 class="anchored" data-anchor-id="setting-things-up">Setting Things Up</h3>
+<p>Before we start building our NUTS engine, we need to gather our tools. This involves defining <strong>(1)</strong> our target distribution, <strong>(2)</strong> its gradient, and <strong>(3)</strong> the leapfrog integration method. We’ll reuse the gradient and leapfrog functions from our <a href="https://doi.org/10.59350/fa26y-xa178">previous HMC implementation</a> (because why reinvent the wheel?).</p>
+<p>Let’s consider a simple 2D Gaussian distribution as our target posterior. <strong>This will make it easier to visualize and understand</strong> the behavior of NUTS. We can define the log-posterior as follows:</p>
 <p><span class="math display">\[
 \log p(q) = -\frac{1}{2}q^\top \Sigma^{-1} q -\frac{1}{2}\log(\det{\Sigma}) + \text{constant}
 \]</span></p>
 <p>Where <span class="math inline">\(q = (q_1, q_2)\)</span> is our position vector and <span class="math inline">\(\Sigma\)</span> is the covariance matrix.</p>
-<p>Now, let’s define the gradient of the log-posterior:</p>
+<p>Now, let’s define the <strong>gradient of the log-posterior</strong>:</p>
 <p><span class="math display">\[
 \nabla \log p(q) = -\Sigma^{-1} q
 \]</span></p>
@@ -515,7 +568,7 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fu">solve</span>(Sigma, q <span class="sc">-</span> mu)</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Next, we need the leapfrog integration function. Here’s a reminder (and the R code) from the previous HMC blog post:</p>
+<p>Next, we need the <strong>leapfrog integration function</strong>. Here’s a reminder (and the R code) from the <a href="https://doi.org/10.59350/fa26y-xa178">previous HMC blog post</a>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Leapfrog integration</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>leapfrog <span class="ot">&lt;-</span> <span class="cf">function</span>(q, p, grad_func, epsilon, Sigma, mu) {</span>
@@ -527,15 +580,15 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">q =</span> q, <span class="at">p =</span> p)</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>With these functions in place, we’re ready to start implementing the core components of NUTS. We’ll begin with the initialization step in the next subsection.</p>
+<p>With these functions in place, <strong>we’re ready to start implementing the core components of NUTS</strong>. We’ll begin with the initialization step in the next subsection.</p>
 <p>Okay, let’s dive into the core steps of NUTS implementation. This will be the most substantial part of the implementation section.</p>
 </section>
-<section id="core-steps-of-nuts" class="level4">
-<h4 class="anchored" data-anchor-id="core-steps-of-nuts">Core Steps of NUTS</h4>
-<p>Now that we have our tools ready, we can start building the core components of the NUTS sampler. This involves initialization, building the trajectory, checking for U-turns, building the tree, and handling acceptance and termination.</p>
-<section id="initialization" class="level5">
-<h5 class="anchored" data-anchor-id="initialization">Initialization</h5>
-<p>First, we need to initialize the sampler. This involves setting the initial position <span class="math inline">\(q\)</span>, drawing a random momentum <span class="math inline">\(p\)</span>, and setting the hyperparameters, most importantly, the initial step size <span class="math inline">\(\epsilon\)</span>.</p>
+<section id="core-steps-of-nuts" class="level3">
+<h3 class="anchored" data-anchor-id="core-steps-of-nuts">Core Steps of NUTS</h3>
+<p>Now that we have our tools ready, <strong>we can start building the core components of the NUTS sampler</strong>. This involves initialization, building the trajectory, checking for U-turns, building the tree, and handling acceptance and termination.</p>
+<section id="initialization" class="level4">
+<h4 class="anchored" data-anchor-id="initialization">Initialization</h4>
+<p>First, we need to <strong>initialize the sampler</strong>. This involves setting the initial position <span class="math inline">\(q\)</span>, drawing a random momentum <span class="math inline">\(p\)</span>, and setting the hyperparameters, most importantly, the initial step size <span class="math inline">\(\epsilon\)</span>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialization</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>nuts_init <span class="ot">&lt;-</span> <span class="cf">function</span>(q0, Sigma, mu, epsilon) {</span>
@@ -555,9 +608,9 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>nuts_state <span class="ot">&lt;-</span> <span class="fu">nuts_init</span>(q0, Sigma, mu, epsilon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="build-the-trajectory" class="level5">
-<h5 class="anchored" data-anchor-id="build-the-trajectory">Build the Trajectory</h5>
-<p>The next step is to build the trajectory using the leapfrog integrator. Here’s where the dynamic doubling comes in. We’ll also incorporate the U-turn check here.</p>
+<section id="build-the-trajectory" class="level4">
+<h4 class="anchored" data-anchor-id="build-the-trajectory">Build the Trajectory</h4>
+<p>The next step is to <strong>build the trajectory using the leapfrog integrator</strong>. Here’s where the dynamic doubling comes in. We’ll also incorporate the U-turn check here.</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -598,9 +651,9 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </details>
 </div>
 </section>
-<section id="tree-building" class="level5">
-<h5 class="anchored" data-anchor-id="tree-building">Tree Building</h5>
-<p>While the previous function <em>builds</em> the trajectory by doubling it, the actual tree structure is implicit. This is because NUTS doesn’t explicitly store the entire tree in memory. It only needs to keep track of the leftmost and rightmost points of the trajectory and use them to sample.</p>
+<section id="tree-building" class="level4">
+<h4 class="anchored" data-anchor-id="tree-building">Tree Building</h4>
+<p>While the previous function <em>builds</em> the trajectory by doubling it, the actual tree structure is implicit. This is because <strong>NUTS doesn’t explicitly store the entire tree in memory</strong>. It only needs to keep track of the leftmost and rightmost points of the trajectory and use them to sample.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -663,9 +716,9 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 </div>
 </section>
-<section id="acceptance-and-termination" class="level5">
-<h5 class="anchored" data-anchor-id="acceptance-and-termination">Acceptance and Termination</h5>
-<p>Finally, we need to decide whether to accept the new sample from the trajectory. This is done using the Metropolis-Hastings acceptance criterion, comparing the joint probability of the initial state and the proposed state. The process is repeated until the desired number of samples is obtained.</p>
+<section id="acceptance-and-termination" class="level4">
+<h4 class="anchored" data-anchor-id="acceptance-and-termination">Acceptance and Termination</h4>
+<p>Finally, we need to decide whether to accept the new sample from the trajectory. <strong>This is done using the Metropolis-Hastings acceptance criterion</strong>, comparing the joint probability of the initial state and the proposed state. The process is repeated <strong>until the desired number of samples is obtained</strong>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Metropolis-Hastings acceptance probability</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>acceptance_prob <span class="ot">&lt;-</span> <span class="cf">function</span>(current_logp, proposed_logp) {</span>
@@ -674,19 +727,19 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 <p>We will incorporate this acceptance step into the full NUTS sampler in the next section, along with the complete NUTS algorithm and the adaptive step size procedure.</p>
 </section>
-<section id="adaptative-step-size" class="level5">
-<h5 class="anchored" data-anchor-id="adaptative-step-size">Adaptative Step-Size</h5>
-<p>One of the most crucial aspects of NUTS (and HMC in general) is choosing an appropriate step size, <span class="math inline">\(\epsilon\)</span>. A good step size allows the sampler to efficiently explore the posterior distribution. Too small, and the sampler takes tiny, slow steps, like a snail on a marathon. Too large, and it overshoots, bouncing around erratically, like a caffeinated kangaroo on a trampoline.</p>
-<p>NUTS uses an adaptive step size procedure, especially during the warmup phase, to find a good value for <span class="math inline">\(\epsilon\)</span>. The goal is to achieve a target acceptance rate, typically around 0.8. This indicates that the sampler is neither accepting too many nor too few proposals.</p>
+<section id="adaptative-step-size" class="level4">
+<h4 class="anchored" data-anchor-id="adaptative-step-size">Adaptative Step-Size</h4>
+<p>One of the most crucial aspects of NUTS (and HMC in general) is <strong>choosing an appropriate step size</strong>, <span class="math inline">\(\epsilon\)</span>. A good step size allows the sampler to efficiently explore the posterior distribution. Too small, and the sampler takes tiny, slow steps, <strong>like a snail on a marathon</strong>. Too large, and it overshoots, bouncing around erratically, <strong>like a caffeinated kangaroo on a trampoline</strong>.</p>
+<p><strong>NUTS uses an adaptive step size procedure</strong>, especially during the warmup phase, to find a good value for <span class="math inline">\(\epsilon\)</span>. The goal is <strong>to achieve a target acceptance rate, typically around 0.8</strong>. This indicates that the sampler is neither accepting too many nor too few proposals.</p>
 <p>A simple way to adapt the step size is to use the following update rule:</p>
 <p><span class="math display">\[
 \epsilon \leftarrow \epsilon \cdot e^{\gamma \cdot \delta} \\
 \]</span></p>
-<p>Where <span class="math inline">\(\epsilon\)</span> is the current step size; <span class="math inline">\(\gamma\)</span> is a tuning parameter that controls the adaptation rate (how fast <span class="math inline">\(\epsilon\)</span> will adapt); <span class="math inline">\(\delta\)</span> is the difference between the current acceptance rate <span class="math inline">\(\lambda_{\text{CA}}\)</span> and the target acceptance rate <span class="math inline">\(\lambda_{\text{TA}}\)</span>, and could be defined like this:</p>
+<p>Where <span class="math inline">\(\epsilon\)</span> is the <strong>current step size</strong>; <span class="math inline">\(\gamma\)</span> is a tuning parameter that <strong>controls the adaptation rate</strong> (how fast <span class="math inline">\(\epsilon\)</span> will adapt); <span class="math inline">\(\delta\)</span> is the difference between the current acceptance rate <span class="math inline">\(\lambda_{\text{CA}}\)</span> and the target acceptance rate <span class="math inline">\(\lambda_{\text{TA}}\)</span>, and could be defined like this:</p>
 <p><span class="math display">\[
 \delta = \lambda_{\text{CA}} - \lambda_{\text{TA}}
 \]</span></p>
-<p>This simplified form allow us to reduce epsilon at each step as long as the current acceptance rate <span class="math inline">\(\lambda_{\text{CA}}\)</span> is lower than the target acceptance rate <span class="math inline">\(\lambda_{\text{TA}}\)</span>. Here’s the R code for this adaptation:</p>
+<p>This simplified form allow us to <strong>reduce epsilon at each step</strong> as long as the current acceptance rate <span class="math inline">\(\lambda_{\text{CA}}\)</span> is lower than the target acceptance rate <span class="math inline">\(\lambda_{\text{TA}}\)</span>. Here’s the R code for this adaptation:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>adapt_epsilon <span class="ot">&lt;-</span> <span class="cf">function</span>(epsilon, lambda_ca, <span class="at">lambda_ta =</span> <span class="fl">0.8</span>, <span class="at">gamma =</span> <span class="fl">0.5</span>) {</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  delta <span class="ot">&lt;-</span> lambda_ca <span class="sc">-</span> lambda_ta</span>
@@ -694,7 +747,7 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  epsilon</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This update rule adjusts the step size based on the difference between the observed and target acceptance rates. If the acceptance rate is too low, (<span class="math inline">\(\epsilon\)</span>) is decreased; if it’s too high, (<span class="math inline">\(\epsilon\)</span>) is increased. The (<span class="math inline">\(\gamma\)</span>) parameter controls how aggressively this adjustment is made.</p>
+<p>This update rule <strong>adjusts the step size based on the difference between the observed and target acceptance rates</strong>. If the acceptance rate is too low, (<span class="math inline">\(\epsilon\)</span>) is decreased; if it’s too high, (<span class="math inline">\(\epsilon\)</span>) is increased. The gamma (<span class="math inline">\(\gamma\)</span>) parameter controls <strong>how aggressively this adjustment is made</strong>.</p>
 <p>To see how this adaptation works in practice, let’s visualize its dynamics:</p>
 <div class="cell">
 <details class="code-fold">
@@ -745,11 +798,11 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 </div>
 </div>
-<p>As the plot shows, the adaptation is more aggressive (epsilon changes more rapidly) with larger values of gamma. Note that this is a very basic adaptation strategy. More robust methods, such as dual averaging, are typically used in practice, but this simple method illustrates the basic idea.</p>
+<p>As the plot shows, the <strong>adaptation is more aggressive</strong> (epsilon changes more rapidly) <strong>with larger values of</strong> <span class="math inline">\(\gamma\)</span>. Note that this is a very basic adaptation strategy. More robust methods, such as dual averaging, are typically used in practice, but this simple method illustrates the basic idea.</p>
 </section>
 </section>
-<section id="implementation-strategy" class="level4">
-<h4 class="anchored" data-anchor-id="implementation-strategy">Implementation Strategy</h4>
+<section id="implementation-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="implementation-strategy">Implementation Strategy</h3>
 <p>Now that we have all the individual components, it’s time to assemble them into a fully functional NUTS sampler. We’ll also incorporate the adaptive step size tuning, which is crucial for NUTS’s performance.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Full NUTS sampler</span></span>
@@ -769,7 +822,7 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Metropolis Hastings</span></span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    current_logp <span class="ot">&lt;-</span> <span class="fu">log_posterior</span>(nuts_state<span class="sc">$</span>q, Sigma, mu)</span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    proposed_logp <span class="ot">&lt;-</span> <span class="fu">log_posterior</span>(trajectory<span class="sc">$</span>q, Sigma, mu)</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    acc_rate <span class="ot">&lt;-</span> <span class="fu">acceptance_prob</span>(current_logp, proposed_logp)</span>
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> acc_rate){</span>
@@ -790,7 +843,7 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Metropolis Hastings</span></span>
 <span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    current_logp <span class="ot">&lt;-</span> <span class="fu">log_posterior</span>(nuts_state<span class="sc">$</span>q, Sigma, mu)</span>
 <span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>    proposed_logp <span class="ot">&lt;-</span> <span class="fu">log_posterior</span>(trajectory<span class="sc">$</span>q, Sigma, mu)</span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> <span class="fu">acceptance_prob</span>(current_logp, proposed_logp)){</span>
 <span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>      nuts_state<span class="sc">$</span>q <span class="ot">&lt;-</span> trajectory<span class="sc">$</span>q</span>
 <span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    }</span>
@@ -817,7 +870,7 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </section>
 <section id="is-our-sampler-behaving-itself" class="level1 page-columns page-full">
 <h1>Is Our Sampler Behaving Itself?</h1>
-<p>In the following section, we’ll try to estimate the location parameters of a 2-dimensional multivariate normal, we’ll call them <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span> respectively. They will have a true values of <span class="math inline">\(\theta_1 = 1\)</span> and <span class="math inline">\(\theta_2 = -1\)</span>, and the variance-covariance matrix (<span class="math inline">\(\Sigma\)</span>) will be defined as:</p>
+<p>In the following section, we’ll try to estimate the location parameters of a <strong>2-dimensional multivariate normal</strong>, we’ll call them <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span> respectively. They will have a true values of <span class="math inline">\(\theta_1 = 1\)</span> and <span class="math inline">\(\theta_2 = -1\)</span>, and the variance-covariance matrix (<span class="math inline">\(\Sigma\)</span>) will be defined as:</p>
 <p><span class="math display">\[
 \Sigma =
   \begin{pmatrix}
@@ -842,7 +895,7 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="co"># Seed for reproducibility</span></span>
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Our main function — HMC-NUTS sampler</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Our main function ,  HMC-NUTS sampler</span></span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">nuts</span>(</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  log_posterior, grad_log_posterior,         <span class="co"># Distribution functions</span></span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  q0, Sigma, mu,                             <span class="co"># Target parameters</span></span>
@@ -850,13 +903,13 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 <span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_samples =</span> <span class="dv">2000</span>, <span class="at">n_warmup =</span> <span class="dv">2000</span> <span class="co"># Sampler hyperparameter</span></span>
 <span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now that we have a working NUTS sampler, we need to make sure it’s actually doing what it’s supposed to do. This section will cover several diagnostic techniques, both visual and numerical, to validate our sampler.</p>
-<section id="visual-diagnostics" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="visual-diagnostics">Visual Diagnostics</h4>
-<p>The first step in diagnosing our sampler is to visualize the results. This gives us a quick and intuitive understanding of its behavior. Two common visual diagnostics are trace plots and posterior density estimates.</p>
-<section id="trace-plots" class="level5 page-columns page-full">
-<h5 class="anchored" data-anchor-id="trace-plots">Trace Plots</h5>
-<p>Trace plots show the value of each parameter over the course of the sampling process. Ideally, trace plots should look like “white noise” (random fluctuations around a stable mean). This indicates that the sampler is exploring the posterior well and not getting stuck in any particular region. If you see trends, patterns, or long periods of near-constant values, it could indicate problems with convergence.</p>
+<p>Now that we have a working NUTS sampler, <strong>we need to make sure it’s actually doing what it’s supposed to do</strong>. This section will cover several diagnostic techniques, both visual and numerical, to <em>validate</em> our sampler.</p>
+<section id="visual-diagnostics" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="visual-diagnostics">Visual Diagnostics</h3>
+<p>The first step in <strong>diagnosing our sampler is to visualize the results</strong>. This gives us a quick and intuitive understanding of its behavior. Two common visual diagnostics are <em>trace plots</em> and <em>posterior density estimates</em>.</p>
+<section id="trace-plots" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="trace-plots">Trace Plots</h4>
+<p>Trace plots show <strong>the value of each parameter over the course of the sampling process</strong>. Ideally, trace plots should look like “white noise” (random fluctuations around a stable mean). <strong>This indicates that the sampler is exploring the posterior</strong> well and not getting stuck in any particular region. If you see trends, patterns, or long periods of near-constant values, it could indicate problems with convergence.</p>
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
@@ -891,9 +944,9 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 </div>
 </section>
-<section id="posterior-density-estimates" class="level5 page-columns page-full">
-<h5 class="anchored" data-anchor-id="posterior-density-estimates">Posterior Density Estimates</h5>
-<p>These plots show the estimated density of the samples, giving us an idea of the shape of the posterior distribution. We can compare these estimates to the true posterior distribution (if we know it) to check if our sampler is capturing the correct shape.</p>
+<section id="posterior-density-estimates" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="posterior-density-estimates">Posterior Density Estimates</h4>
+<p>These plots show the <strong>estimated density of the samples</strong>, giving us an idea of the shape of the posterior distribution. We can compare these estimates to the true posterior distribution (if we know it) to check if our sampler is capturing the correct shape.</p>
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
@@ -919,15 +972,15 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 </div>
 </div>
-<p>By visually inspecting these plots, we can get a good sense of whether our NUTS sampler is working as expected. However, visual diagnostics are subjective. We also need numerical diagnostics to provide more objective measures of sampler performance. We’ll cover these in the next subsection.</p>
+<p>By visually inspecting these plots, we can get a good sense of whether our NUTS sampler is working as expected. However, <strong>visual diagnostics are subjective</strong>. We also need numerical diagnostics to provide more objective measures of sampler performance.</p>
 </section>
 </section>
-<section id="numerical-diagnostics" class="level4">
-<h4 class="anchored" data-anchor-id="numerical-diagnostics">Numerical Diagnostics</h4>
-<p>While visual diagnostics provide a valuable qualitative assessment of our sampler’s performance, we also need quantitative metrics to be more objective. Two key numerical diagnostics are effective sample size (ESS) and R-hat (<span class="math inline">\(\hat{R}\)</span>).</p>
-<section id="effective-sample-size-ess" class="level5">
-<h5 class="anchored" data-anchor-id="effective-sample-size-ess">Effective Sample Size (ESS)</h5>
-<p>The ESS measures the number of <em>independent</em> samples that our sampler has effectively generated. Because MCMC samples are correlated, the ESS is typically smaller than the actual number of samples. A higher ESS indicates better sampler efficiency. A rule of thumb is that you want an ESS of at least a few hundred for each parameter to have reliable estimates of the posterior.</p>
+<section id="numerical-diagnostics" class="level3">
+<h3 class="anchored" data-anchor-id="numerical-diagnostics">Numerical Diagnostics</h3>
+<p>While visual diagnostics provide a valuable qualitative assessment of our sampler’s performance, <strong>we also need quantitative metrics to be more objective</strong>. Two key numerical diagnostics are <em>effective sample size</em> (ESS) and <em>R-hat</em> (<span class="math inline">\(\hat{R}\)</span>).</p>
+<section id="effective-sample-size-ess" class="level4">
+<h4 class="anchored" data-anchor-id="effective-sample-size-ess">Effective Sample Size (ESS)</h4>
+<p>The ESS measures <strong>the number of <em>independent</em> samples that our sampler has effectively generated</strong>. Because MCMC samples are correlated, the ESS is typically smaller than the actual number of samples. A higher ESS indicates better sampler efficiency. A rule of thumb is that you want an ESS of at least a few hundred for each parameter to have reliable estimates of the posterior.</p>
 <p>We can estimate the ESS using various methods. A common approach is to use the <code>effectiveSize()</code> function from the <code>coda</code> package in R:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate ESS for each parameter</span></span>
@@ -939,9 +992,9 @@ y &amp;\sim \mathcal{N}(x^2, 0.1)
 </div>
 </div>
 </section>
-<section id="gelman-and-rubins-convergence-diagnostic-hatr" class="level5">
-<h5 class="anchored" data-anchor-id="gelman-and-rubins-convergence-diagnostic-hatr">Gelman and Rubin’s Convergence Diagnostic (<span class="math inline">\(\hat{R}\)</span>)</h5>
-<p>The <span class="math inline">\(\hat{R}\)</span> statistic (pronounced “R-hat”) is a convergence diagnostic that compares the variance within multiple chains to the variance between chains. If the chains have converged to the same distribution, the within-chain variance should be similar to the between-chain variance, and <span class="math inline">\(\hat{R}\)</span> should be close to 1. Values of <span class="math inline">\(\hat{R}\)</span> much greater than 1 (e.g., above 1.1) indicate that the chains have not converged.</p>
+<section id="gelman-and-rubins-convergence-diagnostic-hatr" class="level4">
+<h4 class="anchored" data-anchor-id="gelman-and-rubins-convergence-diagnostic-hatr">Gelman and Rubin’s Convergence Diagnostic (<span class="math inline">\(\hat{R}\)</span>)</h4>
+<p>The <span class="math inline">\(\hat{R}\)</span> statistic (pronounced “R-hat”) is a convergence diagnostic that <strong>compares the variance within multiple chains to the variance between chains</strong>. If the chains have converged to the same distribution, the within-chain variance should be similar to the between-chain variance, and <span class="math inline">\(\hat{R}\)</span> <strong>should be close to 1</strong>. Values of <span class="math inline">\(\hat{R}\)</span> much greater than 1 (e.g., above 1.1) indicate that the chains have not converged.</p>
 <p>However, to compute <span class="math inline">\(\hat{R}\)</span> we need more than one chain, so let’s run our HMC-NUTS model four times to get independent runs or “chains”:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>n_chains <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># Number of independent chains</span></span>
@@ -977,79 +1030,68 @@ $mpsrf
 [1] 1.004</code></pre>
 </div>
 </div>
-<p>As you can see, all <span class="math inline">\(\hat{R}\)</span> are well below the 1.1 threshold, which suggests thta the chains are mixing well enough.</p>
-<p>With these visual and numerical diagnostics, we can be confident in the performance of our NUTS sampler. These tools allow us to assess convergence, efficiency, and overall sampler behavior, ensuring that we are obtaining reliable samples from our target posterior distribution.</p>
+<p>As you can see, all <span class="math inline">\(\hat{R}\)</span> are well below the 1.1 threshold, <strong>which suggests that the chains are mixing well enough</strong>.</p>
+<p>With these visual and numerical diagnostics, we can be confident about the performance of our NUTS sampler. <strong>These tools allow us to assess convergence, efficiency, and overall sampler behavior</strong>, ensuring that we are obtaining reliable samples from our target posterior distribution.</p>
 </section>
 </section>
 </section>
 <section id="making-it-sing-in-the-real-world" class="level1 page-columns page-full">
 <h1>Making It Sing in the Real World</h1>
-<p>Now that we have a basic NUTS sampler, let’s talk about how to fine-tune it for real-world applications. Because, let’s face it, toy examples are fun, but real-world problems are where the real challenges (and rewards) lie.</p>
-<p>When applying NUTS to real-world problems, there are a few practical considerations to keep in mind: choosing an initial step size, setting the maximum tree depth, and understanding the computational trade-offs.</p>
-<section id="choosing-an-initial-step-size" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="choosing-an-initial-step-size">Choosing an Initial Step Size</h4>
-<p>While NUTS adapts the step size during warmup, a good initial step size can significantly improve the efficiency of the adaptation process. A common approach is to perform a short pilot run (a few hundred iterations) and adjust the initial step size based on the acceptance rate. If the acceptance rate is too low (e.g., below 0.6), decrease the initial step size. If it’s too high (e.g., above 0.9), increase it.</p>
-<p>In our implementation, we used a very simple adaptation strategy. In real-world applications, more robust methods like dual averaging are used. These methods are more stable and efficient at finding a good step size.</p>
+<p>Now that we have a basic NUTS sampler, let’s talk about <strong>how to fine-tune it for real-world applications</strong>. Because, let’s face it, toy examples are fun, but real-world problems are where the real challenges (and rewards) lie.</p>
+<p>When applying NUTS to <em>real-world</em> problems, there are a few practical considerations to keep in mind: <strong>(1)</strong> choosing an initial step size, <strong>(2)</strong> setting the maximum tree depth, and <strong>(3)</strong> understanding the computational trade-offs.</p>
+<section id="choosing-an-initial-step-size" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="choosing-an-initial-step-size">Choosing an Initial Step Size</h3>
+<p>While NUTS adapts the step size during warmup, <strong>a good initial step size can significantly improve the efficiency of the adaptation process</strong>. A common approach is to perform a short pilot run (a few hundred iterations) and adjust the initial step size based on the acceptance rate. If the acceptance rate is too low (e.g., below 0.6), decrease the initial step size. If it’s too high (e.g., above 0.9), increase it.</p>
+<p>In our implementation, we used a very simple adaptation strategy. In real-world applications, more robust methods like <strong>dual averaging</strong> are used. These methods are <strong>more stable and efficient</strong> at finding a good step size.</p>
 <div class="page-columns page-full"><p><img src="stride-length.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Always be careful on the stepsize you choose! Photo from <a href="https://coachtherun.com/running-training/tips/average-stride-length/">Coach The Run</a>.</span></div></div>
 </section>
-<section id="setting-the-maximum-tree-depth" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="setting-the-maximum-tree-depth">Setting the Maximum Tree Depth</h4>
-<p>The maximum tree depth limits the maximum trajectory length that NUTS will explore. A larger tree depth allows for longer trajectories, which can be beneficial for exploring complex posteriors. However, it also increases exponentially the computational cost. A common default value is 10, which allows for trajectories up to <span class="math inline">\(2^{10} = 1024\)</span> leapfrog steps.</p>
-<p>It is important to notice that a too small tree depth can lead to poor exploration of the parameter space, and a too large tree depth can lead to unnecessary computational burden. Therefore, it is important to choose a tree depth that is appropriate for the problem at hand.</p>
-<section id="computational-trade-offs" class="level5 page-columns page-full">
-<h5 class="anchored" data-anchor-id="computational-trade-offs">Computational Trade-offs</h5>
-<p>NUTS, like other HMC methods, involves computational trade-offs between memory, runtime, and efficiency. Longer trajectories (achieved by larger tree depths or smaller step sizes) can lead to better exploration and lower autocorrelation but also increase the runtime and memory usage. It’s important to find a balance that works for your specific problem and computational resources.</p>
-<p>In practice, you’ll often need to experiment with different settings to find the optimal balance for your problem. This might involve running several short test runs with different parameter values and comparing the results.</p>
+<section id="setting-the-maximum-tree-depth" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="setting-the-maximum-tree-depth">Setting the Maximum Tree Depth</h3>
+<p>The maximum tree depth <strong>limits the maximum trajectory length that NUTS will explore</strong>. A larger tree depth allows for longer trajectories, which <strong>can be beneficial for exploring complex posteriors</strong>. However, it also increases exponentially the computational cost. A common default value is 10, which allows for trajectories up to <span class="math inline">\(2^{10} = 1024\)</span> leapfrog steps.</p>
+<p>It is important to notice that a <strong>too small tree depth can lead to poor exploration of the parameter space</strong>, and a too large tree depth can lead to unnecessary computational burden. Therefore, it is important to choose a tree depth that is appropriate for the problem at hand.</p>
+<section id="computational-trade-offs" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="computational-trade-offs">Computational Trade-offs</h4>
+<p>NUTS, like other HMC methods, <strong>involves computational trade-offs between memory, runtime, and efficiency</strong>. Longer trajectories (achieved by larger tree depths or smaller step sizes) can lead to better exploration and lower autocorrelation but also increase the runtime and memory usage. It’s important to <strong>find a balance that works for your specific problem</strong> and computational resources.</p>
+<p>In practice, <strong>you’ll often need to experiment with different settings to find the optimal balance for your problem</strong>. This might involve running several short test runs with different parameter values and comparing the results.</p>
 <div class="page-columns page-full"><p><img src="computer-smoking.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">My computer on an average Bayesian modeling session. Photo from <a href="https://onesupport.com/computer-overheating/">OneSupport</a>.</span></div></div>
 </section>
 </section>
-<section id="when-things-go-wrong" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="when-things-go-wrong">When Things Go Wrong</h4>
-<p>Even with its adaptive nature, NUTS can sometimes struggle with certain types of posterior distributions. This subsection will discuss some common pitfalls and techniques to address them.</p>
-<section id="pathological-posteriors" class="level5">
-<h5 class="anchored" data-anchor-id="pathological-posteriors">Pathological Posteriors</h5>
-<p>Certain characteristics of posterior distributions can make sampling challenging for any MCMC method, including NUTS. Some of the most common culprits are:</p>
-<ul>
-<li><strong>Extreme Curvature:</strong> If the posterior has regions of very high curvature (sharp turns or narrow valleys), NUTS might have trouble navigating these areas. The leapfrog integrator can become inaccurate, leading to poor exploration.</li>
-<li><strong>Multimodality:</strong> As we discussed earlier, multimodal posteriors (with multiple peaks) can be difficult for any sampler. NUTS can sometimes get stuck in one mode and fail to explore the others.</li>
-<li><strong>Discontinuities or Sharp Changes:</strong> If the posterior has discontinuities or sharp changes in density, the gradient information used by NUTS can be misleading, leading to inefficient sampling.</li>
-</ul>
+<section id="when-things-go-wrong" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="when-things-go-wrong">When Things Go Wrong</h3>
+<p>Even with its adaptive nature, <strong>NUTS can sometimes struggle with certain types of posterior distributions</strong>. This subsection will discuss some common pitfalls and techniques to address them.</p>
+<section id="pathological-posteriors" class="level4">
+<h4 class="anchored" data-anchor-id="pathological-posteriors">Pathological Posteriors</h4>
+<p>Certain characteristics of posterior distributions can make sampling challenging for any MCMC method, <strong>including NUTS</strong>. Some of the most common culprits are:</p>
+<p><strong>Extreme Curvature</strong>. If the posterior has regions of <em>very</em> high curvature (sharp turns or narrow valleys), NUTS might have trouble navigating these areas. The leapfrog integrator can become inaccurate, leading to poor exploration.</p>
+<p><strong>Multimodality</strong>. As we discussed earlier, multimodal posteriors (with multiple peaks) can be <em>difficult</em> for any sampler. NUTS can sometimes get stuck in one mode and fail to explore the others.</p>
+<p><strong>Discontinuities or Sharp Changes</strong>. If the posterior has discontinuities or <em>sharp</em> changes in density, the gradient information used by NUTS can be misleading, leading to inefficient sampling.</p>
 </section>
-<section id="techniques-to-stabilize-nuts" class="level5 page-columns page-full">
-<h5 class="anchored" data-anchor-id="techniques-to-stabilize-nuts">Techniques to Stabilize NUTS</h5>
+<section id="techniques-to-stabilize-nuts" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="techniques-to-stabilize-nuts">Techniques to Stabilize NUTS</h4>
 <p>When faced with these challenging posteriors, there are several techniques you can try to stabilize NUTS:</p>
-<ul>
-<li><strong>Reparameterization:</strong> Sometimes, reparameterizing the model can make the posterior easier to sample. This involves transforming the parameters of the model to a new set of parameters that result in a smoother or more well-behaved posterior. For example, if you have a parameter that is constrained to be positive, you could reparameterize it using a logarithmic transformation.</li>
-<li><strong>Increasing Tree Depth:</strong> Increasing the maximum tree depth can allow NUTS to explore more complex trajectories and potentially escape from narrow valleys or explore different modes. However, this comes at the cost of increased computational cost.</li>
-<li><strong>Using a More Robust Step Size Adaptation:</strong> As mentioned before, using more sophisticated methods for step size adaptation, like dual averaging, can significantly improve NUTS’s performance. These methods are less sensitive to the initial step size and can adapt more efficiently to the local geometry of the posterior.</li>
-<li><strong>Prior Choice:</strong> In some cases, a carefully chosen prior distribution can help to regularize the posterior and make it easier to sample.</li>
-</ul>
-<p>It’s important to remember that there’s no one-size-fits-all solution for these problems. You’ll often need to experiment with different techniques to find what works best for your specific problem. Careful diagnostics, both visual and numerical, are crucial for identifying potential issues and evaluating the effectiveness of your solutions.</p>
+<p><strong>Reparameterization</strong>. Sometimes, reparameterizing the model can make the posterior easier to sample. This involves transforming the parameters of the model to a new set of parameters that result in a smoother or more well-behaved posterior. For example, if you have a parameter that is constrained to be positive, you could reparameterize it using a logarithmic transformation.</p>
+<p><strong>Increasing Tree Depth</strong>. Increasing the maximum tree depth can allow NUTS to explore more complex trajectories and potentially escape from narrow valleys or explore different modes. However, this comes at the cost of increased computational cost.</p>
+<p><strong>Using a More Robust Step Size Adaptation</strong>. As mentioned before, using more sophisticated methods for step size adaptation, like dual averaging, can significantly improve NUTS’s performance. These methods are less sensitive to the initial step size and can adapt more efficiently to the local geometry of the posterior.</p>
+<p><strong>Prior Choice</strong>. In some cases, a carefully chosen prior distribution can help to regularize the posterior and make it easier to sample.</p>
+<p>It’s important to remember that <strong>there’s no one-size-fits-all solution</strong> for these problems. You’ll often need to <strong>experiment with different techniques to find what works best for your specific problem</strong>. Careful diagnostics, both visual and numerical, are crucial for identifying potential issues and evaluating the effectiveness of your solutions.</p>
 <div class="page-columns page-full"><p><img src="meme.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://imgflip.com/memegenerator">imgflip</a>.</span></div></div>
 </section>
 </section>
-<section id="taking-it-to-the-next-level" class="level4 page-columns page-full">
-<h4 class="anchored" data-anchor-id="taking-it-to-the-next-level">Taking It to the Next Level</h4>
-<p>We’ve covered the basics of NUTS implementation and fine-tuning. Now, let’s explore some advanced tips for using NUTS in more complex scenarios and leveraging existing tools.</p>
-<section id="standing-on-the-shoulders-of-giants" class="level5">
-<h5 class="anchored" data-anchor-id="standing-on-the-shoulders-of-giants">Standing on the Shoulders of Giants</h5>
-<p>Implementing NUTS from scratch, as we’ve done in this post, is a great way to understand its inner workings. However, for most real-world applications, it’s recommended to use well-established probabilistic programming languages that have highly optimized and thoroughly tested NUTS implementations. Some popular choices include:</p>
-<ul>
-<li><strong>Stan:</strong> Stan is a powerful probabilistic programming language specifically designed for Bayesian modeling. It features a highly optimized implementation of NUTS, along with many other advanced features like automatic differentiation and robust step size adaptation (using dual averaging). Stan is often the go-to choice for serious Bayesian work.</li>
-<li><strong>PyMC:</strong> PyMC is a Python library for Bayesian statistical modeling. It provides a user-friendly interface for building and fitting Bayesian models, including NUTS sampling. PyMC is a good option if you prefer working in Python.</li>
-<li><strong>Turing.jl:</strong> Turing.jl is a probabilistic programming language written in Julia. It also provides an efficient implementation of NUTS, and Julia’s performance makes it a good option for computationally intensive models.</li>
-</ul>
+<section id="taking-it-to-the-next-level" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="taking-it-to-the-next-level">Taking It to the Next Level</h3>
+<p>We’ve covered the basics of NUTS implementation and fine-tuning. Now, <strong>let’s explore some advanced tips for using NUTS</strong> in more complex scenarios and leveraging existing tools.</p>
+<section id="standing-on-the-shoulders-of-giants" class="level4">
+<h4 class="anchored" data-anchor-id="standing-on-the-shoulders-of-giants">Standing on the Shoulders of Giants</h4>
+<p>Implementing NUTS from scratch, as we’ve done in this post, is a great way to <strong>understand its inner workings</strong>. However, for most real-world applications, it’s recommended to use well-established probabilistic programming languages that have highly optimized and thoroughly tested NUTS implementations. Some popular choices include:</p>
+<p><strong>Stan</strong>. Stan is a powerful probabilistic programming language specifically designed for Bayesian modeling. It features a <strong>highly optimized implementation of NUTS</strong>, along with many other advanced features like automatic differentiation and robust step size adaptation (using dual averaging). <strong>Stan is often the go-to choice for serious Bayesian work</strong>.</p>
+<p><strong>PyMC</strong>. PyMC is a Python library for Bayesian statistical modeling. It provides a user-friendly interface for building and fitting Bayesian models, including NUTS sampling. <strong>PyMC is a good option if you prefer working in Python</strong>.</p>
+<p><strong>Turing.jl</strong>. Turing.jl is a probabilistic programming language written in Julia. It also provides an efficient implementation of NUTS, and <strong>Julia’s performance makes it a good option for computationally intensive models</strong>.</p>
 <p>Using these tools saves you the trouble of implementing NUTS yourself and gives you access to highly optimized and robust implementations.</p>
 </section>
-<section id="the-future-of-nuts" class="level5 page-columns page-full">
-<h5 class="anchored" data-anchor-id="the-future-of-nuts">The Future of NUTS</h5>
-<p>The field of Bayesian computation is constantly evolving, and there are several exciting innovations related to NUTS:</p>
-<ul>
-<li><strong>GPU Acceleration:</strong> Recent research has focused on accelerating NUTS using GPUs. This can significantly speed up sampling, especially for high-dimensional models. Libraries like NumPyro (built on JAX) and some developments in Stan are exploring this direction.</li>
-<li><strong>Improved Step Size Adaptation:</strong> Researchers are continually developing more efficient and robust methods for step size adaptation. These methods aim to improve the performance of NUTS in challenging scenarios.</li>
-<li><strong>Variations of NUTS:</strong> There are also variations of NUTS that aim to address specific challenges, such as sampling from posteriors with very high curvature.</li>
-</ul>
-<p>These advanced tips can help you take your Bayesian modeling to the next level. Using established tools like Stan, PyMC, or Turing.jl will save you time and provide access to highly optimized implementations. Keeping up with recent innovations can further improve your sampling efficiency and allow you to tackle even more complex problems.</p>
+<section id="the-future-of-nuts" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="the-future-of-nuts">The Future of NUTS</h4>
+<p>The field of Bayesian computation is constantly evolving, and there are several exciting innovations related to NUTS. <strong>Recent research has focused on accelerating NUTS using GPUs</strong> <span class="citation" data-cites="amaral2025fast saltas2025emri_mc">(<a href="#ref-amaral2025fast" role="doc-biblioref">Amaral et al. 2025</a>; <a href="#ref-saltas2025emri_mc" role="doc-biblioref">Saltas and Oliveri 2025</a>)</span>. This can significantly speed up sampling, <strong>especially for high-dimensional models</strong>. Libraries like NumPyro (built on JAX) and some developments in Stan are exploring this direction <span class="citation" data-cites="sountsov2024running">(<a href="#ref-sountsov2024running" role="doc-biblioref">Sountsov, Carroll, and Hoffman 2024</a>)</span>.</p>
+<p>Researchers are continually developing more efficient and robust methods for step size adaptation. These methods aim to improve the performance of NUTS in challenging scenarios. There are also <strong>variations of NUTS</strong> that aim to address specific challenges, such as <strong>sampling from posteriors with very high curvature</strong>. These advanced tips can help you take your Bayesian modeling to the next level. Using established tools like <em>Stan</em>, <em>PyMC</em>, or <em>Turing.jl</em> will save you time and provide access to highly optimized implementations.</p>
 <div class="page-columns page-full"><p><img src="looking-horizon.jpeg" class="img-fluid" style="width:100.0%"> </p><div class="no-row-height column-margin column-container"><span class="margin-aside">Photo from <a href="https://1.bp.blogspot.com/-_NVPT4_UIH4/X5-KvuqjLNI/AAAAAAAA_e4/rbsr1Z_C3jM2QdD2HZebogB6M3dayurRACLcBGAsYHQ/s3840/loneliness_alone_sunset_188916_2560x1440.jpg">xfxwallpapers</a>.</span></div></div>
 </section>
 </section>
@@ -1057,41 +1099,31 @@ $mpsrf
 <section id="where-do-we-go-from-here" class="level1">
 <h1>Where Do We Go From Here?</h1>
 <p>We’ve explored the depths of NUTS, from its underlying principles to its implementation and fine-tuning. But the journey doesn’t end here. NUTS is a powerful tool with broad applicability, and there are still many exciting avenues for exploration and development.</p>
-<section id="expanding-the-horizons-of-nuts" class="level4">
-<h4 class="anchored" data-anchor-id="expanding-the-horizons-of-nuts">Expanding the Horizons of NUTS</h4>
+<section id="expanding-the-horizons-of-nuts" class="level3">
+<h3 class="anchored" data-anchor-id="expanding-the-horizons-of-nuts">Expanding the Horizons of NUTS</h3>
 <p>NUTS truly shines when applied to complex Bayesian models that pose significant challenges for traditional MCMC methods. Here are some key areas where NUTS has proven particularly valuable.</p>
-<section id="hierarchical-models" class="level5">
-<h5 class="anchored" data-anchor-id="hierarchical-models">Hierarchical Models</h5>
-<p>Hierarchical models, with their nested structures and multiple levels of uncertainty, are notoriously difficult to sample from. NUTS’s ability to efficiently explore high-dimensional spaces and adapt to complex geometries makes it an ideal choice for these models. Whether you’re modeling population dynamics, analyzing clinical trial data, or building complex econometric models, NUTS can handle the intricate dependencies inherent in hierarchical structures.</p>
+<p><strong>Hierarchical models</strong>, with their nested structures and multiple levels of uncertainty, are notoriously difficult to sample from. NUTS’s ability to efficiently explore high-dimensional spaces and adapt to complex geometries makes it an ideal choice for these models. Whether you’re modeling population dynamics, analyzing clinical trial data, or building complex econometric models, <strong>NUTS can handle the intricate dependencies inherent in hierarchical structures</strong>.</p>
+<p>In Bayesian modeling, we often choose conjugate priors for mathematical convenience. However, these priors might not always be the most appropriate for our problem. <strong>Non-conjugate priors</strong>, while more flexible, often lead to intractable posteriors that are difficult to sample from. <strong>NUTS, with its gradient-based approach, can effectively handle these non-conjugate scenarios</strong>, allowing us to use more realistic and flexible priors.</p>
+<p>As the number of parameters in our model increases, <strong>the dimensionality of the posterior space grows rapidly</strong>. This can make sampling extremely challenging for traditional MCMC methods. NUTS’s efficient exploration and adaptive trajectory length make it <strong>well-suited for high-dimensional problems</strong>. Whether you’re working with image analysis, genomics data, or large-scale machine learning models, NUTS can help you navigate these vast parameter spaces.</p>
+<p>These are just a few examples of the many areas where NUTS can be applied. Its <strong>versatility and efficiency</strong> make it a valuable tool for a wide range of Bayesian modeling tasks.</p>
 </section>
-<section id="non-conjugate-priors" class="level5">
-<h5 class="anchored" data-anchor-id="non-conjugate-priors">Non-Conjugate Priors</h5>
-<p>In Bayesian modeling, we often choose conjugate priors for mathematical convenience. However, these priors might not always be the most appropriate for our problem. Non-conjugate priors, while more flexible, often lead to intractable posteriors that are difficult to sample from. NUTS, with its gradient-based approach, can effectively handle these non-conjugate scenarios, allowing us to use more realistic and flexible priors.</p>
-</section>
-<section id="high-dimensional-spaces" class="level5">
-<h5 class="anchored" data-anchor-id="high-dimensional-spaces">High-Dimensional Spaces</h5>
-<p>As the number of parameters in our model increases, the dimensionality of the posterior space grows rapidly. This can make sampling extremely challenging for traditional MCMC methods. NUTS’s efficient exploration and adaptive trajectory length make it well-suited for high-dimensional problems. Whether you’re working with image analysis, genomics data, or large-scale machine learning models, NUTS can help you navigate these vast parameter spaces.</p>
-<p>These are just a few examples of the many areas where NUTS can be applied. Its versatility and efficiency make it a valuable tool for a wide range of Bayesian modeling tasks.</p>
-</section>
-</section>
-<section id="your-turn-to-go-nuts" class="level4">
-<h4 class="anchored" data-anchor-id="your-turn-to-go-nuts">Your Turn to Go NUTS!</h4>
-<p>Now that you’ve grasped the core concepts and implementation of NUTS, I want to leave you with an open challenge: how would you adapt NUTS to your own specific problems?</p>
-<p>Think about the types of models you work with. Do you encounter any of the challenges we’ve discussed, such as high dimensionality, complex geometries, or non-conjugate priors? How could you leverage NUTS to improve your sampling efficiency and obtain more reliable results?</p>
-<p>Here are some questions to consider:</p>
+<section id="your-turn-to-go-nuts" class="level3">
+<h3 class="anchored" data-anchor-id="your-turn-to-go-nuts">Your Turn to Go NUTS!</h3>
+<p>Now that you’ve grasped the core concepts and implementation of NUTS, I want to leave you with an open challenge: <strong>how would you adapt NUTS to your own specific problems?</strong></p>
+<p><strong>Think about the types of models you work with</strong>. Do you encounter any of the challenges we’ve discussed, such as high dimensionality, complex geometries, or non-conjugate priors? How could you leverage NUTS to improve your sampling efficiency and obtain more reliable results?</p>
+<p>Consider this questions:</p>
 <ul>
 <li><strong>What types of posterior distributions do you typically encounter?</strong> Are they relatively simple and well-behaved, or do they exhibit complex features like multimodality or high curvature?</li>
 <li><strong>What are the computational constraints of your problems?</strong> Do you have limited memory or runtime, which might influence your choice of tree depth or other NUTS parameters?</li>
 <li><strong>Could reparameterization help to improve sampling in your models?</strong> Are there any transformations you could apply to your parameters to make the posterior smoother or more amenable to NUTS?</li>
 <li><strong>Are there any specific adaptations or extensions of NUTS that might be relevant to your work?</strong> For example, if you’re working with very high-dimensional models, you might consider exploring GPU-accelerated NUTS implementations.</li>
 </ul>
-<p>Don’t be afraid to experiment and try different approaches. The best way to learn is by doing. Implement NUTS in your own projects, explore different parameter settings, and carefully analyze the results. You might discover new and creative ways to apply this powerful sampling technique.</p>
-<p>This is an open invitation to push the boundaries of Bayesian computation and contribute to the ongoing development of efficient and robust sampling methods.</p>
+<p>Don’t be afraid to experiment and try different approaches. <strong>The best way to learn is by doing.</strong> Implement NUTS in your own projects, explore different parameter settings, and carefully analyze the results. You might discover new and creative ways to apply this powerful sampling technique.</p>
 </section>
-<section id="looking-ahead" class="level4">
-<h4 class="anchored" data-anchor-id="looking-ahead">Looking Ahead</h4>
-<p>This post has provided a deep dive into the No-U-Turn Sampler, from its theoretical foundations to its practical implementation in R. We’ve seen how NUTS addresses the limitations of traditional MCMC methods and fixed-step HMC, offering a powerful and efficient approach to Bayesian inference.</p>
-<p>But the world of Bayesian statistics is constantly evolving, and there’s always more to learn, like <strong>Hierarchical Modeling</strong> and demonstrate how NUTS can be effectively applied to these complex structures. Or maybe we can mess around with <strong>Stan code</strong> directly to gain performance.</p>
+<section id="looking-ahead" class="level3">
+<h3 class="anchored" data-anchor-id="looking-ahead">Looking Ahead</h3>
+<p>This post has provided a deep dive into the <em>No-U-Turn Sampler</em>, from its theoretical foundations to its practical implementation in R. We’ve seen how <strong>NUTS addresses the limitations of traditional MCMC methods and fixed-step HMC</strong>, offering a powerful and efficient approach to Bayesian inference.</p>
+<p>But the world of Bayesian statistics is <em>constantly evolving</em>, and there’s always more to learn, like <strong>Hierarchical Modeling</strong> and demonstrate how NUTS can be effectively applied to these <em>complex</em> structures. Or maybe we can mess around with <strong>Stan code</strong> directly to gain performance.</p>
 <p>I hope this post has given you a solid understanding of NUTS and inspired you to explore its potential in your own work. Stay tuned for future posts as we continue to dig into the fascinating world of Bayesian statistics!</p>
 </section>
 </section>
@@ -1102,18 +1134,29 @@ $mpsrf
 <p><a href="hmc-nuts-functions.R">Here</a> is the file with all the R functions used in this blog post. Feel free to use and modify them according to your needs. Happy coding!</p>
 
 
+
+</div></section><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-amaral2025fast" class="csl-entry" role="listitem">
+Amaral, Dorian, Shixiao Liang, Juehang Qin, and Christopher Tunnell. 2025. <span>“Fast Bayesian Inference for Neutrino Non-Standard Interactions at Dark Matter Direct Detection Experiments.”</span> <em>Machine Learning: Science and Technology</em>.
+</div>
+<div id="ref-saltas2025emri_mc" class="csl-entry" role="listitem">
+Saltas, Ippocratis, and Roberto Oliveri. 2025. <span>“EMRI_MC: A GPU-Based Code for Bayesian Inference of EMRI Waveforms.”</span> <em>SciPost Physics Codebases</em>, 044.
+</div>
+<div id="ref-sountsov2024running" class="csl-entry" role="listitem">
+Sountsov, Pavel, Colin Carroll, and Matthew D Hoffman. 2024. <span>“Running Markov Chain Monte Carlo on Modern Hardware and Software.”</span> <em>arXiv Preprint arXiv:2411.04260</em>.
+</div>
 </div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{castillo-aguilar2025,
   author = {Castillo-Aguilar, Matías},
   title = {Going {NUTS:} {A} {Step-by-Step} {Guide} to {Adaptive}
     {Hamiltonian} {Sampling} in {R}},
   date = {2025-01-21},
   url = {https://bayesically-speaking.com/posts/2025-01-21 hmc-nuts-from-zero/},
+  doi = {10.59350/hnk21-ggm53},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-castillo-aguilar2025" class="csl-entry quarto-appendix-citeas" role="listitem">
 Castillo-Aguilar, Matías. 2025. <span>“Going NUTS: A Step-by-Step Guide
-to Adaptive Hamiltonian Sampling in R.”</span> January 21, 2025. <a href="https://bayesically-speaking.com/posts/2025-01-21 hmc-nuts-from-zero/">https://bayesically-speaking.com/posts/2025-01-21
-hmc-nuts-from-zero/</a>.
+to Adaptive Hamiltonian Sampling in R.”</span> January 21, 2025. <a href="https://doi.org/10.59350/hnk21-ggm53">https://doi.org/10.59350/hnk21-ggm53</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1538,7 +1581,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","loop":false,"openEffect":"zoom","descPosition":"bottom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","closeEffect":"zoom","loop":false,"openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

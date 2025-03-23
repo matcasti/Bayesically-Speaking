@@ -1,7 +1,7 @@
 # Full NUTS sampler
 nuts <- function(log_posterior, grad_log_posterior, 
                  q0, Sigma, mu, 
-                 epsilon, lambda_ta, gamma,
+                 epsilon, lambda_ta = 0.8, gamma = 0.5,
                  n_samples = 1000, n_warmup = 500) {
   # Initialization
   nuts_state <- nuts_init(q0, Sigma, mu, epsilon)
