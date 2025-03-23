@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.55">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Matías Castillo-Aguilar">
+<meta name="dcterms.date" content="2025-03-24">
+<meta name="description" content="Tu corazón no es un metrónomo, es una caótica batería de jazz. Adéntrate conmigo en la locura matemática que hay detrás de por qué tus latidos se disparan durante los burpees y cómo un modelo no lineal (con funciones logísticas y guerreros de Zumba) descifra este drama cardíaco. Spoiler: Código, curvas y cafeína incluidos.">
+
+<title>¿Crees saber cómo modelar el ritmo cardíaco? – Bayesically Speaking</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../images/logo.png" rel="icon" type="image/png">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-H5JH00934M"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-H5JH00934M', { 'anonymize_ip': true});
+</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(../title-block.jpg);
+background-size: cover;
+      }
+</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta name="citation_title" content="¿Crees saber cómo modelar el ritmo cardíaco?">
+<meta name="citation_author" content="Matías Castillo-Aguilar">
+<meta name="citation_publication_date" content="2025-03-24">
+<meta name="citation_cover_date" content="2025-03-24">
+<meta name="citation_year" content="2025">
+<meta name="citation_online_date" content="2025-03-24">
+<meta name="citation_fulltext_html_url" content="https://bayesically-speaking.com/posts/2025-03-24 so-you-think-you-can-model-a-heartbeat/spanish/">
+<meta name="citation_language" content="en">
+<meta name="citation_reference" content="citation_title=Thinking about the action potential: The nerve signal as a window to the physical principles guiding neuronal excitability;,citation_author=Benjamin Drukarch;,citation_author=Micha MM Wilhelmus;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_volume=17;,citation_journal_title=Frontiers in cellular neuroscience;,citation_publisher=Frontiers Media SA;">
+<meta name="citation_reference" content="citation_title=Basics of neurophysiology;,citation_author=Devon I Rubin;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_journal_title=Clinical Neurophysiology;,citation_publisher=Oxford University Press;">
+<meta name="citation_reference" content="citation_title=Dynamic analysis of neural signal based on hodgkin–huxley model;,citation_author=Wei Yao;,citation_author=Yingchen Li;,citation_author=Zhihao Ou;,citation_author=Mingzhu Sun;,citation_author=Qiongxu Ma;,citation_author=Guanghong Ding;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=4;,citation_volume=46;,citation_journal_title=Mathematical Methods in the Applied Sciences;,citation_publisher=Wiley Online Library;">
+<meta name="citation_reference" content="citation_title=Action potentials recorded from inside a nerve fibre;,citation_author=Alan L Hodgkin;,citation_author=Andrew F Huxley;,citation_publication_date=1939;,citation_cover_date=1939;,citation_year=1939;,citation_issue=3651;,citation_volume=144;,citation_journal_title=Nature;,citation_publisher=Nature Publishing Group UK London;">
+</head>
+
+<body class="floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Bayesically Speaking</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../services.html"> 
+<span class="menu-text">Services</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../cv.html"> 
+<span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/matcasti"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/matias_science"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../../blog.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">¿Crees saber cómo modelar el ritmo cardíaco?</h1>
+                  <div>
+        <div class="description">
+          <p>Tu corazón no es un metrónomo, es una caótica batería de jazz. Adéntrate conmigo en la locura matemática que hay detrás de por qué tus latidos se disparan durante los burpees y cómo un modelo no lineal (con funciones logísticas y guerreros de Zumba) descifra este drama cardíaco. Spoiler: Código, curvas y cafeína incluidos.</p>
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">translated</div>
+                <div class="quarto-category">cardiovascular</div>
+                <div class="quarto-category">non-linear</div>
+                <div class="quarto-category">simulation</div>
+                <div class="quarto-category">educational</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p><a href="https://bayesically-speaking.com/cv">Matías Castillo-Aguilar</a> <a href="mailto:m99castillo@gmail.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-7291-247X" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 24, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
+  <li><a href="#las-matemáticas-el-código-y-el-drama-cardíaco-detrás-del-modelo" id="toc-las-matemáticas-el-código-y-el-drama-cardíaco-detrás-del-modelo" class="nav-link" data-scroll-target="#las-matemáticas-el-código-y-el-drama-cardíaco-detrás-del-modelo">Las Matemáticas, el Código y el Drama Cardíaco Detrás del Modelo</a>
+  <ul class="collapse">
+  <li><a href="#la-gran-ecuación-una-sinfonía-de-sigmoides" id="toc-la-gran-ecuación-una-sinfonía-de-sigmoides" class="nav-link" data-scroll-target="#la-gran-ecuación-una-sinfonía-de-sigmoides">La Gran Ecuación: Una Sinfonía de Sigmoides</a></li>
+  </ul></li>
+  <li><a href="#implementando-el-hamiltonian-monte-carlo-hmc" id="toc-implementando-el-hamiltonian-monte-carlo-hmc" class="nav-link" data-scroll-target="#implementando-el-hamiltonian-monte-carlo-hmc">Implementando el Hamiltonian Monte Carlo (HMC)</a></li>
+  <li><a href="#visualizando-el-la-distribución-posterior" id="toc-visualizando-el-la-distribución-posterior" class="nav-link" data-scroll-target="#visualizando-el-la-distribución-posterior">Visualizando el la Distribución Posterior</a></li>
+  <li><a href="#discusión-el-panorama-general" id="toc-discusión-el-panorama-general" class="nav-link" data-scroll-target="#discusión-el-panorama-general">Discusión: El Panorama General</a></li>
+  
+  </ul>
+<div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="https://www.researchgate.net/publication/389812477_Enhancing_cardiovascular_monitoring_a_non-linear_model_for_characterizing_RR_interval_fluctuations_in_exercise_and_recovery"><i class="bi bi-link-45deg"></i>Artículo original</a></li></ul></div></nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+
+<section id="introducción" class="level1 page-columns page-full">
+<h1>Introducción</h1>
+<p>Hablemos de tu corazón. <strong>No el metafórico</strong> que todavía se está recuperando del final <em>esa</em> temporada de <em>Stranger Things</em>, <strong>sino el órgano de carne y papas</strong> que bombea en tu pecho. Ya sabís, esa cosa que se acelera cuando corres para alcanzar la micro o cuando te tragas <em>Squid Game</em> con una pizza familiar solito (eso le llamo autodeterminación gourmet). Resulta que los científicos (como este humilde servidor) llevamos obsesionados con <strong>entender cómo este solo de batería biológico reacciona al ejercicio</strong>. Y créeme, no es tan simple como el iconito feliz del corazón de tu Fitbit quiere hacerte creer.</p>
+<p>Imagina que tu frecuencia cardíaca durante el ejercicio <strong>es como el guión de una película de Christopher Nolan</strong>: llena de vueltas, giros y momentos en que no cachai qué está pasando, pero <em>sientes</em> que es profundo. Los métodos tradicionales para analizar la variabilidad del ritmo cardíaco (VRC) son <strong>como tratar de explicar <em>Inception</em> con un celular del 2005</strong>: técnicamente posible, pero pierdes <em>toda</em> la onda. Por décadas, los investigadores han usado modelos lineales y métricas de VRC resumidas, que sirven <strong>tanto para capturar el caos del corazón durante el ejercicio como un paraguas en un terremoto</strong>. Sí, te dicen <em>algo</em>, pero es como resumir <em>El Señor de los Anillos</em> como “unos tipos caminaron a un volcán”. ¿Perdiendo el punto? Un poquito nomás.</p>
+<div class="page-columns page-full"><p><img src="../services.jpeg" class="img-fluid" style="width:100.0%"><br>
+</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Foto de <a href="https://www.pexels.com/es-es/foto/sano-mujer-telefono-inteligente-navegando-4436296/">Ketut Subiyanto</a></span></div></div>
+<p>¡Pero atención! Tengo buenas noticias. Desarrollamos y publicamos un nuevo modelo no lineal, <strong>el Tony Stark de los análisis cardíacos</strong>: brillante, preciso y hecho en una cueva (bueno, un laboratorio) con matemáticas que <em>casi</em> entenderías. En vez de meter los intervalos latido a latido (llamados <em>intervalos R-R</em> para los amigos) en el corsé rígido de ecuaciones lineales, <strong>abrazamos el caos con funciones logísticas</strong>. Imagínatelo como cambiar del internet con módem al 5G. <strong>Estas funciones logísticas son la Beyoncé de las matemáticas</strong>: versátiles, dinámicas y capaces de manejar cambios bruscos (como cuando pasas de modo vago a HIIT en 0.2 segundos). <strong>Modelan el picaduelo del corazón durante el ejercicio <em>y</em> su lento retorno</strong> al modo Netflix-relajo después, todo mientras escupen parámetros que importan para tu cuerpo. ¿“Intervalo R-R basal”? Es el <em>ritmo base</em> de tu corazón. ¿“Proporción de recuperación”? Cuán rápido te perdona por esos burpees.</p>
+<div class="page-columns page-full"><p><img src="../publised-paper.png" class="img-fluid" style="width:100.0%"><br>
+</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Revisa el paper donde discutimos en profundidad el modelo para todos los tecnicismos. Puedes verlo <a href="https://www.nature.com/articles/s41598-025-93654-6">acá</a>.</span></div></div>
+<p>Ahora, hablemos de lo obvio: <strong>¿para qué te sirve esto?</strong> Bueno, a menos que seas un ciborg (te estamos mirando, Boston Dynamics), <strong>tu sistema nervioso autónomo</strong>, el titiritero tras el ritmo cardíaco, <strong>es una reina del drama</strong>. Durante el ejercicio, es una pulseada entre el sistema simpático <strong>“pelea-o-huye”</strong> (el que grita <strong>¡DALE!</strong>) y el parasimpático <strong>“relájate un rato”</strong> (el que susurra <em>¿un capitulito más no más?</em>). Los modelos tradicionales tratan esto como un sube-y-baja con un cabro pegado al suelo. ¿Nuestro modelo? Es la plaza entera, con columpios, pasamanos y ese cabro que <strong>claramente</strong> se pasó con las bebidas.</p>
+<p>Aquí viene lo bueno: <strong>probamos este prodigio en 272 personas mayores</strong>. ¿Por qué viejitos? Porque si tu corazón aguanta Zumba a los 70, es básicamente el Dwayne Johnson de los órganos. <em>Spoiler</em>: <strong>el modelo la rompió</strong>. Con un R<sup>2</sup> de 0.868 (traducción: es terriblemente preciso) y un RMSE de 32.6 ms (traducción: detecta hasta tu crisis existencial durante las planchas), <strong>es como darle a médicos y entrenadores un truco de God Mode para tu salud cardiovascular</strong>. Ah, y usamos Hamiltonian Monte Carlo para estimar parámetros, que suena como un hechizo de <em>Harry Potter</em> pero en realidad es matemática nivel jedi para decir “no adivinamos, lo <em>calculamos</em>”.</p>
+<p>¡Pero espera, hay más! Con un <strong>análisis de sensibilidad de Sobol</strong> (o sea, preguntar <em>¿qué parte de la ecuación hace la pega?</em>), descubrimos que el intervalo R-R basal y la proporción de recuperación son los cracks de la dinámica cardíaca. Traducción: <strong>la configuración default de tu corazón y su capacidad para recuperarse después del ejercicio son el Messi y el Alexis de esta película</strong>. Los otros parámetros? Son la banca. Útiles, pero no la llevan.</p>
+<p>Hablemos de <strong>aplicaciones reales</strong>. Imagina un futuro donde tu reloj inteligente no solo te reta por estar sentado, sino que <em>entiende</em> los berrinches de tu corazón durante el spinning. O donde <strong>los programas de rehab se ajustan no solo a tu condición física, sino a los cambios de ánimo de tu sistema nervioso</strong>. Este modelo no es solo paja académica, es la puerta a tecnología de salud personalizada que no da pena.</p>
+<div class="page-columns page-full"><p><img src="../pexels-martabranco-28585010.jpg" class="img-fluid" style="width:100.0%"><br>
+</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Foto de <a href="https://www.pexels.com/es-es/foto/vista-detallada-de-los-equipos-y-lecturas-de-ecg-28585010/">Marta Branco</a>.</span></div></div>
+<p>Claro, ningún héroe es perfecto. <strong>Nuestro estudio se hizo principalmente con mujeres mayores</strong>, como probar un auto deportivo solo con abuelitos yendo al bingo. <strong>¿Próximos pasos?</strong> Meter atletas universitarios, padres sin dormir y ese amigo que hace ultramaratones “para relajarse”. Además, un saludo a R, el lenguaje de programación que usamos. Si R fuera persona, sería ese amigo que es seco pero te explica todo con memes.</p>
+<p>Así que ajústense el cinturón. En las próximas secciones, <strong>nos meteremos en el código, las curvas y los momentos “¡eureka!”</strong> que hicieron este paper posible. Ya seas fanático del cardio, ñoño de datos o solo alguien que quiere saber por qué tu corazón odia los burpees, <strong>esto es para ti</strong>. Y si te pierdes, acuérdate: no es caos, es <em>ciencia</em>.</p>
+</section>
+<section id="las-matemáticas-el-código-y-el-drama-cardíaco-detrás-del-modelo" class="level1">
+<h1>Las Matemáticas, el Código y el Drama Cardíaco Detrás del Modelo</h1>
+<p>Vamos a pelar las capas de este modelo como una cebolla, pero <strong>en vez de lágrimas, te saldrán mates</strong>, código R y una nueva apreciación por las telenovelas que hace tu corazón. Ajústate el cinturón; vamos a ponernos modo <em>Sherlock Holmes</em> con esta ecuación.</p>
+<section id="la-gran-ecuación-una-sinfonía-de-sigmoides" class="level3">
+<h3 class="anchored" data-anchor-id="la-gran-ecuación-una-sinfonía-de-sigmoides">La Gran Ecuación: Una Sinfonía de Sigmoides</h3>
+<p>En el corazón del modelo está esta belleza:</p>
+<p><span class="math display">\[  
+\text{RRi}(t) = \alpha + \frac{\beta}{1 + e^{\lambda(t-\tau)}} + \frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}  
+\]</span></p>
+<p>Esto no es solo sopa de letras. <strong>Es un puro <em>caso</em> coordinado entre dos funciones logísticas</strong> (esas curvas en forma de S que conocís de modelos de población o apocalipsis zombi). Juntas, capturan el <strong>viaje de tu corazón</strong> desde el modo zen hasta el pánico del ejercicio y de vuelta al Netflix. <strong>Vamos a diseccionar cada término</strong> como un episodio de <em>Breaking Bad</em>.</p>
+<section id="intervalo-rr-basal-alpha-la-calma-antes-de-la-tormenta" class="level4">
+<h4 class="anchored" data-anchor-id="intervalo-rr-basal-alpha-la-calma-antes-de-la-tormenta">1. Intervalo RR Basal (<span class="math inline">\(\alpha\)</span>): La Calma Antes de la Tormenta</h4>
+<p><span class="math inline">\(\alpha\)</span> (alfa) <strong>es el estado de reposo de tu corazón</strong>, el intervalo R-R cuando estai tirado en el sillón pensando si ver <em>The Office</em> por quinta vez. Matemáticamente, <strong>es el corrimiento vertical de toda la curva</strong>. Imagínatelo como el amigo que insiste en tomarse “días de salud mental” todos los lunes.</p>
+<p>En el código, <span class="math inline">\(\alpha\)</span> es simple. Cuando estandarizamos los datos RRi, centramos cada dato en su media (<span class="math inline">\(\text{RRi}_i\)</span>) y lo escalamos por su desviación estándar (<span class="math inline">\(S_{\text{RRi}_i}\)</span>). <strong>Así comparamos el corazón de la abuela Rosa con el del Gym Bro Chad sin sesgos</strong>. En R, esto sería como revertir un z-score. Nada de magia, solo aritmética para que cada corazón se quede en su cancha.</p>
+<p>Fíjate cómo la distribución transformada de los intervalos R-R <strong>mantiene su forma pero cambia la escala de referencia</strong>. La escala estandarizada siempre estará en desviaciones estándar (también conocido como Z-score):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> bayestestR<span class="sc">::</span><span class="fu">distribution_normal</span>(<span class="dv">5000</span>, <span class="dv">800</span>, <span class="dv">30</span>)  </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">data.table</span>(  </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Intervalo R-R (ms)</span><span class="st">`</span> <span class="ot">=</span> x,  </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Z-Score (unidades estandarizadas)</span><span class="st">`</span> <span class="ot">=</span> (x <span class="sc">-</span> <span class="fu">mean</span>(x))<span class="sc">/</span><span class="fu">sd</span>(x)  </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">melt.data.table</span>(<span class="at">measure.vars =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)  </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_data, <span class="fu">aes</span>(value, <span class="at">fill =</span> variable)) <span class="sc">+</span>  </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span>  </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span>  </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.2</span>,<span class="dv">0</span>), <span class="at">breaks =</span> <span class="cn">NULL</span>) <span class="sc">+</span>  </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="fl">0.1</span>,<span class="dv">0</span>)) <span class="sc">+</span>  </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">type =</span> <span class="st">"qual"</span>, <span class="at">palette =</span> <span class="dv">3</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/unnamed-chunk-2-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="el-parámetro-del-pánico-beta-cuando-el-ejercicio-pegue-como-twist-de-telenovela" class="level4">
+<h4 class="anchored" data-anchor-id="el-parámetro-del-pánico-beta-cuando-el-ejercicio-pegue-como-twist-de-telenovela">2. El Parámetro del Pánico (<span class="math inline">\(\beta\)</span>): Cuando el Ejercicio Pegue Como Twist de Telenovela</h4>
+<p><span class="math inline">\(\beta\)</span> es donde empieza el drama. Este término controla <strong>la caída del intervalo RR cuando empiezas a ejercitarte</strong>. Valores negativos significan que tu corazón se está <em>despilocando</em>, como cuando cachai que dejaste la estufa prendida haciendo sentadillas. Mientras más grande el valor absoluto de <span class="math inline">\(\beta\)</span>, <strong>más brusco el picaduelo</strong>. En el estudio, <span class="math inline">\(\beta = -345\)</span> ms significó que los corazones hicieron un <em>Free Solo</em> en pleno ejercicio.</p>
+<p>El primer término logístico, <span class="math inline">\(\frac{\beta}{1 + e^{\lambda(t-\tau)}}\)</span>, es <strong>el equivalente matemático de tu sistema simpático apretando el acelerador</strong>. El denominador <span class="math inline">\(1 + e^{\lambda(t-\tau)}\)</span> asegura que la caída no sea instantánea, sino suave (más o menos), como una montaña rusa subiendo la primera cuesta.</p>
+<p>En R, simular esto es pan comido:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> <span class="cf">function</span>(t, alpha, beta, lambda, tau) {  </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  alpha <span class="sc">+</span> beta <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(lambda <span class="sc">*</span> (t <span class="sc">-</span> tau)))  </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Poné <span class="math inline">\(\alpha = 860\)</span> ms, <span class="math inline">\(\beta = -345\)</span>, <span class="math inline">\(\lambda = -3.05\)</span>, y <span class="math inline">\(\tau = 6.71\)</span>, y tienes una curva que cae como el Bitcoin en 2022.</p>
+</section>
+<section id="tasa-de-caída-lambda-y-timing-tau-cuán-rápido-y-cuándo-se-arma-el-lío" class="level4">
+<h4 class="anchored" data-anchor-id="tasa-de-caída-lambda-y-timing-tau-cuán-rápido-y-cuándo-se-arma-el-lío">3. Tasa de Caída (<span class="math inline">\(\lambda\)</span>) y Timing (<span class="math inline">\(\tau\)</span>): ¿Cuán Rápido y Cuándo se Arma el Lío?</h4>
+<p><span class="math inline">\(\lambda\)</span> (lambda) dicta <strong>qué tan rápido se desploma el intervalo RR</strong>. Un <span class="math inline">\(\lambda\)</span> más negativo significa una caída más brusca, como tu corazón en una corrida versus una caminata tranquila. En el modelo, <span class="math inline">\(\lambda = -3.05\)</span> es como si tu corazón gritara “¡SÁLVESE QUIEN PUEDA!” al empezar el ejercicio.</p>
+<p><span class="math inline">\(\tau\)</span> (tau) es el punto de inflexión, <strong>el momento exacto en que empieza el caos</strong>. Con <span class="math inline">\(\tau = 6.71\)</span> minutos, es el segundo en que tu corazón cachó que hablas en serio con los burpees. Este parámetro evita que el modelo asuma que todos entran en pánico al mismo tiempo (porque, seamos honestos, a algunos nos transpira la mano solo de <em>pensar</em> en ejercicios).</p>
+<p>El código para este término es <strong>engañosamente simple</strong>, pero la magia está en el exponente: <span class="math inline">\(\lambda(t - \tau)\)</span>. Esto hace que la caída se acelere exponencialmente <strong>una vez activada</strong>, imitando la respuesta de “todos a la bodega” del cuerpo al estrés físico.</p>
+</section>
+<section id="el-equipo-de-recuperación-c-phi-delta-la-redención-post-ejercicio" class="level4">
+<h4 class="anchored" data-anchor-id="el-equipo-de-recuperación-c-phi-delta-la-redención-post-ejercicio">4. El Equipo de Recuperación (<span class="math inline">\(c\)</span>, <span class="math inline">\(\phi\)</span>, <span class="math inline">\(\delta\)</span>): La Redención Post-Ejercicio</h4>
+<p>Después del caos, la calma… o al menos el intento. El segundo término logístico, <span class="math inline">\(\frac{-c \cdot \beta}{1 + e^{\phi(t - \tau - \delta)}}\)</span>, es donde tu sistema parasimpático (el “modo siesta”) llega a limpiar el desastre.</p>
+<ul>
+<li><span class="math inline">\(c\)</span>: <strong>La proporción de recuperación.</strong> Si <span class="math inline">\(c = 0.84\)</span>, tu corazón recupera el 84% de la caída. Es como perdonar a tu pololo por comerse tus completos: se arregla <em>casi</em> todo, pero igual le tiras miradas asesinas.<br>
+</li>
+<li><span class="math inline">\(\phi\)</span> (phi): <strong>Velocidad de recuperación.</strong> <span class="math inline">\(\phi = -2.6\)</span> significa que tu corazón vuelve a la normalidad más rápido que un héroe de Marvel después del chasquido. Mientras más negativo, más rápido.<br>
+</li>
+<li><span class="math inline">\(\delta\)</span> (delta): <strong>El retraso antes de recuperar.</strong> <span class="math inline">\(\delta = 3.24\)</span> minutos es el “dame un minuto para respirar” de tu corazón post-ejercicio.</li>
+</ul>
+<p>En código:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>f2 <span class="ot">&lt;-</span> <span class="cf">function</span>(t, beta, c, phi, delta, tau) {  </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  (<span class="sc">-</span>c <span class="sc">*</span> beta) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(phi <span class="sc">*</span> (t <span class="sc">-</span> tau <span class="sc">-</span> delta)))  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Este término es <strong>un reflejo invertido de la primera curva logística</strong>, demorado por <span class="math inline">\(\delta\)</span>. <strong>Juntos forman una curva en U</strong>, la huella dactilar de la recuperación cardíaca, como un fénix saliendo de las cenizas de tu sesión de HIIT.</p>
+</section>
+<section id="el-panorama-completo-del-reposo-al-caos-y-la-redención" class="level4">
+<h4 class="anchored" data-anchor-id="el-panorama-completo-del-reposo-al-caos-y-la-redención">5. El Panorama Completo: Del Reposo al Caos y la Redención</h4>
+<p>Combinando ambos términos, tienes la trayectoria completa del RRi: <strong>una sinfonía de estrés y recuperación</strong>. La primera función logística modela el momento <em>simpático</em> de “yo me la juego”, y la segunda captura el <em>parasimpático</em> de “tranquilo, aquí estoy”.</p>
+<p>Graficar esto en R es donde sale la magia:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">20</span>, <span class="at">by =</span> <span class="fl">0.05</span>)  </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>total <span class="ot">&lt;-</span> <span class="fu">f1</span>(time, <span class="dv">860</span>, <span class="sc">-</span><span class="dv">345</span>, <span class="sc">-</span><span class="fl">3.05</span>, <span class="fl">6.71</span>) <span class="sc">+</span>   </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">f2</span>(time, <span class="sc">-</span><span class="dv">345</span>, <span class="fl">0.84</span>, <span class="sc">-</span><span class="fl">2.6</span>, <span class="fl">3.24</span>, <span class="fl">6.71</span>)  </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">data.table</span>(  </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">time =</span> time,  </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">total =</span> total  </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)  </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)  </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_data, <span class="fu">aes</span>(time)) <span class="sc">+</span>  </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> total <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">201</span>, <span class="dv">0</span>, <span class="dv">30</span>)), <span class="at">col =</span> <span class="st">"purple"</span>, <span class="at">lwd =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>) <span class="sc">+</span>  </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> total <span class="sc">+</span> <span class="dv">30</span>), <span class="at">col =</span> <span class="st">"purple"</span>, <span class="at">lwd =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span>  </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> total <span class="sc">-</span> <span class="dv">30</span>), <span class="at">col =</span> <span class="st">"purple"</span>, <span class="at">lwd =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span>  </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> total), <span class="at">col =</span> <span class="st">"purple"</span>, <span class="at">lwd =</span> <span class="dv">1</span>) <span class="sc">+</span>  </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(<span class="fl">6.71</span>, <span class="fl">6.71</span> <span class="sc">+</span> <span class="fl">3.24</span>), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray50"</span>) <span class="sc">+</span>  </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"RRi (ms)"</span>, <span class="at">x =</span> <span class="st">"Tiempo (min)"</span>,  </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"La Epopeya de Tu Corazón"</span>,  </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Señal RRi Simulada y Real"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/unnamed-chunk-5-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="index_files/figure-html/unnamed-chunk-5-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Este gráfico no es solo una curva, es un relato. La caída es <strong>la fase “¡ah, la cagué!” de tu corazón durante el ejercicio</strong>, y el rebote es su lento regreso a la cordura. El retraso (<span class="math inline">\(\delta\)</span>) evita que el modelo asuma que la recuperación empieza al tiro (porque, claro, tu corazón también necesita su minuto).</p>
+</section>
+<section id="por-qué-funciones-logísticas-porque-tu-corazón-no-es-george-harris" class="level4">
+<h4 class="anchored" data-anchor-id="por-qué-funciones-logísticas-porque-tu-corazón-no-es-george-harris">¿Por Qué Funciones Logísticas? Porque Tu Corazón No Es George Harris</h4>
+<p>Los modelos lineales son el helado de vainilla de la matemática: seguros, predecibles y medio aburridos. <strong>¿Pero tu corazón? Es más como un helado de manjar-ronrón con chispas de terremoto</strong>. Las funciones logísticas sirven porque manejan <em>efectos de saturación</em>: <strong>tu corazón no puede caer infinitamente</strong> (no sos Flash) <strong>ni recuperarse al tiro</strong> (no sos Wolverine).</p>
+<p>La forma sigmoide de <span class="math inline">\(\frac{1}{1 + e^{-x}}\)</span> es perfecta <strong>para modelar transiciones entre estados</strong>. Durante el ejercicio, captura la toma de control del sistema simpático. Post-ejercicio, el sigmoide invertido refleja el retorno cauteloso del parasimpático. Juntos, <strong>son el yin y yang del control cardíaco</strong>, como <em>Thor y Loki</em>, pero con menos explosiones.</p>
+</section>
+<section id="de-las-matemáticas-a-la-medicina-lo-que-realmente-importa" class="level4">
+<h4 class="anchored" data-anchor-id="de-las-matemáticas-a-la-medicina-lo-que-realmente-importa">De las Matemáticas a la Medicina: Lo Que Realmente Importa</h4>
+<ul>
+<li><strong><span class="math inline">\(\alpha\)</span> alto</strong>: Tu corazón es pura calma. Quizás sos yogui o simplemente un rey de las siestas.<br>
+</li>
+<li><strong><span class="math inline">\(\beta\)</span> bajo</strong>: Tu corazón se asusta brigido con el ejercicio. Felicitaciones, sos el <em>Jason Bourne</em> del cardio.<br>
+</li>
+<li><strong><span class="math inline">\(\phi\)</span> lento</strong>: La recuperación toma siglos. Tu parasimpático es un perezoso en modo zombie.<br>
+</li>
+<li><strong><span class="math inline">\(\delta\)</span> largo</strong>: Tu corazón se toma su tiempo para recuperarse. Es el <em>George R.R. Martin</em> de los órganos: demoras garantizadas.</li>
+</ul>
+<p>Estos parámetros <strong>no son solo académicos, son útiles</strong>. Un <span class="math inline">\(c\)</span> bajo (proporción de recuperación) <strong>podría indicar mala resiliencia autonómica</strong>, señalando diabetes o hipertensión. Un <span class="math inline">\(\lambda\)</span> salvaje (tasa de caída) sugiere que tu sistema simpático es más intenso que perro viendo una liebre.</p>
+</section>
+<section id="tras-bambalinas-stan-hmc-y-trucos-de-jedi-bayesiano" class="level4">
+<h4 class="anchored" data-anchor-id="tras-bambalinas-stan-hmc-y-trucos-de-jedi-bayesiano">Tras Bambalinas: Stan, HMC y Trucos de Jedi Bayesiano</h4>
+<p>Ajustar este modelo no es para pusilánimes. Usamos <strong>Stan</strong> (lenguaje de programación probabilística) y <a href="https://doi.org/10.59350/fa26y-xa178">Hamiltonian Monte Carlo (HMC)</a> para estimar parámetros. Imagina HMC como un Waze para navegar el terreno escarpado del espacio paramétrico: evita callejones sin salida (¡gracias, <a href="https://doi.org/10.59350/hnk21-ggm53">No-U-Turn Sampler</a>!) para encontrar los valores óptimos.</p>
+<p>Traducción: Le dijimos a Stan, <strong>“acá está la ecuación, los datos, y porfa no explotes.”</strong> ¿Resultado? Distribuciones posteriores que nos dan no solo <em>mejores estimaciones</em> sino <em>incertidumbre</em>, como pronósticos del tiempo para tu corazón.</p>
+</section>
+<section id="por-qué-importa-esto" class="level4">
+<h4 class="anchored" data-anchor-id="por-qué-importa-esto">¿Por Qué Importa Esto?</h4>
+<p>Este modelo <strong>no es solo un truco para ñoños de estadísticas</strong>. Es un puente entre datos fríos y el caos de la fisiología humana. Al vincular <strong>parámetros con mecanismos reales</strong> (como activación simpática o tono vagal), podemos:</p>
+<ul>
+<li><strong>Personalizar rehabilitación</strong>: Adaptar ejercicios a tu “personalidad” autonómica.<br>
+</li>
+<li><strong>Detectar riesgos temprano</strong>: Cachar recuperación lenta antes de que sea grave.<br>
+</li>
+<li><strong>Optimizar entrenamiento</strong>: Ajustar intensidad según dinámicas cardíacas en tiempo real.</li>
+</ul>
+<p>Imagina un Fitbit que <strong>no solo cuente pasos</strong>, sino que te diga: <em>“Oye, tu <span class="math inline">\(\phi\)</span> está bajo, mejor no tomes café hoy.”</em> Ese es el futuro que estamos creando.</p>
+<p>Tu corazón no es un metrónomo. <strong>Es un baterista de jazz, improvisando, dinámico y a veces caótico</strong>. Este modelo abraza ese caos, usando funciones logísticas para mapear el ritmo de reposo, pánico y recuperación. Ya seas científico de datos, médico o alguien que solo quiere saber por qué los burpees dan ganas de llorar, acuérdate: <strong>detrás de cada latido hay una historia</strong>. Y ahora, tenemos las mates para leerla.</p>
+</section>
+</section>
+</section>
+<section id="implementando-el-hamiltonian-monte-carlo-hmc" class="level1 page-columns page-full">
+<h1>Implementando el Hamiltonian Monte Carlo (HMC)</h1>
+<p>¿Quieres estimar parámetros para un modelo fancy de ritmo cardíaco usando HMC? Ajústate el cinturón, <strong>esto es como enseñarle a un auto autónomo a navegar un laberinto</strong>, pero en vez de auto, son ecuaciones, y en vez de laberinto, es el caos que hace tu corazón con el ejercicio. Vamos a simplificarlo sin jerga de doctorado.</p>
+<section id="paso-1-qué-chu-es-hmc" class="level4">
+<h4 class="anchored" data-anchor-id="paso-1-qué-chu-es-hmc">Paso 1: ¿Qué Chu*** es HMC?</h4>
+<p>Imagina que estas escalando un cerro (la “<em>distribución posterior</em>” de parámetros que quieres explorar). Métodos tradicionales como <strong>Metropolis-Hastings son como caminar a ciegas dando pasos al azar</strong>: eventualmente llegas a la cima, pero te demoras una eternidad. <strong>¿HMC? Es como ponerte una mochila jet</strong> que usa <em>física</em> (dinámica hamiltoniana) para deslizarte suave hacia las zonas más probables.</p>
+<p>El truco:</p>
+<ul>
+<li><strong>Parámetros = Posiciones</strong>: Tus incógnitas (<span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\beta\)</span>) son coordenadas en un mapa.<br>
+</li>
+<li><strong>Momento = Variables Auxiliares</strong>: Variables “físicas” ficticias que le dan impulso a tu mochila jet.<br>
+</li>
+<li><strong>Hamiltoniano = Energía Total</strong>: Combina “energía potencial” (qué tan malo es el ajuste del modelo) y “energía cinética” (el impulso del momento).</li>
+</ul>
+<p>Simula <strong>deslizarte por este paisaje de energía</strong>, guiado por gradientes (el GPS de las matemáticas), para encontrar los mejores valores.</p>
+</section>
+<section id="paso-2-el-no-u-turn-sampler-nuts-piloto-automático-para-el-hmc" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="paso-2-el-no-u-turn-sampler-nuts-piloto-automático-para-el-hmc">Paso 2: El No-U-Turn Sampler (NUTS): Piloto Automático para el HMC</h4>
+<p>¿El talón de Aquiles del HMC? <strong>Elegir el tamaño de paso</strong> (<span class="math inline">\(\epsilon\)</span>) <strong>y el número de pasos</strong> (<span class="math inline">\(L\)</span>). Si te equivocas, o avanzas a paso de tortuga o te pasái de largo. Ahí entra <strong>NUTS</strong>, la Marie Kondo de los MCMC: ordena el ajuste automático para que tu muestreo genere alegría.</p>
+<p>Ya cubrimos lo básico de NUTS en un <a href="https://doi.org/10.59350/hnk21-ggm53">post anterior</a>. Pero, para ahorrar tiempo, recordemos rápidamente cómo funciona (ya que, obviamente, ya leíste mi <a href="https://doi.org/10.59350/hnk21-ggm53">post anterior de NUTS</a>):</p>
+<ol type="1">
+<li><strong>Construye un Árbol</strong>: NUTS crea un árbol binario de pasos hacia adelante y atrás.<br>
+</li>
+<li><strong>Detención en U-Turn</strong>: Si el camino empieza a retroceder (un “giro en U”), se detiene. ¡Sin pasos perdidos!<br>
+</li>
+<li><strong>Ajuste de Paso</strong>: Durante el calentamiento, NUTS ajusta <span class="math inline">\(\epsilon\)</span> para lograr una tasa de aceptación ~80%, el “justo” de Ricitos de Oro.</li>
+</ol>
+<p>En nuestro paper, usamos <strong>Stan</strong> (vía el paquete <code>brms</code> de R). Stan es como un mayordomo robot que <strong>hace las mates mientras tomas café</strong> (o <em>mate</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>).</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;Es como el café pero 10 veces más intenso y amargo</p></div></div></section>
+<section id="paso-3-definiendo-el-modelo-metiendo-la-ecuación" class="level4">
+<h4 class="anchored" data-anchor-id="paso-3-definiendo-el-modelo-metiendo-la-ecuación">Paso 3: Definiendo el Modelo, Metiendo la Ecuación</h4>
+<p>Bueno, todo lindo, pero ¿cuál es el modelo? Nuestra ecuación es una bestia:</p>
+<p><span class="math display">\[  
+\text{RRi}(t) = \alpha + \frac{\beta}{1 + e^{\lambda(t-\tau)}} + \frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}  
+\]</span></p>
+<p>En <code>brms</code>, escribirías esto como una fórmula no lineal:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(brms)  </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model_formula <span class="ot">&lt;-</span> <span class="fu">bf</span>(  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  RRi <span class="sc">~</span> alpha <span class="sc">+</span> beta <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(lambda <span class="sc">*</span> (tiempo <span class="sc">-</span> tau))) <span class="sc">+</span>  </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                (<span class="sc">-</span>c <span class="sc">*</span> beta) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(phi <span class="sc">*</span> (tiempo <span class="sc">-</span> tau <span class="sc">-</span> delta))),  </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  alpha <span class="sc">~</span> <span class="dv">1</span>, beta <span class="sc">~</span> <span class="dv">1</span>, lambda <span class="sc">~</span> <span class="dv">1</span>, tau <span class="sc">~</span> <span class="dv">1</span>, c <span class="sc">~</span> <span class="dv">1</span>, phi <span class="sc">~</span> <span class="dv">1</span>, delta <span class="sc">~</span> <span class="dv">1</span>,  </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nl =</span> <span class="cn">TRUE</span>  </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Traducción</strong>: “Oye Stan, acá está la ecuación. Los parámetros son <span class="math inline">\(\alpha, \beta, \lambda, \tau, c, \phi, \delta\)</span>. ¡Métete con todo!”.</p>
+</section>
+<section id="paso-4-poniendo-previos-porque-hasta-las-mates-necesitan-límites" class="level4">
+<h4 class="anchored" data-anchor-id="paso-4-poniendo-previos-porque-hasta-las-mates-necesitan-límites">Paso 4: Poniendo Previos, Porque Hasta las Mates Necesitan Límites</h4>
+<p>Los previos evitan que los parámetros se descontrolen. Por ejemplo:<br>
+- <span class="math inline">\(\beta\)</span> (<strong>caída por ejercicio</strong>) debe ser negativo; nadie tiene intervalos R-R que <em>aumenten</em> al correr.<br>
+- <span class="math inline">\(\tau\)</span> (<strong>inicio del pánico</strong>) no puede ser negativo (a menos que tu corazón entre en pánico <em>antes</em> de ejercitarte… igual, te entiendo).</p>
+<p>En <code>brms</code>, los definirías así:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>priors <span class="ot">&lt;-</span> <span class="fu">c</span>(  </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">800</span>, <span class="dv">100</span>), <span class="at">nlpar =</span> <span class="st">"alpha"</span>),   <span class="co"># RR basal ~800 ms  </span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="sc">-</span><span class="dv">300</span>, <span class="dv">30</span>), <span class="at">nlpar =</span> <span class="st">"beta"</span>),    <span class="co"># Caída ~-300 ms  </span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">0.8</span>, <span class="fl">0.01</span>), <span class="at">nlpar =</span> <span class="st">"c"</span>),      <span class="co"># Recuperación ~80%  </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="fl">0.5</span>), <span class="at">nlpar =</span> <span class="st">"lambda"</span>),   <span class="co"># Tasa de caída ~-3  </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="fl">0.5</span>), <span class="at">nlpar =</span> <span class="st">"phi"</span>),      <span class="co"># Tasa de recuperación ~-2  </span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">6</span>, <span class="fl">0.5</span>), <span class="at">nlpar =</span> <span class="st">"tau"</span>),       <span class="co"># Pánico empieza ~6 min  </span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">3</span>, <span class="fl">0.5</span>), <span class="at">nlpar =</span> <span class="st">"delta"</span>)      <span class="co"># Retraso recuperación ~3 min  </span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Estos previos no son inventos, <strong>vienen de conocimiento del área</strong> (o, en este caso, de datos del estudio).</p>
+</section>
+<section id="paso-5-simulando-datos-entre-más-ruido-mejor" class="level4">
+<h4 class="anchored" data-anchor-id="paso-5-simulando-datos-entre-más-ruido-mejor">Paso 5: Simulando Datos, Entre Más Ruido, Mejor</h4>
+<p>Para ilustrar cómo funciona el modelo y estimar parámetros, <strong>necesitamos datos. Creemos unos ficticios</strong>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Creamos un data.frame con intervalos de tiempo  </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">tiempo =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">20</span>, <span class="fl">0.1</span>)  </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)  </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Generamos un patrón RRi con ruido agregado  </span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">within</span>(data, {  </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  RRi <span class="ot">&lt;-</span> <span class="dv">800</span> <span class="sc">-</span>   </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">300</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">3</span> <span class="sc">*</span> (tiempo <span class="sc">-</span> <span class="dv">6</span>))) <span class="sc">+</span>  </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.8</span> <span class="sc">*</span> <span class="dv">300</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> (tiempo <span class="sc">-</span> <span class="dv">6</span> <span class="sc">-</span> <span class="dv">3</span>))) <span class="sc">+</span>  </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="fu">length</span>(tiempo), <span class="dv">0</span>, <span class="dv">30</span>)  </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>})  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y ahora que tenemos datos cocinados, <strong>veamos cómo se ve el caos cardíaco simulado</strong>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(tiempo, RRi)) <span class="sc">+</span>  </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span>  </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">9</span>), <span class="at">col =</span> <span class="st">"gray50"</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> .<span class="dv">5</span>) <span class="sc">+</span>  </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Tiempo (min)"</span>, <span class="at">y =</span> <span class="st">"RRi (ms)"</span>, <span class="at">title =</span> <span class="st">"Caos Cardíaco Simulado"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/unnamed-chunk-9-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="index_files/figure-html/unnamed-chunk-9-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="paso-6-ajustando-el-modelo-que-stan-haga-la-pega-fuerte" class="level4">
+<h4 class="anchored" data-anchor-id="paso-6-ajustando-el-modelo-que-stan-haga-la-pega-fuerte">Paso 6: Ajustando el Modelo, Que Stan Haga la Pega Fuerte</h4>
+<p>Con la fórmula, previos y datos listos, <strong>ajustar el modelo es poco emocionante</strong>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">brm</span>(  </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> model_formula,  </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data,  </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> priors,  </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">gaussian</span>(),  </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,         <span class="co"># 4 cadenas MCMC en paralelo  </span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">2000</span>,        <span class="co"># 2000 iteraciones por cadena  </span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span>,      <span class="co"># Primeras 1000 son calentamiento  </span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.95</span>),  <span class="co"># Sé cuidadoso  </span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"../my_rri_model.RDS"</span>  </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Stan procesará los datos <strong>usando HMC (vía NUTS) para explorar el posterior</strong>. Es como entrenar una red neuronal, pero en vez de fotos de gatos, son curvas cardíacas.</p>
+</section>
+<section id="paso-7-verificando-convergencia-el-robot-mayordomo-estaba-curado" class="level4">
+<h4 class="anchored" data-anchor-id="paso-7-verificando-convergencia-el-robot-mayordomo-estaba-curado">Paso 7: Verificando Convergencia, ¿El Robot Mayordomo Estaba Curado?</h4>
+<p>Tras muestrear, debes verificar si las cadenas (ejecuciones paralelas) están de acuerdo. Diagnósticos clave:<br>
+- <strong>R-hat ( <span class="math inline">\(\hat{R}\)</span> )</strong>: Debe ser ≤1.01. Si es 1.5, tus cadenas se pelean como hermanos.<br>
+- <strong>Tamaño de Muestra Efectivo (ESS)</strong>: Debe ser &gt;1000. ¿ESS bajo? Tu mochila jet falló.</p>
+<p>En R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: RRi ~ alpha + beta/(1 + exp(lambda * (time - tau))) + (-c * beta)/(1 + exp(phi * (time - tau - delta))) 
+         alpha ~ 1
+         beta ~ 1
+         lambda ~ 1
+         tau ~ 1
+         c ~ 1
+         phi ~ 1
+         delta ~ 1
+   Data: data (Number of observations: 201) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Regression Coefficients:
+                 Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+alpha_Intercept    800.75      3.45   794.18   807.53 1.00     3052     2914
+beta_Intercept    -291.16     11.52  -314.42  -269.81 1.00     2077     2512
+lambda_Intercept    -2.88      0.32    -3.54    -2.30 1.00     3034     2480
+tau_Intercept        5.87      0.05     5.77     5.98 1.00     2581     2467
+c_Intercept          0.80      0.01     0.79     0.82 1.00     4280     3403
+phi_Intercept       -2.02      0.26    -2.57    -1.57 1.00     3172     2514
+delta_Intercept      3.17      0.12     2.94     3.39 1.00     2401     2769
+
+Further Distributional Parameters:
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma    29.27      1.48    26.59    32.40 1.00     4401     2760
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<p>Busca <code>Bulk_ESS</code> y <code>Tail_ESS</code> en los resultados. Si están bien, sigue. Si no, llora (o aumenta <code>iter</code>).</p>
+</section>
+<section id="por-qué-esto-importa" class="level4">
+<h4 class="anchored" data-anchor-id="por-qué-esto-importa">Por Qué Esto Importa</h4>
+<p>El HMC <strong>no es solo alarde académico</strong>. Al usar gradientes (derivadas del log-posterior), explora espacios complejos de manera eficiente. <strong>Los métodos tradicionales se perderían</strong>; el HMC navega como sobre rieles.</p>
+<p>Para el paper, esto permitió capturar:</p>
+<ul>
+<li><strong>Qué rápido</strong> entra en pánico el corazón (<span class="math inline">\(\lambda\)</span>).<br>
+</li>
+<li><strong>Cuánto</strong> se recupera (<span class="math inline">\(c\)</span>).<br>
+</li>
+<li><strong>Cuándo</strong> empieza el pánico (<span class="math inline">\(\tau\)</span>).</li>
+</ul>
+<p>Estos parámetros no son solo números, <strong>son biomarcadores</strong>. Un <span class="math inline">\(c\)</span> bajo podría indicar mala recuperación en pacientes cardíacos. Un <span class="math inline">\(\lambda\)</span> alto sugiere respuestas al estrés hiperreactivas.</p>
+<p>Implementar HMC <strong>es como enseñarle a un robot a bailar</strong>. Es complejo, requiere ajustes y a veces parece magia. Pero con herramientas como Stan y `brms, <strong>no necesitas ser físico</strong>, solo un humano con datos y un problema que resolver.</p>
+<p>Así que la próxima vez que tu corazón se acelere en el gimnasio, acuérdate: <strong>hay todo un universo de ecuaciones y código</strong> trabajando para entender sus pataletas. Y eso es bonito po.</p>
+</section>
+</section>
+<section id="visualizando-el-la-distribución-posterior" class="level1 page-columns page-full">
+<h1>Visualizando el la Distribución Posterior</h1>
+<p>Seamos honestos: <strong>la estadística puede ser más seca que galleta de agua</strong>. Pero cuando visualizas las distribuciones posteriores de los parámetros del modelo, ocurre la magia. De repente, <strong>números abstractos se transforman en una historia</strong> sobre los berrinches, resiliencia y rencores secretos de tu corazón contra los burpees. Aquí te mostramos cómo transformar las matemáticas en insights fisiológicos, con código R y gráficos que <strong>hasta tu primo que le huye al cardio entendería</strong>.</p>
+<section id="intervalo-r-r-basal-alpha-el-ritmo-de-reposo" class="level4">
+<h4 class="anchored" data-anchor-id="intervalo-r-r-basal-alpha-el-ritmo-de-reposo">1. Intervalo R-R basal (<span class="math inline">\(\alpha\)</span>): El Ritmo de Reposo</h4>
+<p>Comenzamos con el <strong>gráfico de densidad posterior para <span class="math inline">\(\alpha\)</span></strong>, el intervalo R-R en reposo. Usando <code>brms</code> y <code>bayesplot</code>, visualizamos dónde vive este parámetro:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)  </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)  </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraer muestras posteriores  </span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>muestras_posteriores <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(fit)  </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficar densidad con intervalo creíble del 90%  </span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_areas</span>(muestras_posteriores, <span class="at">pars =</span> <span class="st">"b_alpha_Intercept"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>) <span class="sc">+</span>  </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Intervalo R-R basal (α)"</span>,  </span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Intervalo R-R (ms)"</span>, <span class="at">y =</span> <span class="st">"Densidad"</span>) <span class="sc">+</span>  </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y.left =</span> <span class="fu">element_blank</span>(),  </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.y.left =</span> <span class="fu">element_blank</span>())  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/unnamed-chunk-12-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="index_files/figure-html/unnamed-chunk-12-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>¿Qué Significa?</strong>:</p>
+<ul>
+<li>Un pico alrededor de 800 ms sugiere una frecuencia cardíaca en reposo de ~75 lpm (ya que RRi ≈ 60,000 / frecuencia).<br>
+</li>
+<li>Un intervalo creíble (IC) del 90% estrecho (ej: 795–805 ms) indica poca incertidumbre.<br>
+</li>
+<li><strong>Insight Fisiológico</strong>: Un <span class="math inline">\(\alpha\)</span> bajo (intervalos cortos) podría indicar estrés crónico o menor condición física. ¿<span class="math inline">\(\alpha\)</span> alto? Quizás tus participantes son cracks del fitness.</li>
+</ul>
+</section>
+<section id="pánico-por-ejercicio-beta-y-tasa-de-caída-lambda-la-fase-ah-la-cagué" class="level4">
+<h4 class="anchored" data-anchor-id="pánico-por-ejercicio-beta-y-tasa-de-caída-lambda-la-fase-ah-la-cagué">2. Pánico por Ejercicio (<span class="math inline">\(\beta\)</span>) y Tasa de Caída (<span class="math inline">\(\lambda\)</span>): La Fase “Ah, la Cagué”</h4>
+<p>Graficamos <span class="math inline">\(\beta\)</span> (<strong>magnitud de la caída</strong>) y <span class="math inline">\(\lambda\)</span> (<strong>pendiente de la caída</strong>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combinar gráficos  </span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">mcmc_areas</span>(muestras_posteriores, <span class="at">pars =</span> <span class="st">"b_beta_Intercept"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>) <span class="sc">+</span>  </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Caída Inducida por Ejercicio (β)"</span>,  </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Δ Intervalo R-R (ms)"</span>, <span class="at">y =</span> <span class="st">"Densidad"</span>) <span class="sc">+</span>  </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y.left =</span> <span class="fu">element_blank</span>(),  </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.y.left =</span> <span class="fu">element_blank</span>())  </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">mcmc_areas</span>(muestras_posteriores, <span class="at">pars =</span> <span class="st">"b_lambda_Intercept"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>) <span class="sc">+</span>  </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Tasa de Caída (λ)"</span>,  </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tasa (por min)"</span>, <span class="at">y =</span> <span class="st">"Densidad"</span>) <span class="sc">+</span>  </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y.left =</span> <span class="fu">element_blank</span>(),  </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.y.left =</span> <span class="fu">element_blank</span>())  </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>ggpubr<span class="sc">::</span><span class="fu">ggarrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/unnamed-chunk-13-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>¿Qué Significa?</strong>:</p>
+<ul>
+<li>Un <span class="math inline">\(\beta\)</span> centrado en -290 ms significa que los corazones cayeron ~290 ms durante el ejercicio, como pasar de 75 lpm (~800 ms) a 120 lpm (~500 ms).<br>
+</li>
+<li>Un <span class="math inline">\(\lambda\)</span> de -3 sugiere una caída brusca; tomó ~15 segundos llegar al mínimo. Es como tu corazón gritando “<em>¡¿Esto está pasando?!</em>”.<br>
+</li>
+<li><strong>Insight Fisiológico</strong>: Un <span class="math inline">\(\lambda\)</span> más negativo implica activación simpática rápida (bueno para atletas, preocupante si hay mala recuperación).</li>
+</ul>
+</section>
+<section id="parámetros-de-recuperación-c-phi-delta-la-redención" class="level4">
+<h4 class="anchored" data-anchor-id="parámetros-de-recuperación-c-phi-delta-la-redención">3. Parámetros de Recuperación (<span class="math inline">\(c\)</span>, <span class="math inline">\(\phi\)</span>, <span class="math inline">\(\delta\)</span>): La Redención</h4>
+<p>Ahora, la <strong>fase de recuperación</strong>, donde tu corazón perdona (o no) tus decisiones:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficar los tres  </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">mcmc_areas</span>(muestras_posteriores, <span class="at">pars =</span> <span class="st">"b_c_Intercept"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>) <span class="sc">+</span>  </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Proporción de Recuperación (c)"</span>,  </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Proporción Recuperada"</span>, <span class="at">y =</span> <span class="st">"Densidad"</span>) <span class="sc">+</span>  </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y.left =</span> <span class="fu">element_blank</span>(),  </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.y.left =</span> <span class="fu">element_blank</span>())  </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">mcmc_areas</span>(muestras_posteriores, <span class="at">pars =</span> <span class="st">"b_phi_Intercept"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>) <span class="sc">+</span>  </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Tasa de Recuperación (φ)"</span>,  </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tasa (por min)"</span>, <span class="at">y =</span> <span class="st">"Densidad"</span>) <span class="sc">+</span>  </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y.left =</span> <span class="fu">element_blank</span>(),  </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.y.left =</span> <span class="fu">element_blank</span>())  </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">mcmc_areas</span>(muestras_posteriores, <span class="at">pars =</span> <span class="st">"b_delta_Intercept"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>) <span class="sc">+</span>  </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Retraso en Recuperación (δ)"</span>,  </span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tiempo de Retraso (min)"</span>, <span class="at">y =</span> <span class="st">"Densidad"</span>) <span class="sc">+</span>  </span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y.left =</span> <span class="fu">element_blank</span>(),  </span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.y.left =</span> <span class="fu">element_blank</span>())  </span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>ggpubr<span class="sc">::</span><span class="fu">ggarrange</span>(p1, p2, p3, <span class="at">nrow =</span> <span class="dv">3</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/unnamed-chunk-14-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="index_files/figure-html/unnamed-chunk-14-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>¿Qué Significa?</strong>:</p>
+<ul>
+<li><strong><span class="math inline">\(c = 0.80\)</span></strong>: Los corazones recuperaron 80% de la caída. IC 90% (0.79–0.82) indica alta confianza.<br>
+</li>
+<li><strong><span class="math inline">\(\phi = -2\)</span></strong>: Recuperación rápida pero no instantánea (~20-25 segundos). Un <span class="math inline">\(\phi\)</span> más negativo sería reactivación parasimpática más veloz.<br>
+</li>
+<li><strong><span class="math inline">\(\delta = 3.2\)</span> min</strong>: Los corazones esperaron ~3 minutos post-ejercicio para recuperarse. Retrasos largos podrían indicar fatiga autonómica.<br>
+</li>
+<li><strong>Insight Fisiológico</strong>: <span class="math inline">\(c\)</span> bajo, <span class="math inline">\(\phi\)</span> lento o <span class="math inline">\(\delta\)</span> largo pueden señalar recuperación deficiente, común en envejecimiento o diabetes.</li>
+</ul>
+</section>
+<section id="simulando-curvas-rri-de-posteriores-a-predicciones" class="level4">
+<h4 class="anchored" data-anchor-id="simulando-curvas-rri-de-posteriores-a-predicciones">4. Simulando Curvas RRi: De Posteriores a Predicciones</h4>
+<p><strong>Los posteriores no son solo gráficos bonitos</strong>, permiten simular <em>latidos reales</em>. Generemos trayectorias RRi usando muestras:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtener 100 muestras  </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>muestras <span class="ot">&lt;-</span> muestras_posteriores[<span class="fu">sample.int</span>(<span class="dv">100</span>),]  </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(muestras) <span class="ot">&lt;-</span> <span class="fu">names</span>(muestras) <span class="sc">|&gt;</span>  </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gsub</span>(<span class="at">pattern =</span> <span class="st">"^b_"</span>, <span class="at">replacement =</span> <span class="st">""</span>) <span class="sc">|&gt;</span>  </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gsub</span>(<span class="at">pattern =</span> <span class="st">"_Intercept$"</span>, <span class="at">replacement =</span> <span class="st">""</span>)  </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Simular curvas  </span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>rr_simulado <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, <span class="cf">function</span>(i) {  </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  params <span class="ot">&lt;-</span> muestras[i, ]  </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">tibble</span>(  </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">tiempo =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">20</span>, <span class="at">by =</span> <span class="fl">0.1</span>),  </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">RRi =</span> params<span class="sc">$</span>alpha <span class="sc">+</span>  </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>          params<span class="sc">$</span>beta <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(params<span class="sc">$</span>lambda <span class="sc">*</span> (tiempo <span class="sc">-</span> params<span class="sc">$</span>tau))) <span class="sc">+</span>  </span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>          (<span class="sc">-</span>params<span class="sc">$</span>c <span class="sc">*</span> params<span class="sc">$</span>beta) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(params<span class="sc">$</span>phi <span class="sc">*</span> (tiempo <span class="sc">-</span> params<span class="sc">$</span>tau <span class="sc">-</span> params<span class="sc">$</span>delta))),  </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">sim_id =</span> i  </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  )  </span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>})  </span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficar "espagueti"  </span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rr_simulado, <span class="fu">aes</span>(tiempo, RRi, <span class="at">group =</span> sim_id)) <span class="sc">+</span>  </span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> data, <span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>), <span class="at">color =</span> <span class="st">"gray"</span>) <span class="sc">+</span>  </span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">"purple"</span>) <span class="sc">+</span>  </span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"100 Trayectorias RRi Simuladas"</span>,  </span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Compatibles con datos simulados"</span>,  </span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tiempo (min)"</span>, <span class="at">y =</span> <span class="st">"Intervalo R-R (ms)"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/unnamed-chunk-15-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>¿Qué Significa?</strong>:</p>
+<ul>
+<li>Este <strong>“gráfico de espagueti”</strong> muestra la <em>incertidumbre</em> en predicciones. Bandas gruesas = alta confianza. Huecos = “No estamos seguros qué pasa aquí”.<br>
+</li>
+<li>La <strong>forma en U es consistente</strong>: caída brusca, retraso, luego recuperación. Pero el timing y profundidad varían, reflejando diferencias individuales.<br>
+</li>
+<li><strong>Insight Fisiológico</strong>: Mayor dispersión post-ejercicio sugiere corazones con dificultad para recuperarse, candidatos a monitoreo.</li>
+</ul>
+</section>
+<section id="correlaciones-entre-parámetros-la-pulseada-autonómica" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="correlaciones-entre-parámetros-la-pulseada-autonómica">5. Correlaciones entre Parámetros: La Pulseada Autonómica</h4>
+<p>Finalmente, exploremos interacciones con un <strong>gráfico de correlación por pares</strong>:</p>
+<div class="cell page-columns page-full">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_pairs</span>(fit, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"b_alpha_Intercept"</span>, <span class="st">"b_beta_Intercept"</span>,  </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"b_c_Intercept"</span>, <span class="st">"b_phi_Intercept"</span>),  </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">diag_fun =</span> <span class="st">"dens"</span>,  </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">off_diag_fun =</span> <span class="st">"hex"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display page-columns page-full">
+<div class="page-columns page-full">
+<figure class="figure page-columns page-full">
+<p class="page-columns page-full"><a href="index_files/figure-html/unnamed-chunk-16-1.svg" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-8"><img src="index_files/figure-html/unnamed-chunk-16-1.svg" class="img-fluid figure-img column-page" style="width:100.0%"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>¿Qué Significa?</strong>:</p>
+<ul>
+<li><strong><span class="math inline">\(\alpha\)</span> vs.&nbsp;<span class="math inline">\(\beta\)</span></strong>: ¿Correlación negativa? Corazones relajados (<span class="math inline">\(\alpha\)</span> alto) podrían entrar más en pánico (<span class="math inline">\(\beta\)</span> bajo).<br>
+</li>
+<li><strong><span class="math inline">\(c\)</span> vs.&nbsp;<span class="math inline">\(\phi\)</span></strong>: ¿Correlación positiva? Recuperación rápida (<span class="math inline">\(\phi\)</span>) suele ir con recuperación completa (<span class="math inline">\(c\)</span>).<br>
+</li>
+<li><strong>Insight Fisiológico</strong>: Estas relaciones sugieren <em>acoplamiento autonómico</em>, cómo se coordinan los sistemas simpático y parasimpático.</li>
+</ul>
+</section>
+<section id="por-qué-importa" class="level4">
+<h4 class="anchored" data-anchor-id="por-qué-importa">¿Por Qué Importa?</h4>
+<p>Estas visualizaciones no son solo adornos académicos. Son herramientas para:<br>
+- <strong>Medicina Personalizada</strong>: Detectar valores extremos en <span class="math inline">\(\alpha\)</span> o <span class="math inline">\(c\)</span> puede identificar pacientes en riesgo.<br>
+- <strong>Optimizar Entrenamiento</strong>: Atletas con <span class="math inline">\(\lambda\)</span> pronunciado podrían soportar mayor intensidad.<br>
+- <strong>Investigación en Envejecimiento</strong>: La cohorte de adultos mayores del paper tuvo <span class="math inline">\(\phi\)</span> más lento; comparar con jóvenes puede revelar declive por edad.</p>
+<p>Imagina una clínica donde estos gráficos aparezcan durante un test de esfuerzo, <strong>guiando intervenciones en tiempo real</strong>. O un entrenador ajustando rutinas según el retraso (<span class="math inline">\(\delta\)</span>) de un corredor. <strong>Ese es el poder de casar mates con fisiología</strong>.</p>
+<p>La historia de tu corazón está <strong>escrita en curvas logísticas y densidades de probabilidad</strong>. Al visualizar los posteriores, no solo procesamos números, <strong>sino que desciframos el lenguaje de la vida misma</strong>. Y eso, compadre, es mucho más bacán que cualquier tablero de Fitbit.</p>
+</section>
+</section>
+<section id="discusión-el-panorama-general" class="level1 page-columns page-full">
+<h1>Discusión: El Panorama General</h1>
+<p>Hablemos claro: <strong>el corazón es un caos. No es metrónomo, es un músico de jazz</strong>, improvisando, dinámico y a veces más perdido que perro en misa. Por décadas, hemos intentado meter sus ritmos en cajitas etiquetadas “variabilidad cardíaca” o “modelos lineales”, como tratar de embutir un huaso en un ascensor. Este modelo no-lineal no es solo alarde matemático; <strong>es una rebelión contra la simplificación bruta</strong>. Al abrazar el caos de los intervalos R-R con funciones logísticas, <strong>reconocemos que la respuesta cardíaca al ejercicio no es una línea recta, es una montaña rusa</strong>. Y eso importa.</p>
+<p>Las implicancias acá son más grandes que la última compra compulsiva en Falabella. <strong>Las métricas tradicionales de VRC</strong>, aunque útiles, son como resumir <em>Cien años de soledad</em> como “algo pasó en Macondo”. <strong>Comprimen toda la historia de tu sistema nervioso en un solo número</strong>, perdiendo los giros: cuando el simpático pisa el acelerador en una corrida o el parasimpático hace su lenta vuelta de victoria post-ejercicio. <strong>Nuestro modelo captura estos matices</strong>, ofreciendo una lente HD a la dinámica cardíaca. <strong>Para clínicos, esto podría detectar disfunción autonómica temprana</strong>, como diabetes o hipertensión, antes de que escalen. Para atletas, es una hoja de ruta para optimizar recuperación. ¿Para el resto? Prueba que los burpees son, de hecho, invento del diablo.</p>
+<div class="page-columns page-full"><p><img src="../joachim-schnurle-eqTmD-baDkU-unsplash.jpg" class="img-fluid" style="width:100.0%"><br>
+</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Foto de <a href="https://unsplash.com/es/@joa70?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Joachim Schnürle</a> en <a href="https://unsplash.com/es/fotos/un-primer-plano-de-un-articulo-medico-con-un-grafico-eqTmD-baDkU?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></span></div></div>
+<p>Pero no corramos a abrir champaña. <strong>La cohorte del estudio (personas mayores, mayoría mujeres) es como probar una camioneta 4x4 en la Costanera un domingo</strong>. Si bien sus corazones son héroes (shoutout a los 70añeros que bailan zumba mejor que millennials), el envejecimiento altera la función autonómica. <strong>Corazones jóvenes</strong>, con tono vagal fresco y metabolismo eficiente, podrían <em>bailar cueca distinto</em>. Imagina aplicar este modelo a deportistas universitarios: ¿su retraso en recuperación (<span class="math inline">\(\delta\)</span>) sería menor? ¿Su parámetro de pánico (<span class="math inline">\(\beta\)</span>) más dramático? No sabemos, y eso es un problema. La ceguera demográfica actual del modelo limita su aplicabilidad. <strong>Futuros estudios deben ampliar la red</strong>: jóvenes, atletas élite, padres privados de sueño, y sí, <strong>ese amigo que corre ultramaratones “para relajarse”</strong>. Solo así sabremos si este marco es la multiherramienta de análisis cardíaco o un chiche para abuelitas del bingo.</p>
+<p>Luego está <strong>el elefante en la pieza: el ruido del mundo real</strong>. El estudio, con datos limpios y controlados, es el equivalente científico de un estudio de TikTok. <strong>Pero la vida no es laboratorio</strong>. Estrés, café y ese tercero espresso que no debiste tomarte ensucian las señales. <strong>Imagina desplegar este modelo al mundo, con relojes inteligentes sufriendo artefactos de movimiento y zonas sin Wi-Fi en el cerro</strong>. ¿Aguantará el caos? Las pruebas con datos sintéticos sugieren que sí, pero hasta que no se pruebe en Apple Watches colgando de muñecas sudorosas en CrossFit, seguimos con optimismo cauteloso. Integrar factores ambientales en tiempo real (temperatura, humedad, cortisol) <strong>podría transformar este modelo de truco bacán a herramienta clínica pulenta</strong>.</p>
+<p>Hablando de tecnología, hablemos de wearables. La experiencia Fitbit actual es como tener un copiloto que solo sabe dos frases: “¡Vas bien!” o “¿Y si quizás descansas?”. Nuestro modelo podría mejorarlo a un navegante que <strong>entiende los berrinches cardíacos</strong>. Imagina tu reloj diciendo: <strong>“Tu proporción de recuperación (<span class="math inline">\(c\)</span>) está baja, salta los burpees hoy”</strong>, o “Tu <span class="math inline">\(\phi\)</span> está genial, ¡dale para la press banca!”. No es ciencia ficción; es el próximo paso lógico. Pero para eso, necesitamos integración con APIs de wearables, edge computing para análisis en tiempo real, e interfaces que no parezcan hechas en Excel. <strong>Ah, y baterías que no mueran a media rutina</strong>. Prioridades, gente.</p>
+<div class="page-columns page-full"><p><img src="../saradasish-pradhan-4ZimN_iVwWo-unsplash.jpg" class="img-fluid" style="width:100.0%"><br>
+</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Foto de <a href="https://unsplash.com/es/@saradasish?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Saradasish Pradhan</a> en <a href="https://unsplash.com/es/fotos/un-telefono-movil-que-se-enciende-en-la-oscuridad-4ZimN_iVwWo?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></span></div></div>
+<p>Ahora, el <strong>talón de Aquiles del modelo: interpretabilidad</strong>. Las funciones logísticas son elegantes, pero <strong>explicárselas a un cardiólogo tomando unos mates es como enseñarle física cuántica a un golden retriever</strong>. Parámetros como <span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\beta\)</span>, <span class="math inline">\(\lambda\)</span> tienen sentido para nosotros los ñoños, pero ¿cómo traducir “tasa de recuperación (<span class="math inline">\(\phi\)</span>) = -2.6” en consejos útiles? <strong>La respuesta: mejores herramientas visuales</strong>. Piensa en dashboards interactivos donde médicos ajusten parámetros y vean curvas cardíacas cambiar en tiempo real. O <strong>apps que conviertan “mejorar tu <span class="math inline">\(c\)</span>” en una misión tipo Zelda</strong>. Cerrando la brecha entre ecuaciones y empatía es el próximo desafío.</p>
+<p>Y qué hay de <strong>los rincones oscuros del sistema nervioso</strong>? El modelo asume una pelea simpático vs parasimpático, pero la biología es más enredada que cable de audífonos. Estudios nuevos sugieren que la “balanza simpatovagal” es más como una relación tóxica: a veces cooperan, a veces se pelean. ¿Puede el modelo capturar eso? Por ahora no. <strong>Futuras versiones podrían necesitar ecuaciones diferenciales acopladas</strong> o análisis de redes. Además, factores como arritmia sinusal respiratoria (donde la respiración afecta el ritmo) deben controlarse. Incluir esto transformaría el modelo de obra de dos actores a teleserie prime time.</p>
+<p>No olvidemos <strong>la cuerda floja ética</strong>. Los datos de salud personalizados son oro para innovación, pero mina antipersonal para privacidad. <strong>Si tu reloj sabe los secretos de tu corazón, ¿quién más tiene pase VIP?</strong> ¿Isapres? ¿Empleadores? El potencial es innegable, pero sin ética robusta, estamos <strong>a un hack de un capítulo de Black Mirror</strong>. Transparencia, consentimiento y cifrado no son moda, son el precio de la entrada.</p>
+<div class="page-columns page-full"><p><img src="../maxim-hopman-IayKLkmz6g0-unsplash.jpg" class="img-fluid" style="width:100.0%"><br>
+</p><div class="no-row-height column-margin column-container"><span class="margin-aside">Foto de <a href="https://unsplash.com/es/@nampoh?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Maxim Hopman</a> en <a href="https://unsplash.com/es/fotos/un-grupo-de-personas-de-pie-alrededor-de-una-pantalla-de-video-IayKLkmz6g0?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></span></div></div>
+<p>Entonces, ¿dónde quedamos? El <a href="https://www.researchgate.net/publication/389812477_Enhancing_cardiovascular_monitoring_a_non-linear_model_for_characterizing_RR_interval_fluctuations_in_exercise_and_recovery">paper</a> <strong>es un avance, pero la maratón recién empieza</strong>. El camino tiene preguntas sin responder: <strong>(1)</strong> ¿Puede predecir eventos cardíacos? <strong>(2)</strong> ¿Cómo interactúa con otros biomarcadores como presión arterial? <strong>(3)</strong> ¿Funciona en patologías como fibrilación auricular? <strong>Cada paso requiere colaboración</strong>: matemáticos de la Chile, médicos de la Católica, ingenieros de la Santa María, y sí, <strong>hasta éticos para que no nos pasemos de listos</strong>.</p>
+<p>Al final, <strong>este trabajo no es de ecuaciones o R<sup>2</sup></strong>. Es sobre honrar la complejidad cardíaca. Tu corazón no es máquina; <strong>es un contador de historias</strong>. Cada latido susurra cuentos de estrés, alegría, cansancio y resiliencia. Al escuchar, <em>de verdad</em> escuchar, su narrativa no-lineal, no hacemos ciencia. <strong>Aprendemos un nuevo idioma</strong>, uno que podría reescribir el futuro de la salud. Y eso, compadre, es un giro argumental que vale la pena seguir.</p>
+</section>
+
+
+
+<div id="quarto-appendix" class="default"><section id="apéndice" class="level1 appendix"><h2 class="anchored quarto-appendix-heading">Apéndice</h2><div class="quarto-appendix-contents">
+
+<p>Revisa el paper original donde presentamos el modelo <a href="https://www.researchgate.net/publication/389812477_Enhancing_cardiovascular_monitoring_a_non-linear_model_for_characterizing_RR_interval_fluctuations_in_exercise_and_recovery">aquí</a>.</p>
+
+
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{castillo-aguilar2025,
+  author = {Castillo-Aguilar, Matías},
+  title = {¿Crees Saber Cómo Modelar El Ritmo Cardíaco?},
+  date = {2025-03-24},
+  url = {https://bayesically-speaking.com/posts/2025-03-24 so-you-think-you-can-model-a-heartbeat/spanish/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-castillo-aguilar2025" class="csl-entry quarto-appendix-citeas" role="listitem">
+Castillo-Aguilar, Matías. 2025. <span>“¿Crees Saber Cómo Modelar El
+Ritmo Cardíaco?”</span> March 24, 2025. <a href="https://bayesically-speaking.com/posts/2025-03-24 so-you-think-you-can-model-a-heartbeat/spanish/">https://bayesically-speaking.com/posts/2025-03-24
+so-you-think-you-can-model-a-heartbeat/spanish/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/bayesically-speaking\.com\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>

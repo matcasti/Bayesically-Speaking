@@ -16,6 +16,8 @@ editor_options:
 code-links:
   - text: Original paper
     href: https://www.researchgate.net/publication/389812477_Enhancing_cardiovascular_monitoring_a_non-linear_model_for_characterizing_RR_interval_fluctuations_in_exercise_and_recovery
+  - text: Spanish version of this blog post
+    href: spanish/index.html
 ---
 
 ```{r}
@@ -44,7 +46,7 @@ Now, let's address the elephant in the room: **why should you care?** Well, unle
 
 Here's where it gets spicy: **we tested this bad boy on 272 elderly folks**. Why seniors? Because if your heart can handle Zumba at 70, it's basically the Dwayne Johnson of organs. *Spoiler alert*: **the model nailed it**. With an R^2^ of 0.868 (translation: it's scarily accurate) and RMSE of 32.6 ms (translation: it's precise enough to detect your existential crisis during plank holds), **it's like giving doctors and trainers a cheat code for your cardiovascular health**. Oh, and we used Hamiltonian Monte Carlo for parameter estimation, which sounds like a spell from *Harry Potter* but is really just math jedi tricks for "we didn't guess, we *calculated*".
 
-But wait, there's more! Using Sobol **sensitivity analysis** (a fancy way of asking, "*Which part of this equation is doing the heavy lifting?*"), we discovered that baseline RR intervals and recovery proportion are the MVPs of heart rate dynamics. Translation: **your heart's default setting and its ability to bounce back post-workout are the LeBron and Jordan of this game**. The other parameters? They're the benchwarmers. Useful, but not stealing the spotlight.  
+But wait, there's more! Using Sobol **sensitivity analysis** (a fancy way of asking, "*Which part of this equation is doing the heavy lifting?*"), we discovered that baseline R-R intervals and recovery proportion are the MVPs of heart rate dynamics. Translation: **your heart's default setting and its ability to bounce back post-workout are the LeBron and Jordan of this game**. The other parameters? They're the benchwarmers. Useful, but not stealing the spotlight.  
 
 Now, let's talk **real-world applications**. Imagine a future where your smartwatch doesn't just shame you for sitting too long but actually *understands* your heart's tantrums during spin class. Or where **rehab programs are tailored not just to your fitness level but to your autonomic nervous system's mood swings**. This model isn't just academic nerdery, it's a gateway to personalized health tech that doesn't suck.
 
@@ -69,9 +71,9 @@ $$
 
 This isn't just alphabet soup. **It's a carefully orchestrated dance between two logistic functions** (the S-shaped curves you'd recognize from population growth or zombie apocalypse models). Together, they capture your **heart's journey** from Zen-like rest to exercise-induced panic and back to Netflix mode. **Let's dissect each term** like it's a *Breaking Bad* episode.  
 
-#### 1. Baseline RR Interval ($\alpha$): The Calm Before the Storm
+#### 1. Baseline R-R interval ($\alpha$): The Calm Before the Storm
 
-$\alpha$ (alpha) **is your heart's resting state**, the RR interval when you're sprawled on the couch debating whether to rewatch *The Office* again. Mathematically, **it's the vertical shift of the entire curve**. Think of it as the "neutral" setting of your heart rate, typically around 800–1000 ms for healthy adults. If $\alpha$ were a person, it'd be that friend who insists on taking "mental health days" every Monday.  
+$\alpha$ (alpha) **is your heart's resting state**, the R-R interval when you're sprawled on the couch debating whether to rewatch *The Office* again. Mathematically, **it's the vertical shift of the entire curve**. Think of it as the "neutral" setting of your heart rate, typically around 800–1000 ms for healthy adults. If $\alpha$ were a person, it'd be that friend who insists on taking "mental health days" every Monday.  
 
 In the code, $\alpha$ is straightforward. When we standardized the RRi data, we centered each individual's data around their mean ($\text{RRi}_i$) and scaled it by their standard deviation ($S_{\text{RRi}_i}$). **This let us compare Grandma Ethel's heart rate to Gym Bro Chad's without bias**. In R, this might look like reversing a z-score. No magic here, just arithmetic to keep everyone's heart rates in their lane.  
 
@@ -96,7 +98,7 @@ ggplot(plot_data, aes(value, fill = variable)) +
 
 #### 2. The Panic Parameter ($\beta$): When Exercise Hits Like a Plot Twist
 
-$\beta$ is where the drama begins. This term controls the **magnitude of the RR interval drop when you start exercising**. Negative values mean your heart is freaking out, like when you realize you left the stove on mid-workout. The bigger the absolute value of $\beta$, **the steeper the nosedive**. In our study, $\beta = -345$ ms meant participants' hearts were basically doing a *Free Solo* cliff drop during exercise.  
+$\beta$ is where the drama begins. This term controls the **magnitude of the R-R interval drop when you start exercising**. Negative values mean your heart is freaking out, like when you realize you left the stove on mid-workout. The bigger the absolute value of $\beta$, **the steeper the nosedive**. In our study, $\beta = -345$ ms meant participants' hearts were basically doing a *Free Solo* cliff drop during exercise.  
 
 The first logistic term, $\frac{\beta}{1 + e^{\lambda(t-\tau)}}$, is the **mathematical equivalent of your sympathetic nervous system slamming the gas pedal**. The denominator $1 + e^{\lambda(t-\tau)}$ ensures the drop isn't instant, it's a smooth(ish) transition, like a rollercoaster cresting the first hill.  
 
@@ -112,7 +114,7 @@ Plug in $\alpha = 860$ ms, $\beta = -345$, $\lambda = -3.05$, and $\tau = 6.71$,
 
 #### 3. The Drop Rate ($\lambda$) and Timing ($\tau$): How Fast and When the Chaos Unfolds
 
-$\lambda$ (lambda) dictates **how steep the RR interval plummets**. A more negative $\lambda$ means a sharper drop, picture your heart rate during a sprint versus a leisurely stroll. In our model, $\lambda = -3.05$ is like your heart yelling, "ABANDON SHIP!" the moment exercise starts.  
+$\lambda$ (lambda) dictates **how steep the R-R interval plummets**. A more negative $\lambda$ means a sharper drop, picture your heart rate during a sprint versus a leisurely stroll. In our model, $\lambda = -3.05$ is like your heart yelling, "ABANDON SHIP!" the moment exercise starts.  
 
 $\tau$ (tau) is the inflection point, **the exact moment the drop begins**. At $\tau = 6.71$ minutes, it's the split second your heart realizes you're not joking about that burpee challenge. This parameter ensures the model doesn't assume everyone panics at the same time (because let's face it, some of us start sweating just *thinking* about exercise).  
 
@@ -184,11 +186,11 @@ These parameters **aren't just academic, they're actionable**. A low $c$ (recove
 
 #### Behind the Curtain: Stan, HMC, and Bayesian Jedi Tricks
 
-Fitting this model isn't for the faint of heart. We used **Stan** (a probabilistic programming language) and **[Hamiltonian Monte Carlo (HMC)](https://doi.org/10.59350/fa26y-xa178)** to estimate parameters. Think of HMC as a GPS for navigating the jagged terrain of parameter space, it avoids dead ends and U-turns (thanks, [No-U-Turn Sampler](https://doi.org/10.59350/hnk21-ggm53)!) to find the optimal values.  
+Fitting this model isn't for the faint of heart. We used **Stan** (a probabilistic programming language) and [Hamiltonian Monte Carlo (HMC)](https://doi.org/10.59350/fa26y-xa178) to estimate parameters. Think of HMC as a GPS for navigating the jagged terrain of parameter space, it avoids dead ends and U-turns (thanks, [No-U-Turn Sampler](https://doi.org/10.59350/hnk21-ggm53)!) to find the optimal values.  
 
 Translation: We told Stan, **"Here's our equation, here's our data, and please don't blow up."** The result? Posterior distributions for each parameter that tell us not just *best guesses* but *uncertainty*, like weather forecasts for your heart rate.  
 
-#### Why This Matters
+#### Why This Matters?
 
 This model **isn't just a party trick for stats nerds**. It's a bridge between cold, hard data and the messy reality of human physiology. By linking **parameters to real-world mechanisms**, like sympathetic activation or vagal tone, we can:  
 
@@ -224,7 +226,7 @@ We have already cover the fundamentals of NUTS in a [previous post](https://doi.
 
 1. **Build a Tree**: NUTS grows a binary tree of potential steps forward and backward in time.  
 2. **Stop at U-Turns**: If the path starts doubling back (a "U-turn"), it stops. No wasted steps!  
-3. **Adapt Step Size**: During warm-up, NUTS adjusts $\epsilon$ to hit a ~65% acceptance rate, Goldilocks' "just right."  
+3. **Adapt Step Size**: During warm-up, NUTS adjusts $\epsilon$ to hit a ~80% acceptance rate, Goldilocks' "just right."  
 
 In our paper, we used **Stan** (via R's `brms` package) to handle this. Stan is like a robot butler that **does the math while you sip coffee** (or *mate*^[It's like coffee but 10 times more intense and face-wrenching]).  
 
@@ -253,7 +255,7 @@ model_formula <- bf(
 #### Step 4: Setting Priors, Because Even Math Needs Boundaries
 
 Priors keep the parameters from going rogue. For example:  
-- $\beta$ (**exercise-induced drop**) should be negative, no one's RR interval *increases* when sprinting.  
+- $\beta$ (**exercise-induced drop**) should be negative, no one's R-R interval *increases* when sprinting.  
 - $\tau$ (**panic start time**) can't be negative (unless your heart panics *before* exercise, which… same).  
 
 In `brms`, you'd set these like:  
@@ -335,7 +337,7 @@ summary(fit)
 
 Look for `Bulk_ESS` and `Tail_ESS` in the output. If they're solid, proceed. If not, cry (or increase `iter`).
 
-#### Why This Matters
+#### Why This Matters?
 
 HMC **isn't just academic flexing**. By leveraging gradients (derivatives of the log-posterior), it efficiently explores complex, high-dimensional spaces. **Traditional methods would get lost**; HMC glides through like it's on rails.  
 
@@ -355,7 +357,7 @@ So next time your heart races during a workout, remember: **there's an entire un
 
 Let's face it, **statistics can be drier than a saltine cracker**. But when you visualize the posterior distributions of your model parameters, magic happens. Suddenly, **abstract numbers transform into a story** about your heart's tantrums, resilience, and secret grudges against burpees. Here's how to decode the math into physiological insights, complete with R code and plots that **even your cardio-phobic cousin would understand**.  
 
-#### 1. Baseline RR Interval ($\alpha$): The Heart's Resting Vibe
+#### 1. Baseline R-R interval ($\alpha$): The Heart's Resting Vibe
 
 We'll start with the **posterior density plot for $\alpha$**, the resting R-R interval. Using `brms` and `bayesplot`, we can visualize where this parameter likely lives:  
 
@@ -368,8 +370,8 @@ posterior_draws <- as_draws_df(fit)
 
 # Plot density with 90% credible interval
 mcmc_areas(posterior_draws, pars = "b_alpha_Intercept", prob = 0.9) +
-  labs(title = "Baseline RR Interval (α)",
-       x = "RR Interval (ms)", y = "Density") +
+  labs(title = "Baseline R-R interval (α)",
+       x = "R-R interval (ms)", y = "Density") +
   theme(axis.text.y.left = element_blank(),
         axis.ticks.y.left = element_blank())
 ``` 
@@ -388,7 +390,7 @@ Next, let's plot $\beta$ (drop **magnitude**) and $\lambda$ (drop **steepness**)
 # Combine plots
 p1 <- mcmc_areas(posterior_draws, pars = "b_beta_Intercept", prob = 0.9) +
   labs(title = "Exercise-Induced Drop (β)",
-       x = "Δ RR Interval (ms)", y = "Density") +
+       x = "Δ R-R interval (ms)", y = "Density") +
   theme(axis.text.y.left = element_blank(),
         axis.ticks.y.left = element_blank())
 
@@ -471,7 +473,7 @@ ggplot(simulated_rri, aes(time, RRi, group = sim_id)) +
   geom_line(alpha = 0.1, color = "purple") +
   labs(title = "100 Simulated RRi Trajectories",
        subtitle = "Compatible with simulated RRi",
-       x = "Time (min)", y = "RR Interval (ms)")
+       x = "Time (min)", y = "R-R interval (ms)")
 ```  
 
 **What This Means**:  
@@ -501,7 +503,7 @@ mcmc_pairs(fit, pars = c("b_alpha_Intercept", "b_beta_Intercept",
 - **$c$ vs. $\phi$**: Positive correlation? Faster recovery ($\phi$) often pairs with fuller recovery ($c$).  
 - **Physiological Insight**: These relationships hint at *autonomic coupling*, how sympathetic and parasympathetic systems coordinate.  
 
-#### Why This Matters
+#### Why This Matters?
 
 These visualizations aren't just academic eye candy. They're tools for:  
 - **Personalized Medicine**: Spotting outliers in $\alpha$ or $c$ could flag at-risk patients.  
@@ -523,7 +525,7 @@ The implications here are bigger than your last Amazon impulse buy. **Traditiona
 
 But let's not pop champagne yet. The **study's cohort, elderly individuals, mostly women, is like testing a new sports car on a group of golf cart enthusiasts**. While their hearts are marvels of resilience (shoutout to the 70-year-olds out-Zumba-ing millennials), aging inherently alters autonomic function. **Younger hearts**, with their spry vagal tone and metabolic efficiency, **might dance to a different beat**. Imagine applying this model to college athletes: would their recovery lag ($\delta$) be shorter? Would their panic parameter ($\beta$) be more dramatic? We don't know, and that's a problem. The model's current demographic blind spot limits its universal swagger. **Future work needs to throw a wider net**: young adults, elite athletes, sleep-deprived parents, and yes, **even that one friend who does ultramarathons "for fun"**. Only then can we see if this framework is the Swiss Army knife of cardiac analysis or a niche tool for bingo night regulars.  
 
-Then there's **the elephant in the room: real-world noise**. The study's controlled setting, clean data, preprocessed RR intervals, is the scientific equivalent of a TikTok dance studio. But **life isn't a lab**. Stress, caffeine, and that third espresso you shouldn't have had all jumble the heart's signals. **Imagine deploying this model in the wild, where wearables battle motion artifacts and Wi-Fi dead zones**. Can it handle the chaos? The paper's synthetic data tests suggest yes, but until it's stress-tested on Apple Watches dangling off sweaty wrists during CrossFit hell, we're cautiously optimistic. Integrating real-time environmental factors, temperature, humidity, cortisol levels, **could turn this model from a neat trick into a clinical powerhouse**.  
+Then there's **the elephant in the room: real-world noise**. The study's controlled setting, clean data, preprocessed R-R intervals, is the scientific equivalent of a TikTok dance studio. But **life isn't a lab**. Stress, caffeine, and that third espresso you shouldn't have had all jumble the heart's signals. **Imagine deploying this model in the wild, where wearables battle motion artifacts and Wi-Fi dead zones**. Can it handle the chaos? The paper's synthetic data tests suggest yes, but until it's stress-tested on Apple Watches dangling off sweaty wrists during CrossFit hell, we're cautiously optimistic. Integrating real-time environmental factors, temperature, humidity, cortisol levels, **could turn this model from a neat trick into a clinical powerhouse**.  
 
 Speaking of wearables, let's talk tech. The current Fitbit experience is like having a backseat driver who only knows two phrases: "You're doing great!" and "Maybe sit down?" Our model could upgrade that to a co-pilot who actually understands your heart's tantrums. **Imagine your smartwatch whispering, "Your recovery proportion ($c$) is low, skip the burpees today,"** or "Your $\phi$ is stellar, go crush that PR." This isn't sci-fi; it's the logical next step. But to get there, we need seamless integration with wearable APIs, edge computing to handle real-time analysis, and user interfaces that don't look like they were designed in Excel. **Oh, and battery life that doesn't die mid-workout**. Priorities, people.  
 

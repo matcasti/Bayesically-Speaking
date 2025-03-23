@@ -4,12 +4,10 @@ description: |
   Ever wondered how your heart's existential crisis during exercise could be a math problem? We turned beats into equations, panic into differential calculus, and recovery into logistic drama. Spoiler: Your Fitbit data is way less fun. Join us as we dissect cardiac chaos with sarcasm, code, and zero chill.
 date: "2025-03-28"
 # doi: "10.59350/mgpv2-d5e33"
-draft: true
-draft-mode: unlinked
 execute: 
   warning: false
   error: false
-categories: [dynamical systems, non-linear, simulation, educational]
+categories: [draft, dynamical systems, non-linear, simulation, educational]
 bibliography: ref.bib
 title-block-banner: title-block.png
 image: body_1.png

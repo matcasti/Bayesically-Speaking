@@ -6,6 +6,8 @@ listing:
   id: "sample-listings"
   sort: "date desc"
   type: default
+  exclude: 
+    categories: [translated, draft]
   categories: true
   sort-ui: true
   filter-ui: true
