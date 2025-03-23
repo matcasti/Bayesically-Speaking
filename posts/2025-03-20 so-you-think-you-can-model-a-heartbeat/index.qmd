@@ -31,18 +31,20 @@ theme_set(new = theme_classic(base_size = 20))
 Let's talk about your heart. **Not the metaphorical one** that's still recovering from *that* season finale of *Stranger Things*, **but the actual meat-and-potatoes organ** pumping in your chest. You know, the thing that goes haywire when you sprint for the bus or binge-watch *Squid Game* while eating a family-sized pizza all by yourself (that's what I call self determination). Turns out, scientists (like yours truly) have been obsessed with **understanding how this biological drum solo responds to exercise**. And let me tell you, it's not as straightforward as your Fitbit's cheerful little heart icon would have you believe.  
 
 ![](services.jpeg){width=100%}
+
 <aside>
 Photo from [Ketut Subiyanto](https://www.pexels.com/es-es/foto/sano-mujer-telefono-inteligente-navegando-4436296/)
-</aside
+</aside>
 
 Imagine your heart rate during a workout **is like the plot of a Christopher Nolan movie**, full of twists, turns, and moments where you're not entirely sure what's going on but *feel* like it's profound. Traditional methods for analyzing heart rate variability (HRV) are **like trying to explain *Inception* using only a flip phone**: technically possible, but missing *all* the nuance. For decades, researchers have relied on linear models and aggregated HRV metrics, which are about **as useful for capturing the chaos of exercise-induced heart rhythms as a screen door on a submarine**. Sure, they tell you *something*, but it's like summarizing *The Lord of the Rings* as "some guys walked to a volcano." Missing the point? Just a bit.
 
 But hey! I have good news. We [developed and published](https://www.researchgate.net/publication/389812477_Enhancing_cardiovascular_monitoring_a_non-linear_model_for_characterizing_RR_interval_fluctuations_in_exercise_and_recovery) a new non-linear model, **the Tony Stark of cardiac analysis**, flashy, precise, and built in a cave (okay, a lab) with a bunch of math you'll *almost* understand. Instead of forcing your heart's beat-to-beat intervals (lovingly called *R-R intervals*) into the rigid straightjacket of linear equations, **we've embraced the chaos with logistic functions**. Think of it as upgrading from a dial-up modem to 5G. These **logistic functions are the Beyoncé of math**, versatile, dynamic, and capable of handling sudden shifts (like when you go from couch potato to HIIT warrior in 0.2 seconds). **They model the heart's nosedive during exercise *and* its slow crawl back** to Netflix-and-chill mode afterward, all while spitting out parameters that actually mean something to your body. "*Baseline R-R interval*"? That's your heart's resting vibe. "*Recovery proportion*"? How quickly it forgives you for those burpees.
 
 ![](publised-paper.png){width=100%}
+
 <aside>
 Check the paper where we discuss in-depth the model to get all the technicalities. You can visit it [here](https://www.nature.com/articles/s41598-025-93654-6).
-</aside
+</aside>
 
 Now, let's address the elephant in the room: **why should you care?** Well, unless you're a cyborg (looking at you, Boston Dynamics), **your autonomic nervous system**, the puppet master behind your heart's rhythm, **is a drama queen**. During exercise, it's a tug-of-war between the "*fight-or-flight*" **sympathetic system** (the one yelling **GO!**) and the "*chill-out*" **parasympathetic system** (the one whispering *maybe just one more episode*?). Traditional models treat this like a seesaw with one kid glued to the ground. The model that we developed? It's the entire playground, complete with swing sets, monkey bars, and that one kid who **definitely** ate too much sugar.
 

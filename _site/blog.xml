@@ -24,14 +24,24 @@
 <section id="introduction" class="level1 page-columns page-full">
 <h1>Introduction</h1>
 <p>Let’s talk about your heart. <strong>Not the metaphorical one</strong> that’s still recovering from <em>that</em> season finale of <em>Stranger Things</em>, <strong>but the actual meat-and-potatoes organ</strong> pumping in your chest. You know, the thing that goes haywire when you sprint for the bus or binge-watch <em>Squid Game</em> while eating a family-sized pizza all by yourself (that’s what I call self determination). Turns out, scientists (like yours truly) have been obsessed with <strong>understanding how this biological drum solo responds to exercise</strong>. And let me tell you, it’s not as straightforward as your Fitbit’s cheerful little heart icon would have you believe.</p>
-<img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/services.jpeg" class="img-fluid" style="width:100.0%">
+<p><a href="services.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/services.jpeg" class="img-fluid" style="width:100.0%"></a></p>
 <aside>
 Photo from <a href="https://www.pexels.com/es-es/foto/sano-mujer-telefono-inteligente-navegando-4436296/">Ketut Subiyanto</a>
 </aside>
+<p>Imagine your heart rate during a workout <strong>is like the plot of a Christopher Nolan movie</strong>, full of twists, turns, and moments where you’re not entirely sure what’s going on but <em>feel</em> like it’s profound. Traditional methods for analyzing heart rate variability (HRV) are <strong>like trying to explain <em>Inception</em> using only a flip phone</strong>: technically possible, but missing <em>all</em> the nuance. For decades, researchers have relied on linear models and aggregated HRV metrics, which are about <strong>as useful for capturing the chaos of exercise-induced heart rhythms as a screen door on a submarine</strong>. Sure, they tell you <em>something</em>, but it’s like summarizing <em>The Lord of the Rings</em> as “some guys walked to a volcano.” Missing the point? Just a bit.</p>
+<p>But hey! I have good news. We <a href="https://www.researchgate.net/publication/389812477_Enhancing_cardiovascular_monitoring_a_non-linear_model_for_characterizing_RR_interval_fluctuations_in_exercise_and_recovery">developed and published</a> a new non-linear model, <strong>the Tony Stark of cardiac analysis</strong>, flashy, precise, and built in a cave (okay, a lab) with a bunch of math you’ll <em>almost</em> understand. Instead of forcing your heart’s beat-to-beat intervals (lovingly called <em>R-R intervals</em>) into the rigid straightjacket of linear equations, <strong>we’ve embraced the chaos with logistic functions</strong>. Think of it as upgrading from a dial-up modem to 5G. These <strong>logistic functions are the Beyoncé of math</strong>, versatile, dynamic, and capable of handling sudden shifts (like when you go from couch potato to HIIT warrior in 0.2 seconds). <strong>They model the heart’s nosedive during exercise <em>and</em> its slow crawl back</strong> to Netflix-and-chill mode afterward, all while spitting out parameters that actually mean something to your body. “<em>Baseline R-R interval</em>”? That’s your heart’s resting vibe. “<em>Recovery proportion</em>”? How quickly it forgives you for those burpees.</p>
+<p><a href="publised-paper.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/publised-paper.png" class="img-fluid" style="width:100.0%"></a></p>
+<aside>
 Check the paper where we discuss in-depth the model to get all the technicalities. You can visit it <a href="https://www.nature.com/articles/s41598-025-93654-6">here</a>.
-
+</aside>
+<p>Now, let’s address the elephant in the room: <strong>why should you care?</strong> Well, unless you’re a cyborg (looking at you, Boston Dynamics), <strong>your autonomic nervous system</strong>, the puppet master behind your heart’s rhythm, <strong>is a drama queen</strong>. During exercise, it’s a tug-of-war between the “<em>fight-or-flight</em>” <strong>sympathetic system</strong> (the one yelling <strong>GO!</strong>) and the “<em>chill-out</em>” <strong>parasympathetic system</strong> (the one whispering <em>maybe just one more episode</em>?). Traditional models treat this like a seesaw with one kid glued to the ground. The model that we developed? It’s the entire playground, complete with swing sets, monkey bars, and that one kid who <strong>definitely</strong> ate too much sugar.</p>
+<p>Here’s where it gets spicy: <strong>we tested this bad boy on 272 elderly folks</strong>. Why seniors? Because if your heart can handle Zumba at 70, it’s basically the Dwayne Johnson of organs. <em>Spoiler alert</em>: <strong>the model nailed it</strong>. With an R<sup>2</sup> of 0.868 (translation: it’s scarily accurate) and RMSE of 32.6 ms (translation: it’s precise enough to detect your existential crisis during plank holds), <strong>it’s like giving doctors and trainers a cheat code for your cardiovascular health</strong>. Oh, and we used Hamiltonian Monte Carlo for parameter estimation, which sounds like a spell from <em>Harry Potter</em> but is really just math wizardry for “we didn’t guess, we <em>calculated</em>”.</p>
+<p>But wait, there’s more! Using Sobol <strong>sensitivity analysis</strong> (a fancy way of asking, “<em>Which part of this equation is doing the heavy lifting?</em>”), we discovered that baseline RR intervals and recovery proportion are the MVPs of heart rate dynamics. Translation: <strong>your heart’s default setting and its ability to bounce back post-workout are the LeBron and Jordan of this game</strong>. The other parameters? They’re the benchwarmers. Useful, but not stealing the spotlight.</p>
+<p>Now, let’s talk <strong>real-world applications</strong>. Imagine a future where your smartwatch doesn’t just shame you for sitting too long but actually <em>understands</em> your heart’s tantrums during spin class. Or where <strong>rehab programs are tailored not just to your fitness level but to your autonomic nervous system’s mood swings</strong>. This model isn’t just academic nerdery, it’s a gateway to personalized health tech that doesn’t suck.</p>
+<img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/pexels-martabranco-28585010.jpg" class="img-fluid" style="width:100.0%">
+<aside>
 Photo from <a href="https://www.pexels.com/es-es/foto/vista-detallada-de-los-equipos-y-lecturas-de-ecg-28585010/">Marta Branco</a>.
-
+</aside>
 <p>Of course, no hero’s journey is complete without flaws. <strong>Our study’s cohort was mostly elderly women</strong>, which is like testing a new sports car exclusively on retirees driving to bingo night. <strong>Future work?</strong> Let’s throw in some college athletes, sleep-deprived parents, and that one friend who does ultramarathons “for fun”. Also, shoutout to R, the coding language we used to simulate this model. If R were a person, it’d be that friend who’s brilliant but insists on explaining everything in memes.</p>
 <p>So, buckle up. In the next sections, <strong>we’ll dive into the code, the curves, and the “aha!” moments</strong> that made this paper possible. Whether you’re a cardio junkie, a data science geek, or just someone who wants to know why your heart hates burpees, <strong>this ride’s for you</strong>. And hey, if you get lost, just remember: it’s not chaos, it’s <em>science</em>.</p>
 </section>
@@ -185,7 +195,7 @@ font-style: inherit;">3</span>)</span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/unnamed-chunk-2-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img"></a></p>
+<p><a href="index_files/figure-html/unnamed-chunk-2-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-2-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -505,7 +515,7 @@ font-style: inherit;">"Simulated and True RRi Signal"</span>)</span></code></pre
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/unnamed-chunk-5-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-5-1.svg" class="img-fluid figure-img"></a></p>
+<p><a href="index_files/figure-html/unnamed-chunk-5-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-5-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -960,7 +970,7 @@ font-style: inherit;">"Simulated Heart Mayhem"</span>)</span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/unnamed-chunk-9-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-9-1.svg" class="img-fluid figure-img"></a></p>
+<p><a href="index_files/figure-html/unnamed-chunk-9-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-9-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1164,7 +1174,7 @@ font-style: inherit;">element_blank</span>())</span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/unnamed-chunk-12-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-12-1.svg" class="img-fluid figure-img"></a></p>
+<p><a href="index_files/figure-html/unnamed-chunk-12-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-12-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1289,7 +1299,7 @@ font-style: inherit;">2</span>)</span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/unnamed-chunk-13-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img"></a></p>
+<p><a href="index_files/figure-html/unnamed-chunk-13-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-13-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1460,7 +1470,7 @@ font-style: inherit;">3</span>)</span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/unnamed-chunk-14-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-14-1.svg" class="img-fluid figure-img"></a></p>
+<p><a href="index_files/figure-html/unnamed-chunk-14-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-14-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1691,7 +1701,7 @@ font-style: inherit;">"RR Interval (ms)"</span>)</span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/unnamed-chunk-15-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img"></a></p>
+<p><a href="index_files/figure-html/unnamed-chunk-15-1.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-15-1.svg" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1737,7 +1747,7 @@ font-style: inherit;">"hex"</span>)</span></code></pre></div>
 <div class="cell-output-display page-columns page-full">
 <div class="page-columns page-full">
 <figure class="figure page-columns page-full">
-<p class="page-columns page-full"><a href="index_files/figure-html/unnamed-chunk-16-1.svg" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-8"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-16-1.svg" class="img-fluid figure-img column-page" style="width:100.0%"></a></p>
+<p class="page-columns page-full"><a href="index_files/figure-html/unnamed-chunk-16-1.svg" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-10"><img src="https://bayesically-speaking.com/posts/2025-03-20 so-you-think-you-can-model-a-heartbeat/index_files/figure-html/unnamed-chunk-16-1.svg" class="img-fluid figure-img column-page" style="width:100.0%"></a></p>
 </figure>
 </div>
 </div>
