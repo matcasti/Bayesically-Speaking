@@ -3,7 +3,7 @@ title: "So, You Think You Can Model a Heartbeat?"
 description: |
   Your heart isn't a metronome, it's a chaotic jazz drummer. Dive with me into the math madness behind why your heartbeat skyrockets during burpees and how a non-linear model (featuring logistic functions and elderly Zumba warriors) decodes this cardiac drama. Spoiler: Your Fitbit is shook. Code, curves, and caffeine included.
 date: "2025-03-24"
-# doi: "10.59350/mgpv2-d5e33"
+doi: "10.59350/qfn6w-qyt38"
 execute: 
   warning: false
   error: false

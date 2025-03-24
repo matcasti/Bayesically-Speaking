@@ -3,7 +3,7 @@ title: "¿Crees saber cómo modelar el ritmo cardíaco?"
 description: |
   Tu corazón no es un metrónomo, es una caótica batería de jazz. Adéntrate conmigo en la locura matemática que hay detrás de por qué tus latidos se disparan durante los burpees y cómo un modelo no lineal (con funciones logísticas y guerreros de Zumba) descifra este drama cardíaco. Spoiler: Código, curvas y cafeína incluidos.
 date: "2025-03-24"
-# doi: "10.59350/mgpv2-d5e33"
+doi: "10.59350/qfn6w-qyt38"
 execute: 
   warning: false
   error: false
