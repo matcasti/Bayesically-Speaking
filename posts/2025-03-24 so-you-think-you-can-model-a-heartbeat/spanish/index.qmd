@@ -67,7 +67,7 @@ Así que ajústense el cinturón. En las próximas secciones, **nos meteremos en
 
 # Las Matemáticas, el Código y el Drama Cardíaco Detrás del Modelo  
 
-Vamos a pelar las capas de este modelo como una cebolla, pero **en vez de lágrimas, te saldrán mates**, código R y una nueva apreciación por las telenovelas que hace tu corazón. Ajústate el cinturón; vamos a ponernos modo *Sherlock Holmes* con esta ecuación.  
+Vamos a pelar las capas de este modelo como una cebolla, pero **en vez de lágrimas, te saldrán mates**, código R y una nueva apreciación por las tendencias melodramáticas de tu corazón. Ajústate el cinturón; vamos a ponernos modo *Sherlock Holmes* con esta ecuación.  
 
 ### La Gran Ecuación: Una Sinfonía de Sigmoides  
 
@@ -123,7 +123,7 @@ Poné $\alpha = 860$ ms, $\beta = -345$, $\lambda = -3.05$, y $\tau = 6.71$, y t
 
 $\lambda$ (lambda) dicta **qué tan rápido se desploma el intervalo RR**. Un $\lambda$ más negativo significa una caída más brusca, como tu corazón en una corrida versus una caminata tranquila. En el modelo, $\lambda = -3.05$ es como si tu corazón gritara "¡SÁLVESE QUIEN PUEDA!" al empezar el ejercicio.  
 
-$\tau$ (tau) es el punto de inflexión, **el momento exacto en que empieza el caos**. Con $\tau = 6.71$ minutos, es el segundo en que tu corazón notó que hablabass en serio con los burpees. Este parámetro evita que el modelo asuma que todos entran en pánico al mismo tiempo (porque, seamos honestos, a algunos nos transpira la mano solo de *pensar* en ejercicios).  
+$\tau$ (tau) es el punto de inflexión, **el momento exacto en que empieza el caos**. Con $\tau = 6.71$ minutos, es el segundo en que tu corazón notó que hablabas en serio con los burpees. Este parámetro evita que el modelo asuma que todos entran en pánico al mismo tiempo (porque, seamos honestos, a algunos nos transpira la mano solo de *pensar* en ejercicios).  
 
 El código para este término es **engañosamente simple**, pero la magia está en el exponente: $\lambda(t - \tau)$. Esto hace que la caída se acelere exponencialmente **una vez activada**, imitando la respuesta de "todos a la bodega" del cuerpo al estrés físico.  
 
