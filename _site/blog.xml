@@ -21,6 +21,21 @@
 
 
 
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+CardioCurveR
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="https://matcasti.github.io/CardioCurveR/"><img style="padding:1rem;" src="https://bayesically-speaking.com/posts/2025-03-24 so-you-think-you-can-model-a-heartbeat/CardioCurveR.png" align="right" height="150" alt="CardioCurveR website"></a></p>
+<p>With the mission to aid everyone to be able to use and test our work, we developed and published an <a href="https://matcasti.github.io/CardioCurveR/">R package</a> with easy and out-of-the-box solutions to analyze R-R intervals with dual-logistic behaviour!</p>
+<p>Go check it <a href="https://matcasti.github.io/CardioCurveR/">here</a>!</p>
+</div>
+</div>
 <section id="introduction" class="level1 page-columns page-full">
 <h1>Introduction</h1>
 <p>Let’s talk about your heart. <strong>Not the metaphorical one</strong> that’s still recovering from <em>that</em> season finale of <em>Stranger Things</em>, <strong>but the actual meat-and-potatoes organ</strong> pumping in your chest. You know, the thing that goes haywire when you sprint for the bus or binge-watch <em>Squid Game</em> while eating a family-sized pizza all by yourself (that’s what I call self determination). Turns out, scientists (like yours truly) have been obsessed with <strong>understanding how this biological drum solo responds to exercise</strong>. And let me tell you, it’s not as straightforward as your Fitbit’s cheerful little heart icon would have you believe.</p>
