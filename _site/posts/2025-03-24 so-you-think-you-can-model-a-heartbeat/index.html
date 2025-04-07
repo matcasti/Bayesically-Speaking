@@ -360,7 +360,7 @@ CardioCurveR
 <h3 class="anchored" data-anchor-id="the-grand-equation-a-symphony-of-sigmoids">The Grand Equation: A Symphony of Sigmoids</h3>
 <p>At the heart of our model lies this beauty:</p>
 <p><span class="math display">\[
-\text{RRi}(t) = \alpha + \frac{\beta}{1 + e^{\lambda(t-\tau)}} + \frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}
+\text{RRi}(t) = \alpha + \underbrace{\frac{\beta}{1 + e^{\lambda(t-\tau)}}}_{\text{Exercise}} + \underbrace{\frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}}_{\text{Recovery}}
 \]</span></p>
 <p>This isn’t just alphabet soup. <strong>It’s a carefully orchestrated dance between two logistic functions</strong> (the S-shaped curves you’d recognize from population growth or zombie apocalypse models). Together, they capture your <strong>heart’s journey</strong> from Zen-like rest to exercise-induced panic and back to Netflix mode. <strong>Let’s dissect each term</strong> like it’s a <em>Breaking Bad</em> episode.</p>
 <section id="baseline-r-r-interval-alpha-the-calm-before-the-storm" class="level4">
@@ -531,9 +531,9 @@ CardioCurveR
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;It’s like coffee but 10 times more intense and face-wrenching</p></div></div></section>
 <section id="step-3-defining-the-model-plugging-in-the-equation" class="level4">
 <h4 class="anchored" data-anchor-id="step-3-defining-the-model-plugging-in-the-equation">Step 3: Defining the Model, Plugging in the Equation</h4>
-<p>Okay, all fun and stuff but what is the model? Our paper’s model is a beast:</p>
+<p>Okay, all fun and stuff but what is the model? Let’s remember our paper’s model which is a beast:</p>
 <p><span class="math display">\[
-\text{RRi}(t) = \alpha + \frac{\beta}{1 + e^{\lambda(t-\tau)}} + \frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}
+\text{RRi}(t) = \alpha + \underbrace{\frac{\beta}{1 + e^{\lambda(t-\tau)}}}_{\text{Exercise}} + \underbrace{\frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}}_{\text{Recovery}}
 \]</span></p>
 <p>In <code>brms</code>, you’d write this as a non-linear formula:</p>
 <div class="cell">
@@ -1332,7 +1332,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="matcasti/Bayesically-Speaking" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"loop":false,"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

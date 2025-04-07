@@ -85,7 +85,7 @@ Let's peel back the layers of this model like it's an onion, except **instead of
 At the heart of our model lies this beauty:  
 
 $$
-\text{RRi}(t) = \alpha + \frac{\beta}{1 + e^{\lambda(t-\tau)}} + \frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}
+\text{RRi}(t) = \alpha + \underbrace{\frac{\beta}{1 + e^{\lambda(t-\tau)}}}_{\text{Exercise}} + \underbrace{\frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}}_{\text{Recovery}}
 $$
 
 This isn't just alphabet soup. **It's a carefully orchestrated dance between two logistic functions** (the S-shaped curves you'd recognize from population growth or zombie apocalypse models). Together, they capture your **heart's journey** from Zen-like rest to exercise-induced panic and back to Netflix mode. **Let's dissect each term** like it's a *Breaking Bad* episode.  
@@ -251,10 +251,10 @@ In our paper, we used **Stan** (via R's `brms` package) to handle this. Stan is 
 
 #### Step 3: Defining the Model, Plugging in the Equation
 
-Okay, all fun and stuff but what is the model? Our paper's model is a beast:  
+Okay, all fun and stuff but what is the model? Let's remember our paper's model which is a beast:  
 
 $$
-\text{RRi}(t) = \alpha + \frac{\beta}{1 + e^{\lambda(t-\tau)}} + \frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}
+\text{RRi}(t) = \alpha + \underbrace{\frac{\beta}{1 + e^{\lambda(t-\tau)}}}_{\text{Exercise}} + \underbrace{\frac{-c \cdot \beta}{1 + e^{\phi(t-\tau-\delta)}}}_{\text{Recovery}}
 $$  
 
 In `brms`, you'd write this as a non-linear formula:  

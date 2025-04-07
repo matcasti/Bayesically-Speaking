@@ -61,7 +61,7 @@ CardioCurveR
 <section id="the-grand-equation-a-symphony-of-sigmoids" class="level3">
 <h3 class="anchored" data-anchor-id="the-grand-equation-a-symphony-of-sigmoids">The Grand Equation: A Symphony of Sigmoids</h3>
 <p>At the heart of our model lies this beauty:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7BRRi%7D(t)%20=%20%5Calpha%20+%20%5Cfrac%7B%5Cbeta%7D%7B1%20+%20e%5E%7B%5Clambda(t-%5Ctau)%7D%7D%20+%20%5Cfrac%7B-c%20%5Ccdot%20%5Cbeta%7D%7B1%20+%20e%5E%7B%5Cphi(t-%5Ctau-%5Cdelta)%7D%7D%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7BRRi%7D(t)%20=%20%5Calpha%20+%20%5Cunderbrace%7B%5Cfrac%7B%5Cbeta%7D%7B1%20+%20e%5E%7B%5Clambda(t-%5Ctau)%7D%7D%7D_%7B%5Ctext%7BExercise%7D%7D%20+%20%5Cunderbrace%7B%5Cfrac%7B-c%20%5Ccdot%20%5Cbeta%7D%7B1%20+%20e%5E%7B%5Cphi(t-%5Ctau-%5Cdelta)%7D%7D%7D_%7B%5Ctext%7BRecovery%7D%7D%0A"></p>
 <p>This isn’t just alphabet soup. <strong>It’s a carefully orchestrated dance between two logistic functions</strong> (the S-shaped curves you’d recognize from population growth or zombie apocalypse models). Together, they capture your <strong>heart’s journey</strong> from Zen-like rest to exercise-induced panic and back to Netflix mode. <strong>Let’s dissect each term</strong> like it’s a <em>Breaking Bad</em> episode.</p>
 <section id="baseline-r-r-interval-alpha-the-calm-before-the-storm" class="level4">
 <h4 class="anchored" data-anchor-id="baseline-r-r-interval-alpha-the-calm-before-the-storm">1. Baseline R-R interval (<img src="https://latex.codecogs.com/png.latex?%5Calpha">): The Calm Before the Storm</h4>
@@ -601,8 +601,8 @@ font-style: inherit;">"Simulated and True RRi Signal"</span>)</span></code></pre
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;It’s like coffee but 10 times more intense and face-wrenching</p></div></div></section>
 <section id="step-3-defining-the-model-plugging-in-the-equation" class="level4">
 <h4 class="anchored" data-anchor-id="step-3-defining-the-model-plugging-in-the-equation">Step 3: Defining the Model, Plugging in the Equation</h4>
-<p>Okay, all fun and stuff but what is the model? Our paper’s model is a beast:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7BRRi%7D(t)%20=%20%5Calpha%20+%20%5Cfrac%7B%5Cbeta%7D%7B1%20+%20e%5E%7B%5Clambda(t-%5Ctau)%7D%7D%20+%20%5Cfrac%7B-c%20%5Ccdot%20%5Cbeta%7D%7B1%20+%20e%5E%7B%5Cphi(t-%5Ctau-%5Cdelta)%7D%7D%0A"></p>
+<p>Okay, all fun and stuff but what is the model? Let’s remember our paper’s model which is a beast:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7BRRi%7D(t)%20=%20%5Calpha%20+%20%5Cunderbrace%7B%5Cfrac%7B%5Cbeta%7D%7B1%20+%20e%5E%7B%5Clambda(t-%5Ctau)%7D%7D%7D_%7B%5Ctext%7BExercise%7D%7D%20+%20%5Cunderbrace%7B%5Cfrac%7B-c%20%5Ccdot%20%5Cbeta%7D%7B1%20+%20e%5E%7B%5Cphi(t-%5Ctau-%5Cdelta)%7D%7D%7D_%7B%5Ctext%7BRecovery%7D%7D%0A"></p>
 <p>In <code>brms</code>, you’d write this as a non-linear formula:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="fu" style="color: #4758AB;
