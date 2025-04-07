@@ -46,4 +46,9 @@ canvas{
   .parallax {
     background-attachment: inherit;
   }
+  
+  /* ---- particles.js container ---- */ 
+  #particles-js{ 
+    height: calc(100% + 83px + 14px + 2em); 
+  } 
 }

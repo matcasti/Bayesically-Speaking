@@ -9,7 +9,7 @@
 <link>https://bayesically-speaking.com/</link>
 <atom:link href="https://bayesically-speaking.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>The place where statistics, coffee and bayes theorem come toghether</description>
-<generator>quarto-1.5.55</generator>
+<generator>quarto-1.6.43</generator>
 <lastBuildDate>Mon, 24 Mar 2025 03:00:00 GMT</lastBuildDate>
 <item>
   <title>So, You Think You Can Model a Heartbeat?</title>
