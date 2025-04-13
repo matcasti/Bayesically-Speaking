@@ -52,3 +52,10 @@ canvas{
     height: calc(100% + 83px + 14px + 2em); 
   } 
 }
+
+@media only screen and (max-width:480px) {
+  /* ---- particles.js container ---- */ 
+  #particles-js{ 
+    height: calc(100% + 83px + 14px + 4em); 
+  } 
+}
