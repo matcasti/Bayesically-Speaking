@@ -1,0 +1,945 @@
+---
+title: "HMC by Hand: Gradients, Heartbeats, PDEs and Other Tales"
+description: |
+  We already saw in previous posts how to set up your own Hamiltonian Monte Carlo (HMC) sampler to explore the parameter space. However, there was something we didn't cover in that or other posts: how to set up the gradient function that will guide the sampler through the parameter space. So buckle up! We'll dive right into the nitty gritty of math, gradients and partial derivatives by hand!
+date: "2025-04-19"
+# doi: "10.59350/mgpv2-d5e33"
+execute: 
+  warning: false
+  error: false
+categories: [by-hand, mcmc, algorithms, non-linear, educational]
+bibliography: ref.bib
+title-block-banner: title-block.png
+image: body_1.png
+editor_options: 
+  chunk_output_type: console
+code-fold: show
+#code-links:
+#  - text: test
+#    href: url
+---
+
+```{r}
+#| include: false
+library(ggplot2)
+library(data.table)
+
+theme_set(new = theme_classic(base_size = 20))
+```
+
+# Introduction
+
+When we exercise, our hearts run faster, which is associated with a decrease in the time between heartbeats. This time between heartbeats is also known by R-R intervals. If you have ever seen an electrocardiogram (EKG) curve before, each time your heart pumps you'll see a small spike in your EKG; well, those are your R-R intervals (RRi for short).
+
+So, you'll imagine that this RRi decreases during exercise (i.e., your heart run faster) but when you are resting your RRi increases (i.e., this is your heart slowing down). This is, in very simple terms, the overall dynamics of your RRi:
+
+:::{style="text-align: center;"}
+```{mermaid}
+flowchart TD
+  a((Rest)) --->| High RRi | b((Exercise))
+  b --->| RRi decreases | c((Recovery))
+  c -->| RRi increases | a
+```
+:::
+
+How ever there's more to it than just saying that your heart run faster or slower. The curve describing its fluctuations can be described using the [Castillo-Aguilar et al. (2025) RRi-vs-Time model](https://www.researchgate.net/publication/389812477_Enhancing_cardiovascular_monitoring_a_non-linear_model_for_characterizing_RR_interval_fluctuations_in_exercise_and_recovery), that describe the exercise-induced RRi dynamics. Here's an example RRi curve estimated using the aforementioned model:
+
+![](illustrative_curve.svg){width=100%}
+[Example exercise-induced RRi-vs-time dynamics and key parameters governing the overall curve behavior.]{.aside}
+
+### A Matter of Guessing
+
+As you can see, the model parameters (e.g., decay rates, time constants) controlling the observed curve are numerous. So, as you can imagine, trying to estimate each parameter value to reproduce the observed curve, considering that the inter-individual cardiovascular response is highly heterogeneous, is for challenging (for say the least).
+
+In this context, many methods exist to estimate model parameters for a given target function. However, one method above all the others allow us to quantify the uncertainty associated with each of these curve knobs. Yes, Bayesian models are what we are discussing here, but not any type of Bayesian algorithm. We are talking about Hamiltonian Monte Carlo (HMC).
+
+Let's remember that HMC uses the analogy of a particle gliding through the parameter space, visiting more frequently the areas associated with greater probability, depicting an accurate representation of the true probability distribution of model parameters. In a [previous post](https://doi.org/10.59350/qfn6w-qyt38) we've discussed how to implement this very same model (i.e., the RRi-vs-time model) using HMC in R. However, we did not delved into the methodology to estimate the gradient that will guide our particle over this parameter space. In HMC, the position $q$ represents the model parameters, while momentum $p$ is an auxiliary variable that enables efficient exploration of the posterior distribution, avoiding the random-walk behavior of traditional MCMC.
+
+The probability of a set of parameters is given by the likelihood function, which determines the amount of probability associated with a specific position in this space. So in order to simulate the movement of this particle through this parameter space, we need to estimate the slope that will move this particle using Hamiltonian mechanics principles.
+[In Bayesian inference, each point in this $p$-dimensional space corresponds to a unique combination of the $p$ model parameters we aim to estimate.]{.aside}
+
+Hamiltonian mechanics provides a physics-inspired framework to explore the parameter space. Let's briefly recall its mathematical foundation
+
+### Hamiltonian Drama
+
+Hamilton's equations describe a system using position ($q$) and momentum ($p$) parameters, which are used to compute the potential ($U(q)$) and kinetic energy ($K(p)$) of a physical system. One of the key features of Hamilton mechanics is that the total energy of the system ($H(q, p)$) is conserved over time. This means that a change in potential energy $U(q)$ is compensated by an inversely proportional change in kinetic energy $K(p)$.
+
+This is denoted in the classical form of the Hamiltonian:
+
+$$
+H(q, p) = U(q) + K(p)
+$$
+
+And the set of differential equations that govern the overall dynamics of the system. Here, we say that the rate of change in the position ($\frac{dq}{dt}$) of our imaginary particle the system is equal to the derivative of the system with respect to the momentum ($\frac{\partial H}{\partial p}$):
+
+$$
+\frac{dq}{dt} = \frac{\partial H}{\partial p}
+$$
+
+This means that we can use the momentum parameter $p$ to update the position of our particle $q$ inside our system over time.
+
+However, we use the gradient information (i.e., the slope of the parameter space) of the current position $q$ to update the future momentum ($\frac{dp}{dt}$), updating momentum in the direction of the negative gradient ($-\frac{\partial H}{\partial q}$), which is analogous to a ball rolling downhill, going faster down the steepest the surface. 
+
+$$
+\frac{dp}{dt} = -\frac{\partial H}{\partial q}
+$$
+
+Nonetheless, the challenge arrives when we need to estimate the gradient of the surface we are located, which is the gradient of the likelihood function, which usually involves at least a vector of partial derivatives of every single parameter of our target function, updating the momentum that then will update the position, where we will again estimate the gradient to update the momentum and so on. 
+
+To reflect this principle, the notation also can be imagined as:
+
+$$
+\frac{dp}{dt} = -\nabla U(q)
+$$
+
+### All by Hand
+
+Many softwares and statistical packages compute the gradient of the target likelihood function numerically or even symbolically. However, manually deriving gradients builds intuition for why HMC outperforms gradient-free MCMC methods (e.g., Metropolis-Hastings) in complex models, avoiding computational bottlenecks like random-walk behavior.
+
+Even though you might think this is a monumental work (which in fact, it is), it's also a very educational journey that will give us full intuition of what is actually happening when we call Stan or your favorite Bayesian sample software (that uses HMC behind scenes). 
+
+So buckle up! And let's go for a very math and nerdy ride! Warning: the following sections are very technical and dense in terms of notation, which might be hard to follow. I'll do my best to explain each step of the way the rationale and the manual derivations steps so you can follow along.
+
+# Data Generation Process
+
+Let's assume that the observed RRi signal ($y_i$) comes from a Gaussian distribution (as the data generation process), centered around the true signal $M$ with variance $\sigma^2$. This can be denoted as:
+
+$$
+y_i \sim \mathcal{N}(M, \sigma^2)
+$$
+
+However, we assume that this true signal $M$ comes from our model $f(t \mid \theta_k)$.
+
+So let $M: f(t \mid \theta_k)$, with $k \in \{\alpha, \beta, c, \lambda, \phi, \tau, \delta\}$, the parameters that control the output of our true signal $M$. Where:
+
+$$
+f(t \mid \theta_k) = \alpha + \frac{\beta}{1 + e^{\lambda (t - \tau)}}  - \frac{c\beta}{1 + e^{\phi (t - \tau - \delta)}}
+$$
+
+However, we need to estimate the parameters of the data generation process ($\theta_k$), in order to be able to reproduce the observed data. 
+
+# Arriving to the Log Likelihood 
+
+Remember that we assumed that the data generation process came from a Gaussian distribution. Thus, lets consider that the Gaussian probability function has this form:
+
+$$
+\mathcal{N}_\text{pdf}(y \mid M, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \cdot e^{-\frac{(y - M)^2}{2\sigma^2}}
+$$
+
+So, the likelihood for a set of data points would have the following form:
+
+$$
+L(y_i \mid M, \sigma^2) = \prod_{i = 1}^{N}{\frac{1}{\sqrt{2\pi\sigma^2}} \cdot e^{-\frac{(y_i - M)^2}{2\sigma^2}}}
+$$
+
+But for computational efficiency and stability, we work with logarithms (given the very small probabilities we are computing). Hence, the logarithm of our likelihood would look like the following:
+
+$$
+\log L(y_i \mid M, \sigma^2) = \sum_{i = 1}^{N}{\log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) + \log\left(e^{-\frac{(y_i - M)^2}{2\sigma^2}}\right)}
+$$
+
+where we can simplify the first term by the quotient rule and the second one by canceling the euler (given that $\log(e^x) = x$) term:
+
+$$
+\log L(y_i \mid M, \sigma^2) = \sum_{i = 1}^{N}{\log(1) - \log(\sqrt{2\pi\sigma^2}) - \frac{(y_i - M)^2}{2\sigma^2}}
+$$
+
+which can be further simplified by solving $\log(1) = 0$ and applying the power rule to the square root inside the log using $\log((2\pi\sigma^2)^\frac{1}{2})$ which comes out of the log term:
+
+$$
+\log L(y_i \mid M, \sigma^2) = \sum_{i = 1}^{N}{-\frac{1}{2} \log(2\pi\sigma^2) - \frac{(y_i - M)^2}{2\sigma^2}}
+$$
+
+Now we can solve the summation symbolically for the first term and leave it only on the variable term, leaving with our final log likelihood gaussian function:
+
+$$
+\log L(y_i \mid M, \sigma^2) = -\frac{N}{2} \log(2\pi\sigma^2) - \sum_{i = 1}^{N}{\frac{(y_i - M)^2}{2\sigma^2}}
+$$
+
+And like this, we reach the final form for our likelihood function
+
+# Estimating the Gradient of the Function
+
+### With Respect to $M$
+
+To estimate the gradient of our log likelihood function, we need to derive it with respect to each parameter term. Let's start by solving for $M$:
+
+$$
+\frac{\partial \log L}{\partial M} \left( -\frac{N}{2} \log(2\pi\sigma^2) - \sum_{i = 1}^{N}{\frac{(y_i - M)^2}{2\sigma^2}} \right)
+$$
+
+Here, we see that the first term does not contain $M$, so we can drop it from our calculations, leaving this expression:
+
+$$
+\frac{\partial \log L}{\partial M} \left( - \sum_{i = 1}^{N}{\frac{(y_i - M)^2}{2\sigma^2}} \right)
+$$
+
+Here, we can remove out of the denominator the term $2\sigma^2$ like this:
+
+$$
+\frac{\partial \log L}{\partial M} \left( - \frac{1}{2\sigma^2} \sum_{i = 1}^{N}{ (y_i - M)^2} \right)
+$$
+
+And now we apply the chain rule, where we derive the exponent and then the $M$ term. So it would look like this:
+
+$$
+\frac{\partial \log L}{\partial M} = - \frac{1}{2\sigma^2} \sum_{i = 1}^{N}{ (2)(y_i - M)(-\frac{\partial M}{\partial \theta_k})}
+$$
+
+Remember that $M$ its a function with multiple parameters ($k$ parameters), so "deriving $M$" actually means taking the partial derivative of the function with respect to each parameter $\theta_k$, also preserving the sign inside the parenthesis.
+
+So by passing the 2 out the summation, we can cancel the 2 in the outside denominator by $\frac{2}{2\sigma^2} = \frac{1}{\sigma^2}$ and passing the negative sign in the partial derivative we can cancel the negative sign at the beginning of the function. So the whole expression would end up like this:
+
+$$
+\frac{\partial \log L}{\partial M} = \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \theta_k}}
+$$
+
+### With Respect to $sigma$
+
+Now to solve for $\frac{\partial \log L}{\partial \sigma^2}$ let's remember where were we with the derived log likelihood:
+
+$$
+\frac{\partial \log L}{\partial \sigma} \left( -\frac{N}{2} \log(2\pi\sigma^2) - \sum_{i = 1}^{N}{\frac{(y_i - M)^2}{2\sigma^2}} \right)
+$$
+
+Here, let's start with the first term, and remember that the $-\frac{N}{2}$ is multiplying the log term. We need to have this present given that we want to pull the $\sigma^2$ out of the log term, but in order to do so, we need to also distribute the $-\frac{N}{2}$ term with it, leaving it this way:
+
+$$
+\frac{\partial \log L}{\partial \sigma} \left( -\frac{N}{2} \log(2\pi) -\frac{N}{2} \log(\sigma^2) - \sum_{i = 1}^{N}{\frac{(y_i - M)^2}{2\sigma^2}} \right)
+$$
+
+And now, we can discard the first term given it doesn't contain our target parameter $\sigma^2$, leaving us with:
+
+$$
+\frac{\partial \log L}{\partial \sigma} \left( -\frac{N}{2} \log(\sigma^2) - \sum_{i = 1}^{N}{\frac{(y_i - M)^2}{2\sigma^2}} \right)
+$$
+
+And by applying the power rule, we can pull out of the log term the square term out of the log, leaving the term $-\frac{2N}{2}$ canceling out the 2 like this:
+
+$$
+\frac{\partial \log L}{\partial \sigma} \left( -N \log(\sigma) - \sum_{i = 1}^{N}{\frac{(y_i - M)^2}{2\sigma^2}} \right)
+$$
+
+Additionally and for convenience, let's pull the $2\sigma^2$ out of the denominator and let's call $\sum_{i = 1}^{N} (y_i - M)^2 = S$ for ease of notation. Additionally, let's express the $sigma^2$ with negative exponent for clarity when we derive:
+
+$$
+\frac{\partial \log L}{\partial \sigma} \left( -N \log(\sigma) - \frac{\sigma^{-2}}{2} S \right)
+$$
+
+And finally, let's derive this bad boy. For the first term, the derivative of any log is the inverse of the term, so our $\log(\sigma) \rightarrow \frac{1}{\sigma}$. And in our second term, we cancel out the 2 by pulling out the -2 from the exponent, leaving $\sigma^{-2}$ as $\sigma^{-3}$. This whole show will look like this:
+
+$$
+\frac{\partial \log L}{\partial \sigma} = -\frac{N}{\sigma} + \frac{1}{\sigma^3} S
+$$
+
+Which can be expressed as:
+
+$$
+\frac{\partial \log L}{\partial \sigma} = -\frac{N}{\sigma} + \frac{1}{\sigma^3} \sum_{i=1}^{N}{(y_i - M)^2}
+$$
+
+And this conclude our gradient estimation section for our log likelihood function. These functions can be further used to estimate the gradient and update the parameters when using gradient-based methods to explore the parameter space, like Hamiltonian Monte Carlo methods.
+
+Up next, we'll calculate analytically the partial derivatives of the Castillo-Aguilar RRi-vs-time model. 
+
+# Estimation of RRi-vs-Time Gradient
+
+Let's recall our original target function:
+
+$$
+f(t \mid \theta_k) = \alpha + \frac{\beta}{1 + e^{\lambda (t - \tau)}}  - \frac{c\beta}{1 + e^{\phi (t - \tau - \delta)}}
+$$
+
+So the gradient of this function $\nabla f(t \mid \theta_k)$ would be a column vector of partial derivatives with the following form:
+
+$$
+\nabla f(t \mid \theta_k) = 
+\begin{bmatrix}
+    \frac{\partial f(t \mid \theta_k)}{\partial \alpha} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \beta} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial c} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \lambda} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \phi} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \tau} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \delta}
+  \end{bmatrix}
+$$
+
+But in order to produce this beauty, we need to derive each term separately. And you know the saying: every journey begins with a single step, let's go!
+
+### Deriving the RRi-vs-Time Equations
+
+**Deriving the alpha ($\alpha$) parameter**
+
+Lucky for us, this is the easiest of the seven model parameters, given that it is a constant,  it is not being transformed in any way. For this reason its derivative is just 1 (because the derivative of any constant is 1).
+
+$$ 
+\frac{\partial f(t \mid \theta_k)}{\partial \alpha} = 1
+$$
+
+**Deriving the beta ($\beta$) parameter**
+
+The beta parameter is present on both logistic functions. However it is on the top position, so we can derive it while mantaining the rest of the parameters constant and dropping the ones where the term $\beta$ is not used like $\alpha$, like this:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial \beta} = \frac{1}{1 + e^{\lambda (t - \tau)}}  - \frac{c}{1 + e^{\phi (t - \tau - \delta)}}
+$$
+
+**Deriving the $c$ parameter**
+
+The derivation of $c$ is relatively trivial given that it only appears on the numerator of the recovery logistic function. So the final derivative form would look like this:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial c} =  - \frac{\beta}{1 + e^{\phi (t - \tau - \delta)}}
+$$
+
+**Deriving the lambda ($\lambda$) parameter**
+
+Here is where it gets more difficult. Given that $\lambda$ appears on the exponent we need to apply the chain rule plus some additional calculus. However, we can use a shortcut here. For any function in the form of $f(x) = \frac{A}{g(x)}$ it's derivative ends up being $f'(x) = -A \frac{g'(x)}{g(x)^2}$. 
+
+Let's recall the part of the function that contains $\lambda$:
+
+$$
+\frac{\beta}{1 + e^{\lambda (t - \tau)}}
+$$
+
+Here, we can assume that $1 + e^{\lambda (t - \tau)}$ correspond to the $g(x)$ we previusly mentioned. With this being said, the derivative of $g(x) = 1 + e^{x (t - \tau)}$ with respect to $x$ would be $(t - \tau) e^{x (t - \tau)}$. Consequently, applying the aforementioned transformations to our original equation, the function would have the following form:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial \lambda} = -\beta \frac{(t - \tau) e^{\lambda (t - \tau)}}{(1 + e^{\lambda (t - \tau)})^2}
+$$
+
+which can be further rearranged as:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial \lambda} = -\beta (t - \tau) \frac{e^{\lambda (t - \tau)}}{(1 + e^{\lambda (t - \tau)})^2}
+$$
+
+**Deriving the phi ($\phi$) parameter**
+
+Here, we apply the same logic to the one we used earlier for $\lambda$. So the functional form would be:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial \phi} = c\beta \frac{(t - \tau - \delta) e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2}
+$$
+
+which can be further rearranged into:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial \phi} = c\beta(t - \tau - \delta) \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2}
+$$
+
+**Deriving the tau ($\tau$) parameter**
+
+For $\tau$ things gets complicated. This is because this parameter is present in both logistic components (exercise-induced decay and recovery components). So we need to apply our same trick, but instead of pulling the time-specific segment of the exponent, we need to pull the rate component in the exponent. Let's recall the components of the function that contains the $\tau$ parameters:
+
+$$
+\underbrace{\frac{\beta}{1 + e^{\lambda (t - \tau)}}}_{\text{Exercise}} - \underbrace{\frac{c\beta}{1 + e^{\phi (t - \tau - \delta)}}}_{\text{Recovery}}
+$$
+
+So the derivative form (applying our previous derivation rule) would be the following:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial \tau} = \underbrace{-\beta \frac{-\lambda e^{\lambda (t - \tau)}}{(1 + e^{\lambda (t - \tau)})^2}}_{\text{Exercise}} - \underbrace{(-c\beta) \frac{-\phi e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2}}_{\text{Recovery}}
+$$
+
+Note that the negative sign in the pulled rate parameter is propagated from the negative sign in the $\tau$ parameter. Rearrenging the signs and the numerators, the final form would be:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial \tau} =
+\beta \lambda \frac{e^{\lambda (t - \tau)}}{(1 + e^{\lambda (t - \tau)})^2} - c \beta \phi \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2} 
+$$
+
+**Deriving the delta ($\delta$) parameter**
+
+For the $\delta$ parameter, the final product is similar for $\tau$. This, in the sense that the final form is similar in the recovery function, given that its relation with the rate parameter $\phi$ is conserved with respect to $\tau$. That is why, we obtain the same form for that side of the equation:
+
+$$
+\frac{\partial f(t \mid \theta_k)}{\partial \delta} = -c \beta \phi \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2} 
+$$
+
+There we have it! Now the final gradient of our function (by taking the whole equations) would be something like this:
+
+$$
+\nabla f(t \mid \theta_k) = 
+  \begin{bmatrix}
+    \frac{\partial f(t \mid \theta_k)}{\partial \alpha} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \beta} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial c} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \lambda} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \phi} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \tau} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \delta}
+  \end{bmatrix} = 
+  \begin{bmatrix}
+    1 \\
+    \frac{1}{1 + e^{\lambda (t - \tau)}}  - \frac{c}{1 + e^{\phi (t - \tau - \delta)}} \\
+    - \frac{\beta}{1 + e^{\phi (t - \tau - \delta)}} \\
+    -\beta \frac{(t - \tau) e^{\lambda (t - \tau)}}{(1 + e^{\lambda (t - \tau)})^2} \\
+    c\beta(t - \tau - \delta) \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2} \\
+    \beta \lambda \frac{e^{\lambda (t - \tau)}}{(1 + e^{\lambda (t - \tau)})^2} - c \beta \phi \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2}  \\
+    -c \beta \phi \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2}
+  \end{bmatrix}
+$$
+
+And this monstruosity is the whole gradient of our RRi-vs-time model, which as you can see, is a vector of partial derivatives that describe the change in the function value with respect a change in the parameter being derived (i.e., a measure of how sensitive is). 
+
+# Expansion of the Gradient of $\log L$
+
+Now we have all the necessary tools to compute the gradient of the log likelihood function, which remember, involves not only the parameters of $M$, but also the $\sigma$ parameter. The gradient of this function will update the momentum $p$ of the imaginary particle, that then will update the position coordinates of this particle, which itself correspond to the values we're trying to estimate. 
+
+To honor Hamilton's memory, we'll refer to the gradient of the log likelihood as $\nabla U(q)$, given that the "position" parameter $q$ under the Hamiltonian framework are the parameter values (which work as coordinates in the parameter space), and the gradient of the log likelihood ($\nabla U(q)$) will give us the updated momentum $p$ to then, update our parameter coordinates $q$. 
+
+::: {.callout-note}
+## Terminology Clarification
+
+However, its important to considerate that in Hamiltonian Monte Carlo (HMC), the **potential energy** is defined as $U(q) = -\log L(q) - \log \text{prior}(q)$. Here, we focus on the gradient of the log-likelihood $\nabla \log L(q)$ for simplicity (assuming uniform priors). For non-uniform priors, $\nabla U(q) = -\nabla \log L(q) - \nabla \log \text{prior}(q)$.
+:::
+
+Let's recall our derived (log) likelihood function with respect to $M$ ($\frac{\partial \log L}{\partial M}$):
+
+$$
+\frac{\partial \log L}{\partial M} = \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \theta_k}}
+$$
+
+And with respect to $\sigma$ ($\frac{\partial \log L}{\partial \sigma}$):
+
+$$
+\frac{\partial \log L}{\partial \sigma} = -\frac{N}{\sigma} + \frac{1}{\sigma^3} \sum_{i=1}^{N}{(y_i - M)^2}
+$$
+
+So our gradient function would look like something like this:
+
+$$
+\nabla U(q) = 
+-\nabla \log L(q) = 
+  -\begin{bmatrix}
+    \frac{\partial \log L}{\partial M} \\
+    \frac{\partial \log L}{\partial \sigma}
+  \end{bmatrix} = 
+  -\begin{bmatrix}
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \theta_k}} \\
+    -\frac{N}{\sigma} + \frac{1}{\sigma^3} \sum_{i=1}^{N}{(y_i - M)^2}
+  \end{bmatrix}
+$$
+
+But recall that $\frac{\partial M}{\partial \theta_k}$ is the partial derivative of the model $M$ with respecto to each parameter value $\theta_k$, so $\frac{\partial \log L}{\partial M}$ can be expanded with respect to each parameter value using the elements of the gradient of our RRi-vs-time model $\nabla f(t \mid \theta_k)$. By incorporating these changes into $\nabla U(q)$ the result is the following:
+[Please note that here I use $M$ as a shorthand for $f(t \mid \theta_k)$ (as indicated at the beginning of the math section). So plase consider that when I refer to $\frac{\partial M}{\partial \theta_k}$ is equivalent to $\frac{\partial f(t \mid \theta_k)}{\partial \theta_k}$]{.aside}
+
+$$
+\nabla U(q) = 
+-\nabla \log L(q) =
+  -\begin{bmatrix}
+    \frac{\partial \log L}{\partial \alpha} \\
+    \frac{\partial \log L}{\partial \beta} \\
+    \frac{\partial \log L}{\partial c} \\
+    \frac{\partial \log L}{\partial \lambda} \\
+    \frac{\partial \log L}{\partial \phi} \\
+    \frac{\partial \log L}{\partial \tau} \\
+    \frac{\partial \log L}{\partial \delta} \\
+    \frac{\partial \log L}{\partial \sigma}
+  \end{bmatrix} = 
+  -\begin{bmatrix}
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \alpha}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \beta}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial c}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \lambda}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \phi}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \tau}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \delta}} \\
+    -\frac{N}{\sigma} + \frac{1}{\sigma^3} \sum_{i=1}^{N}{(y_i - M)^2}
+  \end{bmatrix}
+$$
+
+This is the cherry and cream on the top of gradient-based estimation methods, because with this gradient function we can now compute the slope of this probability landscape and ride it without problems. Now the next challenge is transforming the hand-derived equations into a valid R code that will actually be useful to estimate anything.
+
+# Translating Math Into Code
+
+Okay, after almost igniting the latex out of my keyboard, now we'll have to pull these fancy equations into an efficient set of functions in R that will be able to actually do something. This "something" will be estimating the gradient of the surface where this particle is in space (using $-\nabla U(q)$) and updating its position $q$ by leveraging momentum $p$ to carry us away, sliding over higher probability landscapes.
+
+We'll start simple. First we will implement the Castillo-Aguilar Equation (the RRi-vs-Time model) in order to accept an input vector as time and a named list of parameter values. This will serve our purpose when we need to compute the predicted RRi values, to then compute the residuals for the log likelihood and bla bla bla (i.e., what we already have been discussing so far). 
+
+Let's recall what is the function we'll implement in R code:
+
+$$
+f(t \mid \theta_k) = \alpha + \frac{\beta}{1 + e^{\lambda (t - \tau)}}  - \frac{c\beta}{1 + e^{\phi (t - \tau - \delta)}} \\
+\text{where:}~k\in\{\alpha,\beta,c,\lambda,\phi,\tau,\delta\}
+$$
+
+Where $t$ will be the time vector and $\theta_k$ the list of parameters. Let's see how this turns out!
+
+```{r}
+# ==============================================
+# 1. RRi Model (Castillo-Aguilar Equation)
+# ==============================================
+rr_model <- function(t, params) {
+  alpha <- params$alpha
+  beta <- params$beta
+  c <- params$c
+  lambda <- params$lambda
+  phi <- params$phi
+  tau <- params$tau
+  delta <- params$delta
+  
+  term2 <- beta / (1 + exp(lambda * (t - tau)))
+  term3 <- (-c * beta) / (1 + exp(phi * (t - tau - delta)))
+  alpha + term2 + term3
+}
+```
+
+Now let's ensure ourselves that this code is actually working. We'll simulate some rest-exercise-rest dynamics using our function and then visualize it using `ggplot2` package:
+
+```{r}
+#| code-fold: true
+
+# Time vector
+t <- seq(0.01, 12, 0.01) 
+
+# list with RRi parameters
+params <- list(alpha = 800, beta = -300, c = 0.9,
+               lambda = -3, phi = -2, 
+               tau = 5, delta = 2)
+
+# list with parameters for SD dynacmis of RRi over time
+params_sd <- list(alpha = 30, beta = -30, c = 0.7,
+               lambda = -1, phi = -0.8, 
+               tau = 5, delta = 3)
+
+# Simulate the "true" (smooth) RRi curve
+y_true <- rr_model(t, params)
+# And the fluctuations for RRi SD over time
+y_sd <- rr_model(t, params_sd)
+
+# And simulate the observed RRi signal
+y <- y_true + rnorm(n = length(t), sd = y_sd)
+
+ggplot() +
+  geom_line(aes(t, y), linewidth = 1/4, color = "purple") +
+  geom_line(aes(t, y_true), linewidth = 1, color = "purple") +
+  geom_line(aes(t, y_true + y_sd), linewidth = 1/2, linetype = 2, color = "purple") +
+  geom_line(aes(t, y_true - y_sd), linewidth = 1/2, linetype = 2, color = "purple") +
+  geom_vline(xintercept = c(5, 7), linetype = 2, color = "gray50") +
+  annotate("text", label = "Rest", x = 3.5, y = 650, color = "gray50") +
+  annotate("text", label = "Exercise", x = 6, y = 750, color = "gray50") +
+  annotate("text", label = "Recovery", x = 8.5, y = 650, color = "gray50") +
+  labs(y = "RRi (ms)", x = "Time (min)", 
+       title = "Exercise-Induced RRi Dynamics",
+       subtitle = "Cardiac Autonomic Modulation")
+```
+
+So as you can see, we can model not only a time-varying RRi, but also, we can simulate the variations in the standard deviation of RRi over time. See how the dispersion changes from rest, exercise and recovery around the true curve and the observed RRi curve.
+
+Cool! now we have to implement the log likelihood function, which is the function that will give us the probability (in log scale) of the current parameter values on this parameter space, which will inform us if we are going into a place of greater probability (or not). Let's recall the equation we arrived earlier:
+
+$$
+\log L(y_i \mid M, \sigma^2) = -\frac{N}{2} \log(2\pi\sigma^2) - \sum_{i = 1}^{N}{\frac{(y_i - M)^2}{2\sigma^2}}
+$$
+
+Let's go implementing this bad boy as a function in R:
+
+```{r}
+# ==============================================
+# 2. Gaussian Log-Likelihood
+# ==============================================
+log_likelihood <- function(y, t, params, sigma) {
+  M <- rr_model(t, params)
+  residuals <- y - M
+  N <- length(residuals)
+  sigma_squared <- sigma^2
+  
+  -N/2 * log(2 * pi * sigma_squared) - sum(residuals^2) / (2 * sigma_squared)
+}
+```
+
+Now let's see if we can visualize something using this function:
+
+```{r}
+#| code-fold: true
+
+# Same parameters as before
+
+# Observed signal
+y <- y_true + rnorm(n = length(t), sd = 30)
+
+# Input parameters
+param_data <- expand.grid(
+  alpha = seq(710, 890, length.out = 100),
+  c = seq(0.3, 1.5, length.out = 100)
+)
+
+# Compute log likelihood
+param_data$log_likelihood <- 
+  apply(param_data, 1, function(x) {
+    new_params <- within(params, {
+      alpha <- x[["alpha"]];
+      c <- x[["c"]]
+    }) 
+    log_likelihood(y, t, new_params, sigma = 20)
+  })
+
+param_data <- as.data.table(param_data)
+
+
+# Get unique alpha and c values for axes
+z_vals <- as.matrix(dcast(param_data, alpha ~ c, value.var = "log_likelihood")[,-1])
+alpha_vals <- unique(param_data$alpha)
+c_vals <- unique(param_data$c)
+
+# Create the 3D surface plot
+library(plotly)
+
+plot_ly() |> 
+  add_trace(
+    x = c_vals,
+    y = alpha_vals,
+    z = z_vals,
+    type = "surface",
+    colorscale = "Viridis",
+    showscale = TRUE
+  ) |> 
+  layout(
+    scene = list(
+      xaxis = list(title = "C (Recovery proportion)"),
+      yaxis = list(title = "Alpha parameter"),
+      zaxis = list(title = "Log-Likelihood"),
+      camera = list(eye = list(x = -1, y = -2.5, z = 0.5))
+    ),
+    title = "Log-Likelihood Landscape for alpha and c Parameters"
+  )
+```
+
+So as you can see, we can now explore the probability of our parameter space (at least, in two dimensions). However, in reality, our parameter space has 8 parameters (7 from the RRi-vs-time model and the $\sigma$ parameter), which increases exponentially the number of computations needed to use grid approximation.
+[I don't have access to a quantum computer to be able to compute the whole probability landscape without my computer bursting into flames]{.aside}
+
+Some algorithms that are designed to find optimal parameter values, work by maximizing the likelihood of seeing the data for a given set of the parameters (e.g., maximum likelihood estimation, MLE for short). In those cases, some methods might even take advantage of the gradient information similar to HMC methods, like gradient-descent for instance. However, almost all methods require you to able to compute the likelihood of observing the data given a set of parameter values (which is what we just plotted).
+
+Up next, we need to specify (in R code) the vector of partial derivatives we estimated earlier. Let's remember that this vector of derivatives (of the RRi-vs-time model) will be important to compute the gradient of the log likelihood, which is necessary to update the momentum vector to then update our parameter vector, by simulating our imaginary particle moving throught this parameter space.
+
+Let's recall our vector of partial derivatives for the RRi-vs-time model:
+
+$$
+\nabla f(t \mid \theta_k) = 
+  \begin{bmatrix}
+    \frac{\partial f(t \mid \theta_k)}{\partial \alpha} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \beta} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial c} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \lambda} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \phi} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \tau} \\
+    \frac{\partial f(t \mid \theta_k)}{\partial \delta}
+  \end{bmatrix} = 
+  \begin{bmatrix}
+    1 \\
+    \frac{1}{1 + e^{\lambda (t - \tau)}}  - \frac{c}{1 + e^{\phi (t - \tau - \delta)}} \\
+    - \frac{\beta}{1 + e^{\phi (t - \tau - \delta)}} \\
+    -\beta \frac{(t - \tau) e^{\lambda (t - \tau)}}{(1 + e^{\lambda (t - \tau)})^2} \\
+    c\beta(t - \tau - \delta) \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2} \\
+    \beta \lambda \frac{e^{\lambda (t - \tau)}}{(1 + e^{\lambda (t - \tau)})^2} - c \beta \phi \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2}  \\
+    -c \beta \phi \frac{e^{\phi (t - \tau - \delta)}}{(1 + e^{\phi (t - \tau - \delta)})^2}
+  \end{bmatrix}
+$$
+
+Yeah... Its a picture hard to erase from memory. Even though this look like ITS A LOT, it truly isn't. Let's focus on the implementation of these set of equations in R:
+
+```{r}
+# ==============================================
+# 3. Partial Derivatives of the RRi Model
+# ==============================================
+compute_partials <- function(t, params) {
+  alpha <- params$alpha
+  beta <- params$beta
+  c <- params$c
+  lambda <- params$lambda
+  phi <- params$phi
+  tau <- params$tau
+  delta <- params$delta
+  
+  # Precompute common terms
+  t_tau <- t - tau
+  t_tau_delta <- t - tau - delta
+  
+  exp_lambda <- exp(lambda * t_tau)
+  exp_phi <- exp(phi * t_tau_delta)
+  denom1 <- (1 + exp_lambda)^2
+  denom2 <- (1 + exp_phi)^2
+  
+  list(
+    d_alpha = rep(1, length(t)),             # Is constant, so we repeat 1's
+    d_beta = 1/(1 + exp_lambda) - c/(1 + exp_phi), # ∂M/∂β
+    d_c = -beta / (1 + exp_phi),             # ∂M/∂c
+    d_lambda = -beta * t_tau * exp_lambda / denom1, # ∂M/∂λ
+    d_phi = c * beta * t_tau_delta * exp_phi / denom2, # ∂M/∂φ
+    d_tau = beta * lambda * exp_lambda / denom1 - c * beta * phi * exp_phi / denom2, # ∂M/∂τ
+    d_delta = -c * beta * phi * exp_phi / denom2 # ∂M/∂δ
+  )
+}
+```
+
+These set of equation only tell us how sensitive is each parameter with regard to the observed error in the predicted RRi. Let's plot this for further understanding. 
+
+```{r}
+#| fig-asp: 1.5
+#| code-fold: true
+
+partials <- 
+  compute_partials(t, params) |> 
+  as.data.table()
+
+names(partials) <- 
+  c("alpha", "beta", "c", 
+    "lambda", "phi", "tau", "delta")
+
+data <- 
+  cbind(time = t, partials) |> 
+  melt.data.table(id.vars = "time")
+
+ggplot(data, aes(time, value, col = variable)) +
+  facet_grid(rows = vars(variable), scales = "free_y", 
+             labeller = label_parsed) +
+  geom_line(show.legend = FALSE, linewidth = 1) +
+  geom_vline(xintercept = c(5, 7), linetype = 2, color = "gray50") +
+  labs(x = "Time (min)", y = "Effect on RRi (ms)",
+       title = "Effect of parameter change on RRi",
+       subtitle = "Change in RRi for a unit change for each parameter")
+```
+
+In this plot, we can observed the effect of modifying in one unit each parameter on the observed RRi dynamics. This crucial piece of information is obtained thanks to the magic of partial derivatives. It allow us to describe how a system, composed of multiple parameters controlling the behavior of the observed dynamics, change relative to each parameter at a time. In reality, this set of equations describe a richer picture that we are intending to show here (but that's an adventure for another blog post).
+
+Finally, we now need to implement the gradient of the log likelihood function $\nabla U(q)$, which let's recall, it looked like this:
+
+$$
+\nabla U(q) = 
+-\nabla \log L(q) =
+  -\begin{bmatrix}
+    \frac{\partial \log L}{\partial \alpha} \\
+    \frac{\partial \log L}{\partial \beta} \\
+    \frac{\partial \log L}{\partial c} \\
+    \frac{\partial \log L}{\partial \lambda} \\
+    \frac{\partial \log L}{\partial \phi} \\
+    \frac{\partial \log L}{\partial \tau} \\
+    \frac{\partial \log L}{\partial \phi} \\
+    \frac{\partial \log L}{\partial \sigma}
+  \end{bmatrix} = 
+  -\begin{bmatrix}
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \alpha}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \beta}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial c}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \lambda}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \phi}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \tau}} \\
+    \frac{1}{\sigma^2} \sum_{i = 1}^{N}{ (y_i - M) \cdot \frac{\partial M}{\partial \phi}} \\
+    -\frac{N}{\sigma} + \frac{1}{\sigma^3} \sum_{i=1}^{N}{(y_i - M)^2}
+  \end{bmatrix}
+$$
+
+However, most of the work is already done, so we basically need to assemble the functions that take as input our observed data (RRi and time vectors), the named list of parameter values and $\sigma$.
+
+Let's see how this implementation looks like:
+
+```{r}
+# ==============================================
+# 4. Gradient of Log-Likelihood (∇U(q))
+# ==============================================
+grad_U <- function(y, t, params, sigma) {
+  M <- rr_model(t, params)
+  residuals <- y - M
+  partials <- compute_partials(t, params)
+  N <- length(residuals)
+  
+  # Precompute inverses
+  sigma_sq_inv <- 1 / sigma^2
+  sigma_cu_inv <- 1 / sigma^3
+  
+  # Gradients for model parameters
+  grad_params <- list(
+    alpha = sum(residuals * partials$d_alpha) * sigma_sq_inv,
+    beta = sum(residuals * partials$d_beta) * sigma_sq_inv,
+    c = sum(residuals * partials$d_c) * sigma_sq_inv,
+    lambda = sum(residuals * partials$d_lambda) * sigma_sq_inv,
+    phi = sum(residuals * partials$d_phi) * sigma_sq_inv,
+    tau = sum(residuals * partials$d_tau) * sigma_sq_inv,
+    delta = sum(residuals * partials$d_delta) * sigma_sq_inv
+  )
+  
+  # Gradient for sigma
+  grad_sigma <- (-N / sigma) + sum(residuals^2) * sigma_cu_inv
+  
+  # Return -∇logL(q)
+  gradLL <- c(grad_params, list(sigma = grad_sigma))
+  
+  lapply(gradLL, function(x) -x)
+}
+```
+
+It's important to not forget that the gradient of the potential energy $\nabla U(q)$, used to update the momentum parameter $p$ is itself a vector of gradients for all parameters, including $\sigma$:
+
+$$
+\nabla U(q) = -\nabla \log L(q) = -\begin{bmatrix}
+\frac{\partial \log L}{\partial \alpha} \\
+\vdots \\
+\frac{\partial \log L}{\partial \sigma}
+\end{bmatrix}
+$$
+
+Now that we have our gradient function $\nabla U(q)$, we'll need to use it to simulate how our particle moves through the parameter space. The common way to do this is to use what we know as symplectic integrators, which are a special kind of algorithms specifically design to leverage Hamiltonian parameters ($p$ and $q$) to simulate the evolution of a Hamiltonian system over time. The most famous symplectic integrator used in common Bayesian analysis software is the leapfrog integrator. 
+
+I have already described the leapfrog integrator in previous [blog posts](https://doi.org/10.59350/fa26y-xa178), however, for the sake of not interrumpting the flow of the narrative, let me remind you what was about.
+
+In the leapfrog integrator, we start with a random momentum, commonly drawn from a standard normal distribution (with $\mu = 0$ and $\sigma^2 = 1$):
+
+$$
+p \leftarrow \mathcal{N}(n \mid 0, 1), \text{ where: } n = \text{length}(p)
+$$
+
+However, its important to note that we need to draw a random standard normal vector of the same length of the position parameter vector $q$, so that we'll have a momentum $p$ for each value in $q$.
+
+Once we start with a random momentum, we need to updated it right away based on the gradient of our parameter space. To do this, let's recall the form of the rate of change of the momentum paramter $p$:
+
+$$
+\frac{d p}{d t} = -\frac{\partial H}{\partial q} = -\nabla U(q)
+$$
+
+This means that in order to update $p$ we need add the value of the $\nabla U(q)$ in the opposite direction, analogous to a ball rolling downhill. We manage to do this by "half-updates":
+
+$$
+p_{t+0.5} \leftarrow p_{t} - \nabla U(q_{t}) \cdot \frac{\text{stepsize}}{2}
+$$
+[First half-step momentum update]{.aside}
+
+Then, with the updated momentum, we update the position vector $q$ like the following:
+
+$$
+q_{t+1} \leftarrow q_{t} + p_{t+0.5} \cdot \text{stepsize}
+$$
+[Full-step position update]{.aside}
+
+And then, we end up the algorithm by half-updating the momentum again, but this time with the new position:
+
+$$
+p_{t+1} \leftarrow p_{t+0.5} - \nabla U(q) \cdot \frac{\text{stepsize}}{2}
+$$
+[Second half-step momentum update]{.aside}
+
+And this is the whole algorithm to simulate the movement of the particle through this parameter space. As you see, the complicated stuff is not the algorithm itself, its the process to obtaining the equations to compute such gradients in the first place.
+
+We can compact this algorithm into this tiny R function:
+
+```{r}
+leapfrog <- function(q, p, dt, y, t) {
+  # Extract sigma and model parameters
+  sigma <- q$sigma
+  params <- q[names(q) != "sigma"]
+  
+  # Compute gradient
+  grad <- grad_U(y, t, params, sigma)
+  
+  # Update momentum
+  p <- p - 0.5 * dt * unlist(grad)
+  
+  # Update position
+  q_new <- as.list(x = unlist(q) + dt * p)
+  
+  # Recompute gradient at new position
+  new_sigma <- q_new$sigma
+  new_params <- q_new[names(q_new) != "sigma"]
+  grad_new <- grad_U(y, t, new_params, new_sigma)
+  
+  # Final momentum update
+  p <- p - 0.5 * dt * unlist(grad_new)
+  
+  list(q = q_new, p = p)
+}
+```
+
+Now let's try simulating this bad boy!
+
+```{r}
+# Initial parameters ----
+## Castillo-Aguilar's model
+params <- list(
+  alpha = 800, beta = -300, c = 0.8,
+  lambda = -2, phi = -1, tau = 6, delta = 3
+)
+## Parameter for the standard deviation
+sigma <- 10
+
+# Data ----
+## Time
+t <- seq(0, 15, length.out = 1000)
+## Observed RRi
+y <- rr_model(t, params) + rnorm(1000, sd = sigma)
+
+# Parameters for simulation ----
+## Number of steps
+steps <- 10000
+## Stepsize at each step
+stepsize <- 0.00025
+## Random seed
+set.seed(1234)
+
+## Initiate random momentum vector
+p <- rnorm(n = 8, mean = 0, sd = 1)
+
+## Parameter
+q <- c(params, list(sigma = sigma))
+out <- vector("list", length = steps)
+
+## Leapfrog integrator
+for (step in 1:steps) {
+  out[[step]] <- leapfrog(q = q, p = p, dt = stepsize, y = y, t = t)
+  q <- out[[step]]$q
+  p <- out[[step]]$p
+}
+```
+
+And that's it! Now we have to check how well our leapfrog algorithm performed. Here we can leverage the famous Phase-Space plots, which illustrates the Position-vs-Momentum evolution of the system on the parameter space:
+
+```{r}
+#| code-fold: true
+#| fig-asp: 2
+
+position <- lapply(out, function(x) {
+  as.data.table(x$q)
+}) |> rbindlist()
+
+momentum <- lapply(out, function(x) {
+  as.list(x$p)
+}) |> rbindlist()
+
+position$step <- 1:steps
+momentum$step <- 1:steps
+
+position <- melt.data.table(position, id.vars = "step", value.name = "p")
+momentum <- melt.data.table(momentum, id.vars = "step", value.name = "q")
+
+sim_data <- position[momentum, on = c("step", "variable")]
+sim_data[, `:=`(q = scale(q), p = scale(p)), list(variable)]
+
+ggplot(sim_data, aes(p, q)) +
+  facet_grid(rows = vars(variable), labeller = label_parsed) +
+  geom_path(aes(group = 1, alpha = step, col = variable), show.legend = FALSE) +
+  labs(x = "Momentum (p)", y = "Position (q)",
+       title = "Phase Space of RRi Model",
+       subtitle = "Particle Moving on the Parameter Space",
+       caption = "Values are Standardized For Each Parameter")
+```
+
+With this plot, we can already see which parameters behave accordingly to what we should expect (i.e., cyclic behavior like a pendulum) and which doesn't. At first glance we can see that the $\beta$ parameter didn't reach a stationary behavior. This could be for a number of different reasons like hyperparameter tuning, and in the same way, we could try to fix it using several methods (e.g., step size, trajectory length). However, that's another beast for another article. 
+
+# Synthesizing Theory, Computation, and Cardiovascular Insight
+
+The intellectual passage from the abstract realm of mathematical derivation to the concrete execution of Hamiltonian Monte Carlo (HMC) code for the Castillo-Aguilar RRi-vs-Time model exemplifies a profound synergy between theoretical exactitude, computational dexterity, and domain-specific biological understanding. This discussion delves into the broader ramifications of this synthesis, acknowledging its inherent limitations while distilling the critical lessons learned for both Bayesian inference methodologies and the intricate modeling of cardiovascular dynamics. Furthermore, it contemplates avenues for enhancing model veracity, computational performance, and the clarity of interpretation.
+
+Perhaps the most significant realization emerging from this exercise is the deep epistemological value derived from the manual derivation of the model's gradients. While contemporary probabilistic programming frameworks conveniently automate gradient computation through automatic differentiation (AD), the rigorous intellectual effort involved in manually applying the chain rule to a sophisticated formulation like the Castillo-Aguilar equation cultivates an irreplaceable, nuanced intuition. This meticulous process compels the modeler to grapple directly with potential analytical obstacles, such as singularities arising from specific mathematical terms or challenges in parameter identifiability, which automated systems might otherwise mask or silently fail upon. Moreover, dissecting individual gradient components, such as the partial derivative of the model with respect to exercise onset time ($\tau$), illuminates the complex interplay of competing physiological forces—exercise versus recovery dynamics—mathematically encoded within the model. This granular understanding directly informs parameter sensitivity analysis and fosters a crucial, well-founded confidence in the inferential outcomes, particularly when confronting complex posterior geometries or apparent non-stationarity in sampling traces, allowing one to distinguish true model behavior from mere artifacts of the inference algorithm or its tuning. This experience strongly advocates for considering hybrid analytical workflows, where the manual derivation of particularly insightful or sensitive gradient components is judiciously combined with the efficiency of AD for others, thus achieving an optimal balance between profound conceptual grasp and practical computational execution, especially pertinent in hierarchical modeling structures.
+
+The remarkable efficiency of HMC, particularly its advantage over gradient-free Markov Chain Monte Carlo techniques like Metropolis-Hastings, is fundamentally predicated on its intelligent exploitation of gradient information to navigate the complex topology of the posterior distribution. Our implementation vividly illustrates this advantage, showcasing HMC's capacity to circumvent entrapment in local probability maxima—a common failing of random-walk algorithms in high-dimensional spaces. By employing momentum to traverse the parameter landscape, HMC effectively explores correlated parameter spaces, such as the relationship between exercise decay rate ($\lambda$) and recovery rate ($\phi$) in the RRi model, navigating the characteristic ridges of such posteriors far more adeptly than undirected random proposals. This gradient-informed exploration mechanism also confers significant scalability; whereas grid-based evaluations or random walks suffer exponentially from the curse of dimensionality, HMC's computational cost typically scales polynomially, rendering complex models with numerous parameters computationally tractable. The symplectic nature of the leapfrog integrator further ensures a delicate balance between broad exploration of the parameter space, facilitated by sustained momentum across potentially long trajectories, and detailed exploitation of high-probability regions, maintaining the necessary statistical properties for valid inference. Observing the phase-space dynamics, where stable oscillations for parameters like baseline RRi ($\alpha$) contrast with divergent behavior for others like exercise magnitude ($\beta$), provides direct diagnostic feedback on the interplay between the model's geometry and the sampler's hyperparameters.
+
+Despite the inherent power of HMC, its application invariably surfaces significant challenges, demanding careful consideration. The performance of the sampler is acutely sensitive to the choice of hyperparameters: the step size ($\epsilon$), which dictates the granularity of the leapfrog integration; the trajectory length ($L$), which determines the extent of exploration in each iteration; and the mass matrix, which adapts the sampler to the local curvature and scale of the posterior. Suboptimal choices, as potentially indicated by the observed behavior of the ($\beta$) parameter in our simulations, can lead to integration instability or inefficient exploration. While adaptive HMC variants like the No-U-Turn Sampler (NUTS) offer automated tuning, they introduce additional algorithmic complexity. Furthermore, the very flexibility of sophisticated mechanistic models like the Castillo-Aguilar formulation can engender issues of parameter identifiability. Parameters governing timing, such as exercise onset ($\tau$) and recovery delay ($\delta$), may exhibit strong correlations, leading to elongated, curved posterior distributions that challenge even gradient-based samplers. Addressing this requires thoughtful strategies, including model reparameterization to decouple correlated variables or the incorporation of informative prior distributions derived from existing physiological knowledge. Finally, the computational burden associated with gradient evaluation, scaling linearly with the number of data points, remains a practical constraint, particularly for extensive datasets like continuous, long-term ECG recordings, potentially necessitating the adoption of stochastic gradient methods or hardware acceleration.
+
+This endeavor highlights the persistent, often necessary, tension in Bayesian modeling between achieving high mechanistic fidelity—capturing the nuances of the underlying biological processes—and maintaining computational tractability. The Castillo-Aguilar model, rooted in physiological assumptions about exercise and recovery, offers interpretability but risks misrepresenting the system if the true dynamics deviate significantly from its sigmoidal assumptions. Conversely, purely phenomenological approaches, such as Gaussian processes, provide greater flexibility but often sacrifice direct physiological interpretation. An optimal path may lie in hybrid models that strategically combine mechanistic components for well-understood dynamics with non-parametric elements to capture residual variation or unmodeled effects. Similarly, the simplifying assumption of constant, Gaussian noise ($\sigma$) overlooks the common physiological reality of heteroscedasticity in RR intervals, where variability often changes with physiological state. Enhancing the model to accommodate time-varying or state-dependent noise would increase realism but inevitably add layers of computational and inferential complexity, demanding a careful cost-benefit analysis guided by the specific research question.
+
+Beyond the technicalities of Bayesian inference, this work resonates with broader challenges and opportunities within the field of computational physiology. The inherent inter-individual heterogeneity in cardiovascular responses is not merely statistical noise but a reflection of genuine biological diversity. Extending models like ours into hierarchical frameworks offers a powerful means to parse this variability, simultaneously estimating population-level trends while tailoring parameters like decay rates ($\lambda$, $\phi$) and timing ($\tau$, $\delta$) to individual subjects, thereby paving the way for more personalized physiological assessment. The translation of such theoretical models into practical clinical applications, however, necessitates bridging the gap between offline analysis and real-time monitoring. This requires developing robust prior distributions informed by population data, potentially exploring online HMC algorithms capable of processing streaming data, and ensuring rigorous validation against established clinical metrics. Furthermore, advancing the field responsibly hinges on a commitment to open science and reproducibility, extending beyond code sharing to encompass standardized data formats and the creation of benchmark datasets for objective model comparison.
+
+The trajectory for future work is rich with potential, branching into algorithmic enhancement, model elaboration, and empirical validation. Integrating adaptive samplers like NUTS could automate hyperparameter tuning, while leveraging GPU acceleration or exploring approximate Bayesian methods like Variational Inference could drastically reduce computation times for large-scale applications. Model extensions could incorporate hierarchical structures for population studies, allow key parameters like ($\lambda$) and ($\phi$) to vary dynamically with factors like exercise intensity, or employ more flexible non-Gaussian likelihoods (e.g., log-normal or Gamma distributions) to better capture the statistical properties of RR intervals. Crucially, the clinical relevance of these models must be established through rigorous benchmarking against existing gold-standard physiological measures and validated in intervention studies designed to assess whether estimated parameter shifts accurately reflect responses to therapeutic interventions or training regimens.
+
+In conclusion, the implementation and application of HMC to the Castillo-Aguilar model represent a compelling fusion of art and science. It demands mathematical acuity for gradient derivation, computational proficiency for robust implementation, and deep domain knowledge for meaningful interpretation. The ultimate value, however, transcends these individual components, residing in the synergistic insight generated when mathematical formalism illuminates biological complexity. This journey underscores several core tenets of sophisticated modeling: the indispensable intuition fostered by rigorous derivation, the inescapable necessity of navigating trade-offs between model complexity, inferential accuracy, and computational resources, and the paramount importance of interpreting results within their specific physiological context. The seemingly "monstrous" gradient vector, therefore, is far more than a collection of partial derivatives; it is a high-dimensional map guiding exploration at the confluence of mathematics and biology, promising deeper understanding for those willing to navigate its intricate terrain, one calculated step at a time.
